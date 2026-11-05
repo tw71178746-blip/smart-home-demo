@@ -1,34 +1,52 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
-    <title>스마트홈</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스마트홈 환기 시스템</title>
 </head>
 <body>
     <h1>스마트홈 환기 시스템</h1>
 
-    <h2>실내 온도</h2>
-    <p id="temp">25도</p>
+    <h2>실내 환경</h2>
+    <p>온도: <span id="temp">불러오는 중...</span></p>
+    <p>습도: <span id="humidity">불러오는 중...</span></p>
 
-    <h2>실내 습도</h2>
-    <p id="humidity">55%</p>
-
-    <button onclick="changeData()">수치 변경</button>
-
-    <hr>
+    <button onclick="getData()">데이터 새로고침</button>
 
     <h2>창문 제어</h2>
-    <p>현재 상태: <strong id="windowStatus">닫힘</strong></p>
-
+    <p>창문 상태: <span id="windowStatus">닫힘</span></p>
     <button onclick="openWindow()">창문 열기</button>
     <button onclick="closeWindow()">창문 닫기</button>
 
-    <script>
-        function changeData() {
-            let temp = Math.floor(Math.random() * 11) + 20;
-            let humidity = Math.floor(Math.random() * 41) + 30;
+    <p id="message"></p>
 
-            document.getElementById("temp").innerHTML = temp + "도";
-            document.getElementById("humidity").innerHTML = humidity + "%";
+    <script>
+        const FIREBASE_URL =
+        "https://smart-home-demo-52a8a-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+        async function getData() {
+            try {
+                const response = await fetch(FIREBASE_URL + ".json");
+
+                if (!response.ok) {
+                    throw new Error("데이터 요청 실패");
+                }
+
+                const data = await response.json();
+
+                document.getElementById("temp").innerHTML =
+                    data.temperature + "도";
+
+                document.getElementById("humidity").innerHTML =
+                    data.humidity + "%";
+
+                document.getElementById("message").innerHTML =
+                    "Firebase 연결 성공!";
+            } catch (error) {
+                document.getElementById("message").innerHTML =
+                    "데이터를 가져오지 못했습니다: " + error.message;
+            }
         }
 
         function openWindow() {
@@ -38,7 +56,9 @@
         function closeWindow() {
             document.getElementById("windowStatus").innerHTML = "닫힘";
         }
+
+        // 페이지를 열면 자동으로 데이터 가져오기
+        getData();
     </script>
 </body>
 </html>
-
