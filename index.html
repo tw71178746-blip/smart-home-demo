@@ -1,64 +1,327 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>스마트홈 환기 시스템</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>스마트홈 통합 대시보드</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 25px;
+    background: #101827;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    max-width: 900px;
+    margin: auto;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: #67D5C0;
+}
+
+.subtitle {
+    color: #9CAFC4;
+    font-size: 13px;
+    margin-top: 6px;
+}
+
+.online {
+    background: #145C48;
+    color: #6EE7B7;
+    padding: 8px 13px;
+    border-radius: 20px;
+    font-size: 13px;
+}
+
+h2 {
+    font-size: 19px;
+    margin: 25px 0 15px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+}
+
+.card {
+    background: #1D2B40;
+    border-radius: 15px;
+    padding: 20px;
+}
+
+.icon {
+    font-size: 26px;
+}
+
+.label {
+    color: #AAB9CC;
+    margin-top: 12px;
+    font-size: 14px;
+}
+
+.value {
+    font-size: 29px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.description {
+    color: #9CAFC4;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+.control {
+    background: #1D2B40;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 15px;
+}
+
+.control-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.status {
+    color: #67D5C0;
+    font-size: 14px;
+}
+
+button {
+    border: none;
+    border-radius: 9px;
+    padding: 11px 16px;
+    margin-top: 15px;
+    cursor: pointer;
+    background: #287F78;
+    color: white;
+    font-size: 14px;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+.secondary {
+    background: #40516B;
+}
+
+footer {
+    text-align: center;
+    color: #718096;
+    font-size: 12px;
+    margin-top: 30px;
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 16px;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    .value {
+        font-size: 24px;
+    }
+}
+</style>
 </head>
+
 <body>
-    <h1>스마트홈 환기 시스템</h1>
+<div class="container">
 
-    <h2>실내 환경</h2>
-    <p>온도: <span id="temp">불러오는 중...</span></p>
-    <p>습도: <span id="humidity">불러오는 중...</span></p>
+<header>
+    <div>
+        <div class="logo">⌂ SMART HOME</div>
+        <div class="subtitle">스마트홈 통합 환경 관리 시스템</div>
+    </div>
+    <div class="online">● ONLINE</div>
+</header>
 
-    <button onclick="getData()">데이터 새로고침</button>
+<h2>실내 환경 모니터링</h2>
 
-    <h2>창문 제어</h2>
-    <p>창문 상태: <span id="windowStatus">닫힘</span></p>
-    <button onclick="openWindow()">창문 열기</button>
-    <button onclick="closeWindow()">창문 닫기</button>
+<div class="grid">
 
-    <p id="message"></p>
+    <div class="card">
+        <div class="icon">🌡️</div>
+        <div class="label">온도</div>
+        <div class="value" id="temp">-- °C</div>
+        <div class="description">실내 온도</div>
+    </div>
 
-    <script>
-        const FIREBASE_URL =
-        "https://smart-home-demo-52a8a-default-rtdb.asia-southeast1.firebasedatabase.app";
+    <div class="card">
+        <div class="icon">💧</div>
+        <div class="label">습도</div>
+        <div class="value" id="humidity">-- %</div>
+        <div class="description">실내 습도</div>
+    </div>
 
-        async function getData() {
-            try {
-                const response = await fetch(FIREBASE_URL + "/.json");
+    <div class="card">
+        <div class="icon">🌫️</div>
+        <div class="label">미세먼지</div>
+        <div class="value" id="pm">측정 대기</div>
+        <div class="description">PM2.5 / PM10</div>
+    </div>
 
-                if (!response.ok) {
-                    throw new Error("데이터 요청 실패");
-                }
+    <div class="card">
+        <div class="icon">🫧</div>
+        <div class="label">CO₂ 농도</div>
+        <div class="value" id="co2">측정 대기</div>
+        <div class="description">단위: ppm</div>
+    </div>
 
-                const data = await response.json();
+</div>
 
-                document.getElementById("temp").innerHTML =
-                    data.temperature + "도";
+<h2>스마트홈 장치 상태</h2>
 
-                document.getElementById("humidity").innerHTML =
-                    data.humidity + "%";
+<div class="grid">
 
-                document.getElementById("message").innerHTML =
-                    "Firebase 연결 성공!";
-            } catch (error) {
-                document.getElementById("message").innerHTML =
-                    "데이터를 가져오지 못했습니다: " + error.message;
-            }
+    <div class="card">
+        <div class="icon">🪟</div>
+        <div class="label">창문 개폐 상태</div>
+        <div class="value" id="windowStatus">닫힘</div>
+        <div class="description">마그네틱 센서 연결 예정</div>
+    </div>
+
+    <div class="card">
+        <div class="icon">💦</div>
+        <div class="label">가습기</div>
+        <div class="value" id="humidifierStatus">정지</div>
+        <div class="description">가습 장치 상태</div>
+    </div>
+
+    <div class="card">
+        <div class="icon">🌀</div>
+        <div class="label">선풍기</div>
+        <div class="value" id="fanStatus">정지</div>
+        <div class="description">환기 장치 상태</div>
+    </div>
+
+</div>
+
+<h2>장치 제어</h2>
+
+<div class="control">
+    <div class="control-row">
+        <strong>🪟 창문 제어</strong>
+        <span class="status" id="windowControl">닫힘</span>
+    </div>
+    <button onclick="setWindow('열림')">창문 열기</button>
+    <button class="secondary" onclick="setWindow('닫힘')">창문 닫기</button>
+</div>
+
+<div class="control">
+    <div class="control-row">
+        <strong>💦 가습기 제어</strong>
+        <span class="status" id="humidifierControl">OFF</span>
+    </div>
+    <button onclick="toggleHumidifier()">가습기 ON / OFF</button>
+</div>
+
+<div class="control">
+    <div class="control-row">
+        <strong>🌀 선풍기 제어</strong>
+        <span class="status" id="fanControl">OFF</span>
+    </div>
+    <button onclick="toggleFan()">선풍기 ON / OFF</button>
+</div>
+
+<button onclick="getData()">🔄 센서 데이터 새로고침</button>
+
+<p id="message" class="description"></p>
+
+<footer>
+    SMART HOME IoT PROJECT
+    <br><br>
+    센서 및 실제 장치 연결 준비 중
+</footer>
+
+</div>
+
+<script>
+const FIREBASE_URL =
+"https://smart-home-demo-52a8a-default-rtdb.asia-southeast1.firebasedatabase.app";
+
+async function getData() {
+    try {
+        const response = await fetch(FIREBASE_URL + "/.json");
+
+        if (!response.ok) {
+            throw new Error("데이터 요청 실패");
         }
 
-        function openWindow() {
-            document.getElementById("windowStatus").innerHTML = "열림";
-        }
+        const data = await response.json();
 
-        function closeWindow() {
-            document.getElementById("windowStatus").innerHTML = "닫힘";
-        }
+        document.getElementById("temp").innerHTML =
+            data.temperature + " °C";
 
-        // 페이지를 열면 자동으로 데이터 가져오기
-        getData();
-    </script>
+        document.getElementById("humidity").innerHTML =
+            data.humidity + " %";
+
+        document.getElementById("message").innerHTML =
+            "Firebase 연결 성공!";
+
+    } catch (error) {
+        document.getElementById("message").innerHTML =
+            "Firebase 연결 오류: " + error.message;
+    }
+}
+
+function setWindow(status) {
+    document.getElementById("windowStatus").innerHTML = status;
+    document.getElementById("windowControl").innerHTML = status;
+}
+
+let humidifierOn = false;
+
+function toggleHumidifier() {
+    humidifierOn = !humidifierOn;
+
+    let status = humidifierOn ? "작동 중" : "정지";
+    let control = humidifierOn ? "ON" : "OFF";
+
+    document.getElementById("humidifierStatus").innerHTML = status;
+    document.getElementById("humidifierControl").innerHTML = control;
+}
+
+let fanOn = false;
+
+function toggleFan() {
+    fanOn = !fanOn;
+
+    let status = fanOn ? "작동 중" : "정지";
+    let control = fanOn ? "ON" : "OFF";
+
+    document.getElementById("fanStatus").innerHTML = status;
+    document.getElementById("fanControl").innerHTML = control;
+}
+
+getData();
+</script>
+
 </body>
 </html>
