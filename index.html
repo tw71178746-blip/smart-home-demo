@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>스마트홈</title>
+</head>
+<body>
+    <h1>스마트홈 환기 시스템</h1>
+
+    <h2>실내 온도</h2>
+    <p id="temp">25도</p>
+
+    <h2>실내 습도</h2>
+    <p id="humidity">55%</p>
+
+    <button onclick="changeData()">수치 변경</button>
+
+    <hr>
+
+    <h2>창문 제어</h2>
+    <p>현재 상태: <strong id="windowStatus">닫힘</strong></p>
+
+    <button onclick="openWindow()">창문 열기</button>
+    <button onclick="closeWindow()">창문 닫기</button>
+
+    <script>
+        function changeData() {
+            let temp = Math.floor(Math.random() * 11) + 20;
+            let humidity = Math.floor(Math.random() * 41) + 30;
+
+            document.getElementById("temp").innerHTML = temp + "도";
+            document.getElementById("humidity").innerHTML = humidity + "%";
+        }
+
+        function openWindow() {
+            document.getElementById("windowStatus").innerHTML = "열림";
+        }
+
+        function closeWindow() {
+            document.getElementById("windowStatus").innerHTML = "닫힘";
+        }
+    </script>
+</body>
+</html>
+
