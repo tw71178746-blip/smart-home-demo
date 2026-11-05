@@ -27,7 +27,7 @@
 
         async function getData() {
             try {
-                const response = await fetch(FIREBASE_URL + ".json");
+                const response = await fetch(FIREBASE_URL + "/.json");
 
                 if (!response.ok) {
                     throw new Error("데이터 요청 실패");
