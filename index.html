@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -122,6 +121,16 @@
       line-height: 1.5;
     }
 
+    .cancel-marker {
+      background: #dc2626;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 9px;
+      margin-top: 7px;
+      cursor: pointer;
+    }
+
     @media (max-width: 600px) {
       body {
         padding: 14px;
@@ -214,30 +223,29 @@
         위치 공유 대기 중
       </div>
       <div id="mapArea" style="display: none;">
-  <p>위도: <span id="latitude">--</span></p>
-  <p>경도: <span id="longitude">--</span></p>
+        <p>위도: <span id="latitude">--</span></p>
+        <p>경도: <span id="longitude">--</span></p>
 
-      <div class="notice">
-    지도를 클릭해서 집 위치를 선택하세요.
-  </div>
+        <div class="notice" id="houseInstruction">
+          집 위치 등록 버튼을 누른 뒤 지도에서 집 위치를 선택하세요.
+        </div>
 
-  <button id="saveHouseButton"
-    onclick="saveHouseLocation()" disabled>
-    집 위치 등록
-  </button>
+        <button id="houseButton" onclick="handleHouseButton()">
+          집 위치 등록
+        </button>
 
-  <p class="status" id="houseStatus">
-    등록된 집 위치가 없습니다.
-  </p>
+        <p class="status" id="houseStatus">
+          등록된 집 위치가 없습니다.
+        </p>
 
-  <p class="value">
-    집과의 거리:
-    <span id="distanceFromHome">--</span>
-    <span class="unit">km</span>
-  </p>
+        <p class="value">
+          집과의 거리:
+          <span id="distanceFromHome">--</span>
+          <span class="unit">km</span>
+        </p>
 
-  <div id="map"></div>
-</div>
+        <div id="map"></div>
+      </div>
     </div>
 
     <p class="status" id="firebaseStatus">
@@ -262,24 +270,22 @@
     let map = null;
     let locationMarker = null;
     let watchId = null;
+
     // 집 위치 관련 변수
     let houseMarker = null;
     let pendingHouseMarker = null;
-
     let houseLocation = null;
     let pendingHouseLocation = null;
     let lastPosition = null;
+    let selectionMode = false;
 
-// Firebase 집 위치 저장 주소
-const HOUSE_URL = FIREBASE_URL + "/houseLocation.json";
+    const HOUSE_URL = FIREBASE_URL + "/houseLocation.json";
+
     let heartbeatTimer = null;
     let statusTimer = null;
-
     let isSharing = false;
 
-    // 사용자별 임시 식별값
-    let locationUserId = "";
-
+    // 새로고침해도 같은 탭에서는 같은 사용자 ID를 유지
     function createUserId() {
       if (window.crypto && crypto.randomUUID) {
         return crypto.randomUUID();
@@ -289,62 +295,80 @@ const HOUSE_URL = FIREBASE_URL + "/houseLocation.json";
         Math.random().toString(16).slice(2);
     }
 
-    locationUserId = createUserId();
+    let locationUserId;
 
-    // 지도 초기화
-    // 지도 초기화
-function initializeMap() {
-  if (map !== null) return;
+    try {
+      locationUserId = sessionStorage.getItem("smartHomeLocationUserId");
 
-  map = L.map("map").setView([37.5665, 126.9780], 13);
-
-  L.tileLayer(
-    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-    {
-      attribution: "&copy; OpenStreetMap contributors"
-    }
-  ).addTo(map);
-
-  // 지도 클릭 시 집 위치 후보 선택
-  map.on("click", function(event) {
-    if (!isSharing) return;
-
-    const latitude = event.latlng.lat;
-    const longitude = event.latlng.lng;
-
-    pendingHouseLocation = {
-      latitude: latitude,
-      longitude: longitude
-    };
-
-    if (pendingHouseMarker) {
-      map.removeLayer(pendingHouseMarker);
+      if (!locationUserId) {
+        locationUserId = createUserId();
+        sessionStorage.setItem(
+          "smartHomeLocationUserId",
+          locationUserId
+        );
+      }
+    } catch (error) {
+      // sessionStorage를 사용할 수 없는 환경의 대체 방식
+      locationUserId = createUserId();
     }
 
-    pendingHouseMarker = L.marker([
-      latitude,
-      longitude
-    ]).addTo(map);
+    // 지도 초기화
+    function initializeMap() {
+      if (map !== null) return;
 
-    pendingHouseMarker.bindPopup("등록할 집 위치").openPopup();
+      map = L.map("map").setView([37.5665, 126.9780], 13);
 
-    document.getElementById("saveHouseButton").disabled = false;
+      L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          attribution: "&copy; OpenStreetMap contributors"
+        }
+      ).addTo(map);
 
-    document.getElementById("houseStatus").textContent =
-      "집 위치 후보 선택 완료. 등록 버튼을 눌러 저장하세요.";
-  });
-}
+      // 집 위치 선택 모드일 때만 지도 클릭을 처리
+      map.on("click", function(event) {
+        if (!isSharing || !selectionMode) return;
 
-// 지도 표시
-function showMap() {
-  document.getElementById("mapArea").style.display = "block";
+        pendingHouseLocation = {
+          latitude: event.latlng.lat,
+          longitude: event.latlng.lng
+        };
 
-  initializeMap();
+        if (pendingHouseMarker) {
+          map.removeLayer(pendingHouseMarker);
+        }
 
-  setTimeout(function() {
-    map.invalidateSize();
-  }, 200);
-}
+        pendingHouseMarker = L.marker([
+          pendingHouseLocation.latitude,
+          pendingHouseLocation.longitude
+        ]).addTo(map);
+
+        pendingHouseMarker.bindPopup(
+          '선택한 집 위치<br>' +
+          '<button class="cancel-marker" ' +
+          'onclick="cancelHouseSelection()">× 취소</button>'
+        ).openPopup();
+
+        document.getElementById("houseButton").textContent = "확정";
+
+        document.getElementById("houseInstruction").textContent =
+          "위치가 맞으면 확정을 누르세요. 다른 곳을 클릭하면 위치가 변경됩니다.";
+
+        document.getElementById("houseStatus").textContent =
+          "집 위치를 확인하고 확정해 주세요.";
+      });
+    }
+
+    // 지도 표시
+    function showMap() {
+      document.getElementById("mapArea").style.display = "block";
+
+      initializeMap();
+
+      setTimeout(function() {
+        map.invalidateSize();
+      }, 200);
+    }
 
     // 지도에 위치 표시
     function updateMap(latitude, longitude) {
@@ -358,111 +382,178 @@ function showMap() {
       }
 
       map.setView(position, 16);
+    }    // Firebase에 저장된 집 위치 가져오기
+    async function loadHouseLocation() {
+      try {
+        const response = await fetch(HOUSE_URL);
+
+        if (!response.ok) {
+          throw new Error("집 위치 확인 실패");
+        }
+
+        houseLocation = await response.json();
+
+        if (
+          houseLocation &&
+          houseLocation.latitude !== undefined &&
+          houseLocation.longitude !== undefined
+        ) {
+          showHouseMarker();
+
+          document.getElementById("houseStatus").textContent =
+            "집 위치가 등록되어 있습니다.";
+
+          document.getElementById("houseButton").textContent =
+            "집 위치 변경";
+        } else {
+          houseLocation = null;
+
+          document.getElementById("houseStatus").textContent =
+            "등록된 집 위치가 없습니다.";
+
+          document.getElementById("houseButton").textContent =
+            "집 위치 등록";
+        }
+      } catch (error) {
+        console.error(error);
+        document.getElementById("houseStatus").textContent =
+          "집 위치를 불러오지 못했습니다.";
+      }
     }
-    // Firebase에 저장된 집 위치 가져오기
-async function loadHouseLocation() {
-  try {
-    const response = await fetch(HOUSE_URL);
 
-    if (!response.ok) {
-      throw new Error("집 위치 확인 실패");
+    // 저장된 집 위치를 지도에 표시
+    function showHouseMarker() {
+      if (!houseLocation || !map) return;
+
+      if (houseMarker) {
+        map.removeLayer(houseMarker);
+      }
+
+      houseMarker = L.marker([
+        houseLocation.latitude,
+        houseLocation.longitude
+      ]).addTo(map);
+
+      houseMarker.bindPopup("등록된 집 위치");
     }
 
-    houseLocation = await response.json();
+    // 집 위치 등록/변경 선택 모드 시작
+    function handleHouseButton() {
+      if (!selectionMode) {
+        selectionMode = true;
+        pendingHouseLocation = null;
 
-    if (houseLocation &&
-        houseLocation.latitude !== undefined &&
-        houseLocation.longitude !== undefined) {
+        if (pendingHouseMarker) {
+          map.removeLayer(pendingHouseMarker);
+          pendingHouseMarker = null;
+        }
 
-      showHouseMarker();
+        document.getElementById("houseButton").textContent =
+          "선택 취소";
+
+        document.getElementById("houseInstruction").textContent =
+          "지도에서 집 위치를 클릭하세요.";
+
+        document.getElementById("houseStatus").textContent =
+          "지도에서 등록할 집 위치를 선택해 주세요.";
+
+        return;
+      }
+
+      if (!pendingHouseLocation) {
+        cancelHouseSelection();
+        return;
+      }
+
+      saveHouseLocation();
+    }
+
+    // 집 위치 선택 취소 (지도 마커의 X 또는 버튼)
+    function cancelHouseSelection() {
+      selectionMode = false;
+      pendingHouseLocation = null;
+
+      if (pendingHouseMarker && map) {
+        map.removeLayer(pendingHouseMarker);
+        pendingHouseMarker = null;
+      }
+
+      const houseButton = document.getElementById("houseButton");
+      houseButton.textContent = houseLocation
+        ? "집 위치 변경"
+        : "집 위치 등록";
+
+      document.getElementById("houseInstruction").textContent =
+        "집 위치 등록 버튼을 누른 뒤 지도에서 집 위치를 선택하세요.";
 
       document.getElementById("houseStatus").textContent =
-        "집 위치가 등록되어 있습니다.";
-
-    } else {
-      houseLocation = null;
-
-      document.getElementById("houseStatus").textContent =
-        "등록된 집 위치가 없습니다.";
+        houseLocation
+          ? "기존 집 위치가 유지됩니다."
+          : "집 위치 선택을 취소했습니다.";
     }
 
-  } catch (error) {
-    console.error(error);
-  }
-}
+    // 선택한 집 위치를 Firebase에 확정 저장
+    async function saveHouseLocation() {
+      if (!pendingHouseLocation || !selectionMode) {
+        alert("먼저 지도에서 집 위치를 선택하세요.");
+        return;
+      }
 
-// 집 위치 지도 표시
-function showHouseMarker() {
-  if (!houseLocation || !map) return;
-
-  if (houseMarker) {
-    map.removeLayer(houseMarker);
-  }
-
-  houseMarker = L.marker([
-    houseLocation.latitude,
-    houseLocation.longitude
-  ]).addTo(map);
-
-  houseMarker.bindPopup("등록된 집 위치");
-}
-
-// 집 위치 Firebase 저장
-async function saveHouseLocation() {
-  if (!pendingHouseLocation) {
-    alert("먼저 지도에서 집 위치를 선택하세요.");
-    return;
-  }
-
-  try {
-    const response = await fetch(HOUSE_URL, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
+      const selectedLocation = {
         latitude: pendingHouseLocation.latitude,
         longitude: pendingHouseLocation.longitude,
         lastUpdate: Date.now()
-      })
-    });
+      };
 
-    if (!response.ok) {
-      throw new Error("집 위치 저장 실패");
+      try {
+        const response = await fetch(HOUSE_URL, {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(selectedLocation)
+        });
+
+        if (!response.ok) {
+          throw new Error("집 위치 저장 실패");
+        }
+
+        houseLocation = selectedLocation;
+        selectionMode = false;
+        pendingHouseLocation = null;
+
+        if (pendingHouseMarker) {
+          map.removeLayer(pendingHouseMarker);
+          pendingHouseMarker = null;
+        }
+
+        showHouseMarker();
+
+        document.getElementById("houseButton").textContent =
+          "집 위치 변경";
+
+        document.getElementById("houseInstruction").textContent =
+          "집 위치가 등록되었습니다. 변경하려면 집 위치 변경을 누르세요.";
+
+        document.getElementById("houseStatus").textContent =
+          "집 위치가 Firebase에 저장되었습니다.";
+
+        if (lastPosition) {
+          await sendLocation(
+            lastPosition.latitude,
+            lastPosition.longitude
+          );
+        }
+
+        alert("집 위치 등록 성공!");
+
+      } catch (error) {
+        alert(error.message);
+        console.error(error);
+      }
     }
 
-    houseLocation = pendingHouseLocation;
-    pendingHouseLocation = null;
-
-    if (pendingHouseMarker) {
-      map.removeLayer(pendingHouseMarker);
-      pendingHouseMarker = null;
-    }
-
-    document.getElementById("saveHouseButton").disabled = true;
-
-    showHouseMarker();
-
-    document.getElementById("houseStatus").textContent =
-      "집 위치가 Firebase에 저장되었습니다.";
-
-    // 현재 위치가 있다면 거리도 다시 계산
-    if (lastPosition) {
-      sendLocation(
-        lastPosition.latitude,
-        lastPosition.longitude
-      );
-    }
-
-    alert("집 위치 등록 성공!");
-
-  } catch (error) {
-    alert(error.message);
-    console.error(error);
-  }
-}
-
-// 두 좌표 사이의 직선거리 계산
+    // 두 좌표 사이의 직선거리 계산
 function calculateDistance(lat1, lon1, lat2, lon2) {
   const R = 6371;
 
@@ -621,6 +712,15 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
         ) {
           document.getElementById("shareNotice").textContent =
             "현재 위치를 공유하고 있는 사용자가 있습니다.";
+        } else if (
+          data &&
+          data.active === true &&
+          Number(data.expiresAt || 0) > Date.now() &&
+          data.owner === locationUserId &&
+          !isSharing
+        ) {
+          document.getElementById("shareNotice").textContent =
+            "이 기기의 이전 공유 기록이 남아 있습니다. 다시 공유를 시작할 수 있습니다.";
         } else if (!isSharing) {
           document.getElementById("shareNotice").textContent =
             "현재 위치 공유 가능";
@@ -728,7 +828,7 @@ function displayLocation(position) {
 
         isSharing = true;
         showMap();
-        loadHouseLocation();
+        await loadHouseLocation();
         document.getElementById("startButton").disabled = true;
         document.getElementById("stopButton").disabled = false;
 
@@ -801,14 +901,26 @@ function displayLocation(position) {
       }
 
       isSharing = false;
-      // 지도 숨기기
-      document.getElementById("mapArea").style.display = "none";
 
+      // 선택 중이던 임시 집 위치만 취소하고 등록된 집 위치는 유지
+      selectionMode = false;
       pendingHouseLocation = null;
+
+      if (pendingHouseMarker && map) {
+        map.removeLayer(pendingHouseMarker);
+        pendingHouseMarker = null;
+      }
+
+      document.getElementById("mapArea").style.display = "none";
+      document.getElementById("distanceFromHome").textContent = "--";
+      document.getElementById("houseButton").textContent =
+        houseLocation ? "집 위치 변경" : "집 위치 등록";
+
+      document.getElementById("houseInstruction").textContent =
+        "집 위치 등록 버튼을 누른 뒤 지도에서 집 위치를 선택하세요.";
+
       lastPosition = null;
 
-      document.getElementById("distanceFromHome").textContent = "--";
-      document.getElementById("saveHouseButton").disabled = true;
       document.getElementById("startButton").disabled = false;
       document.getElementById("stopButton").disabled = true;
 
@@ -871,10 +983,16 @@ function displayLocation(position) {
     // 다른 사용자 공유 상태 주기적 확인
     statusTimer = setInterval(checkShareStatus, 5000);
 
-    // 페이지 종료 시 위치 추적 중단
+    // 새로고침/페이지 종료 시 브라우저 위치 추적만 중단
+    // Firebase 공유 잠금은 heartbeat가 멈춘 뒤 최대 SHARE_TIME 후 만료됨.
+    // sessionStorage의 사용자 ID는 같은 탭의 새로고침 후에도 유지됨.
     window.addEventListener("beforeunload", function() {
       if (watchId !== null) {
         navigator.geolocation.clearWatch(watchId);
+      }
+
+      if (heartbeatTimer !== null) {
+        clearInterval(heartbeatTimer);
       }
     });
   </script>
