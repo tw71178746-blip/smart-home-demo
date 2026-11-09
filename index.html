@@ -6,10 +6,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>스마트홈 통합 대시보드</title>
 
+<!-- Leaflet 지도 라이브러리 -->
+<link rel="stylesheet"
+ href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <style>
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 body {
     margin: 0;
@@ -62,15 +66,13 @@ h2 {
     gap: 15px;
 }
 
-.card {
+.card, .control {
     background: #1D2B40;
     border-radius: 15px;
     padding: 20px;
 }
 
-.icon {
-    font-size: 26px;
-}
+.icon { font-size: 26px; }
 
 .label {
     color: #AAB9CC;
@@ -79,9 +81,10 @@ h2 {
 }
 
 .value {
-    font-size: 29px;
+    font-size: 25px;
     font-weight: bold;
     margin-top: 8px;
+    overflow-wrap: anywhere;
 }
 
 .description {
@@ -90,12 +93,7 @@ h2 {
     margin-top: 8px;
 }
 
-.control {
-    background: #1D2B40;
-    border-radius: 15px;
-    padding: 20px;
-    margin-bottom: 15px;
-}
+.control { margin-bottom: 15px; }
 
 .control-row {
     display: flex;
@@ -120,12 +118,15 @@ button {
     font-size: 14px;
 }
 
-button:hover {
-    opacity: 0.8;
-}
+button:hover { opacity: 0.8; }
+.secondary { background: #40516B; }
 
-.secondary {
-    background: #40516B;
+#map {
+    width: 100%;
+    height: 320px;
+    margin-top: 15px;
+    border-radius: 12px;
+    z-index: 1;
 }
 
 footer {
@@ -136,17 +137,9 @@ footer {
 }
 
 @media (max-width: 480px) {
-    body {
-        padding: 16px;
-    }
-
-    .card {
-        padding: 15px;
-    }
-
-    .value {
-        font-size: 24px;
-    }
+    body { padding: 16px; }
+    .card, .control { padding: 15px; }
+    .value { font-size: 22px; }
 }
 </style>
 </head>
@@ -184,34 +177,23 @@ footer {
         <div class="icon">🌫️</div>
         <div class="label">미세먼지</div>
         <div class="value" id="pm">측정 대기</div>
-        <div class="description">PM2.5 / PM10</div>
+        <div class="description">에어코리아 API 연동 예정</div>
     </div>
 
     <div class="card">
-        <div class="icon">🫧</div>
-        <div class="label">CO₂ 농도</div>
-        <div class="value" id="co2">측정 대기</div>
-        <div class="description">단위: ppm</div>
+        <div class="icon">☣️</div>
+        <div class="label">유해가스 감지</div>
+        <div class="value" id="gas">측정 대기</div>
+        <div class="description">MQ-135 센서값</div>
     </div>
 
-</div>
-
-<h2>사용자 위치 정보</h2>
-
-<div class="card">
-    <div class="icon">📍</div>
-    <div class="label">현재 위치</div>
-    <div class="value" id="locationStatus">위치 확인 전</div>
-
-    <div class="description">
-        위도: <span id="latitude">--</span>
+    <div class="card">
+        <div class="icon">🌧️</div>
+        <div class="label">빗물 감지</div>
+        <div class="value" id="rain">측정 대기</div>
+        <div class="description">빗물 감지 센서</div>
     </div>
 
-    <div class="description">
-        경도: <span id="longitude">--</span>
-    </div>
-
-    <button onclick="getLocation()">현재 위치 가져오기</button>
 </div>
 
 <h2>스마트홈 장치 상태</h2>
@@ -239,6 +221,25 @@ footer {
         <div class="description">환기 장치 상태</div>
     </div>
 
+</div>
+
+<h2>사용자 위치 정보</h2>
+
+<div class="card">
+    <div class="icon">📍</div>
+    <div class="label">현재 위치</div>
+    <div class="value" id="locationStatus">위치 확인 전</div>
+
+    <div class="description">
+        위도: <span id="latitude">--</span>
+    </div>
+
+    <div class="description">
+        경도: <span id="longitude">--</span>
+    </div>
+
+    <button onclick="getLocation()">현재 위치 가져오기</button>
+    <div id="map"></div>
 </div>
 
 <h2>장치 제어</h2>
@@ -284,6 +285,7 @@ footer {
 const FIREBASE_URL =
 "https://smart-home-demo-52a8a-default-rtdb.asia-southeast1.firebasedatabase.app";
 
+// Firebase 센서 데이터 가져오기
 async function getData() {
     try {
         const response = await fetch(FIREBASE_URL + "/.json");
@@ -294,11 +296,15 @@ async function getData() {
 
         const data = await response.json();
 
-        document.getElementById("temp").innerHTML =
-            data.temperature + " °C";
+        if (data.temperature != null) {
+            document.getElementById("temp").innerHTML =
+                data.temperature + " °C";
+        }
 
-        document.getElementById("humidity").innerHTML =
-            data.humidity + " %";
+        if (data.humidity != null) {
+            document.getElementById("humidity").innerHTML =
+                data.humidity + " %";
+        }
 
         document.getElementById("message").innerHTML =
             "Firebase 연결 성공!";
@@ -309,6 +315,79 @@ async function getData() {
     }
 }
 
+// 위치 및 지도
+let map = null;
+let locationMarker = null;
+
+function getLocation() {
+    const status = document.getElementById("locationStatus");
+
+    if (!navigator.geolocation) {
+        status.innerHTML = "위치 기능을 지원하지 않는 브라우저";
+        return;
+    }
+
+    status.innerHTML = "위치 확인 중...";
+
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            document.getElementById("latitude").innerHTML =
+                latitude.toFixed(6);
+
+            document.getElementById("longitude").innerHTML =
+                longitude.toFixed(6);
+
+            status.innerHTML = "위치 확인 성공!";
+
+            // 처음 지도를 만들 때
+            if (map === null) {
+                map = L.map("map").setView(
+                    [latitude, longitude], 16
+                );
+
+                L.tileLayer(
+                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                    {
+                        attribution: '&copy; OpenStreetMap'
+                    }
+                ).addTo(map);
+            } else {
+                map.setView([latitude, longitude], 16);
+            }
+
+            // 기존 마커 갱신
+            if (locationMarker !== null) {
+                locationMarker.setLatLng([latitude, longitude]);
+            } else {
+                locationMarker = L.marker(
+                    [latitude, longitude]
+                ).addTo(map);
+            }
+
+            locationMarker.bindPopup("현재 사용자 위치").openPopup();
+
+            setTimeout(function() {
+                map.invalidateSize();
+            }, 100);
+
+        },
+
+        function(error) {
+            status.innerHTML = "위치 확인 실패: " + error.message;
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 15000,
+            maximumAge: 0
+        }
+    );
+}
+
+// 창문 제어 화면
 function setWindow(status) {
     document.getElementById("windowStatus").innerHTML = status;
     document.getElementById("windowControl").innerHTML = status;
@@ -338,36 +417,8 @@ function toggleFan() {
     document.getElementById("fanControl").innerHTML = control;
 }
 
+// 첫 화면에서 Firebase 데이터 불러오기
 getData();
-function getLocation() {
-    const status = document.getElementById("locationStatus");
-
-    if (!navigator.geolocation) {
-        status.innerHTML = "위치 기능을 지원하지 않는 브라우저";
-        return;
-    }
-
-    status.innerHTML = "위치 확인 중...";
-
-    navigator.geolocation.getCurrentPosition(
-        function(position) {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
-
-            document.getElementById("latitude").innerHTML =
-                latitude;
-
-            document.getElementById("longitude").innerHTML =
-                longitude;
-
-            status.innerHTML = "위치 확인 성공!";
-        },
-
-        function(error) {
-            status.innerHTML = "위치 확인 실패: " + error.message;
-        }
-    );
-}
 </script>
 
 </body>
