@@ -81,21 +81,46 @@
       font-weight: bold;
     }
 
-    .device-on {
-      color: #22c55e;
+    .device-card {
+      transition: background-color 0.2s ease;
     }
 
-    .device-off {
-      color: #ef4444;
+    .device-card.device-on {
+      background: #14532d;
+      border-color: #22c55e;
     }
 
-    .device-unknown {
-      color: #000000;
-      background: #e5e7eb;
-      display: inline-block;
-      padding: 4px 9px;
-      border-radius: 6px;
-      font-size: 16px;
+    .device-card.device-off {
+      background: #7f1d1d;
+      border-color: #ef4444;
+    }
+
+    .device-card.device-unknown {
+      background: #000000;
+      border-color: #475569;
+    }
+
+    .device-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .device-heading h3 {
+      margin-bottom: 12px;
+    }
+
+    .device-connection {
+      flex-shrink: 0;
+      font-size: 12px;
+      color: #e2e8f0;
+      text-align: right;
+    }
+
+    .device-card .value {
+      color: #ffffff;
+      margin-bottom: 10px;
     }
 
     .unit {
@@ -125,6 +150,16 @@
     button:disabled {
       background: #64748b;
       cursor: not-allowed;
+    }
+
+    button.stop:disabled {
+      background: #dc2626;
+      opacity: 0.75;
+      cursor: not-allowed;
+    }
+
+    #mapContainer[hidden] {
+      display: none;
     }
 
     .stop {
@@ -241,10 +276,6 @@
           <div class="value"><span id="gas">--</span></div>
         </div>
         <div class="card">
-          <h3>창문 상태</h3>
-          <div class="value" id="windowState">--</div>
-        </div>
-        <div class="card">
           <h3>빗물 감지</h3>
           <div class="value" id="rain">--</div>
         </div>
@@ -254,23 +285,23 @@
     <div class="dashboard-section">
       <h2 class="section-heading">장치</h2>
       <div class="grid">
-        <div class="card">
-          <h3>가습기</h3>
-          <div class="value device-unknown" id="humidifier">연결 안 됨</div>
+        <div class="card device-card device-unknown" id="humidifierCard">
+          <div class="device-heading"><h3>가습기</h3><span class="device-connection" id="humidifierConnection">연결 안 됨</span></div>
+          <div class="value" id="humidifier">--</div>
           <button type="button" onclick="sendDeviceCommand('humidifier', 'on')">가습기 켜기</button>
           <button type="button" class="stop" onclick="sendDeviceCommand('humidifier', 'off')">가습기 끄기</button>
           <p class="status" id="humidifierCommandMessage">장치 상태를 확인하고 있습니다.</p>
         </div>
-        <div class="card">
-          <h3>선풍기</h3>
-          <div class="value device-unknown" id="fan">연결 안 됨</div>
+        <div class="card device-card device-unknown" id="fanCard">
+          <div class="device-heading"><h3>선풍기</h3><span class="device-connection" id="fanConnection">연결 안 됨</span></div>
+          <div class="value" id="fan">--</div>
           <button type="button" onclick="sendDeviceCommand('fan', 'on')">선풍기 켜기</button>
           <button type="button" class="stop" onclick="sendDeviceCommand('fan', 'off')">선풍기 끄기</button>
           <p class="status" id="fanCommandMessage">장치 상태를 확인하고 있습니다.</p>
         </div>
-        <div class="card">
-          <h3>창문 원격 제어</h3>
-          <div class="value" id="windowControlStatus">대기 중</div>
+        <div class="card device-card device-unknown" id="windowCard">
+          <div class="device-heading"><h3>창문 원격 제어</h3><span class="device-connection" id="windowConnection">연결 안 됨</span></div>
+          <div class="value" id="windowControlStatus">상태 확인 중</div>
           <button type="button" onclick="sendWindowCommand('open')">창문 열기</button>
           <button type="button" class="stop" onclick="sendWindowCommand('close')">창문 닫기</button>
           <p class="status" id="windowCommandMessage">명령을 선택하면 Firebase로 전송합니다.</p>
@@ -312,6 +343,9 @@
         <button id="houseButton" onclick="handleHouseButton()" disabled>
           집 위치 등록
         </button>
+        <button type="button" id="clearHouseButton" class="stop" onclick="confirmDeleteHouseLocation()" disabled>
+          등록 위치 삭제
+        </button>
 
         <p class="status" id="houseStatus">
           등록된 집 위치가 없습니다.
@@ -323,7 +357,10 @@
           <span class="unit">km</span>
         </p>
 
-        <div id="map"></div>
+        <button type="button" id="mapToggleButton" onclick="toggleMap()">▼ 지도 보기</button>
+        <div id="mapContainer" hidden>
+          <div id="map"></div>
+        </div>
       </div>
     </div>
 
@@ -449,6 +486,24 @@
       }, 200);
     }
 
+    // 지도 접기/펼치기 (처음에는 접힌 상태)
+    function toggleMap() {
+      const container = document.getElementById("mapContainer");
+      const button = document.getElementById("mapToggleButton");
+      const willShow = container.hidden;
+      container.hidden = !willShow;
+      button.textContent = willShow ? "▲ 지도 접기" : "▼ 지도 보기";
+
+      if (willShow) {
+        showMap();
+        if (lastPosition) {
+          map.setView([lastPosition.latitude, lastPosition.longitude], 16);
+        } else if (houseLocation) {
+          map.setView([houseLocation.latitude, houseLocation.longitude], 15);
+        }
+      }
+    }
+
     // 지도에 위치 표시
     function updateMap(latitude, longitude) {
       const position = [latitude, longitude];
@@ -490,6 +545,7 @@
 
           document.getElementById("houseButton").textContent =
             "집 위치 변경";
+          document.getElementById("clearHouseButton").disabled = !isSharing;
         } else {
           houseLocation = null;
 
@@ -498,6 +554,7 @@
 
           document.getElementById("houseButton").textContent =
             "집 위치 등록";
+          document.getElementById("clearHouseButton").disabled = true;
         }
       } catch (error) {
         console.error(error);
@@ -553,6 +610,41 @@
       }
 
       saveHouseLocation();
+    }
+
+    // 등록된 집 위치 삭제 전 사용자 확인
+    async function confirmDeleteHouseLocation() {
+      if (!isSharing || !houseLocation) return;
+
+      const confirmed = confirm("등록된 집 위치를 삭제할까요?\n삭제하면 지도에서도 집 위치 표시가 사라집니다.");
+      if (!confirmed) return;
+
+      try {
+        const response = await fetch(HOUSE_URL, { method: "DELETE" });
+        if (!response.ok) throw new Error("집 위치 삭제 실패");
+
+        houseLocation = null;
+        if (houseMarker && map) {
+          map.removeLayer(houseMarker);
+          houseMarker = null;
+        }
+        if (pendingHouseMarker && map) {
+          map.removeLayer(pendingHouseMarker);
+          pendingHouseMarker = null;
+        }
+        pendingHouseLocation = null;
+        selectionMode = false;
+
+        document.getElementById("houseButton").textContent = "집 위치 등록";
+        document.getElementById("clearHouseButton").disabled = true;
+        document.getElementById("houseStatus").textContent = "등록된 집 위치가 없습니다.";
+        document.getElementById("houseInstruction").textContent = "집 위치 등록 버튼을 누른 뒤 지도에서 집 위치를 선택하세요.";
+        document.getElementById("distanceFromHome").textContent = "--";
+        alert("등록된 집 위치를 삭제했습니다.");
+      } catch (error) {
+        alert(error.message);
+        console.error(error);
+      }
     }
 
     // 집 위치 선택 취소 (지도 마커의 X 또는 버튼)
@@ -618,6 +710,7 @@
 
         document.getElementById("houseButton").textContent =
           "집 위치 변경";
+        document.getElementById("clearHouseButton").disabled = false;
 
         document.getElementById("houseInstruction").textContent =
           "집 위치가 등록되었습니다. 변경하려면 집 위치 변경을 누르세요.";
@@ -702,28 +795,32 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
       }
     }
 
-    // Firebase에 기록된 장치 상태를 화면에 반영
-    function updateDeviceDisplay(elementId, value) {
-      const element = document.getElementById(elementId);
+    // 장치 상태에 따라 항목 전체 배경색과 오른쪽 연결 문구 갱신
+    function updateDeviceDisplay(device, value, connected = true) {
+      const card = document.getElementById(device + "Card");
+      const valueElement = document.getElementById(device);
+      const connectionElement = document.getElementById(device + "Connection");
       const normalized = value === null || value === undefined
         ? ""
         : String(value).trim().toLowerCase();
 
-      const onValues = ["on", "true", "1", "켜짐", "작동 중", "작동중", "운전", "running"];
-      const offValues = ["off", "false", "0", "꺼짐", "정지", "중지", "stopped"];
+      const onValues = ["on", "true", "1", "켜짐", "작동 중", "작동중", "운전", "running", "open", "opened", "열림"];
+      const offValues = ["off", "false", "0", "꺼짐", "정지", "중지", "stopped", "closed", "close", "닫힘"];
 
-      element.classList.remove("device-on", "device-off", "device-unknown");
+      card.classList.remove("device-on", "device-off", "device-unknown");
 
-      if (onValues.includes(normalized)) {
-        element.textContent = "켜짐";
-        element.classList.add("device-on");
-      } else if (offValues.includes(normalized)) {
-        element.textContent = "꺼짐";
-        element.classList.add("device-off");
+      if (!connected || (!onValues.includes(normalized) && !offValues.includes(normalized))) {
+        card.classList.add("device-unknown");
+        valueElement.textContent = "상태 확인 불가";
+        connectionElement.textContent = "연결 안 됨";
+      } else if (onValues.includes(normalized)) {
+        card.classList.add("device-on");
+        valueElement.textContent = device === "window" ? "열림" : "켜짐";
+        connectionElement.textContent = "연결됨";
       } else {
-        // Firebase에 상태값이 없거나 연결/상태를 확인할 수 없으면 검은색으로 표시
-        element.textContent = "연결 안 됨";
-        element.classList.add("device-unknown");
+        card.classList.add("device-off");
+        valueElement.textContent = device === "window" ? "닫힘" : "꺼짐";
+        connectionElement.textContent = "연결됨";
       }
     }
 
@@ -774,8 +871,9 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
         const data = await response.json();
 
         if (!data) {
-          updateDeviceDisplay("humidifier", null);
-          updateDeviceDisplay("fan", null);
+          updateDeviceDisplay("humidifier", null, false);
+          updateDeviceDisplay("fan", null, false);
+          updateDeviceDisplay("window", null, false);
           return;
         }
 
@@ -791,19 +889,20 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
         document.getElementById("gas").textContent =
           data.gas ?? "--";
 
-        document.getElementById("windowState").textContent =
-          data.windowState ?? "--";
-
         document.getElementById("rain").textContent =
           data.rain ?? "--";
 
-        updateDeviceDisplay("humidifier", data.humidifier);
-        updateDeviceDisplay("fan", data.fan);
+        updateDeviceDisplay("humidifier", data.humidifier, data.humidifier !== undefined && data.humidifier !== null);
+        updateDeviceDisplay("fan", data.fan, data.fan !== undefined && data.fan !== null);
+        updateDeviceDisplay("window", data.windowState, data.windowState !== undefined && data.windowState !== null);
 
         document.getElementById("firebaseStatus").textContent =
           "Firebase 연결 성공";
 
       } catch (error) {
+        updateDeviceDisplay("humidifier", null, false);
+        updateDeviceDisplay("fan", null, false);
+        updateDeviceDisplay("window", null, false);
         document.getElementById("firebaseStatus").textContent =
           "Firebase 연결 실패: " + error.message;
 
@@ -1016,6 +1115,7 @@ function displayLocation(position) {
         document.getElementById("startButton").disabled = true;
         document.getElementById("stopButton").disabled = false;
         document.getElementById("houseButton").disabled = false;
+        document.getElementById("clearHouseButton").disabled = !houseLocation;
 
         document.getElementById("shareNotice").textContent =
           "내 위치를 공유하고 있습니다.";
@@ -1097,6 +1197,7 @@ function displayLocation(position) {
       }
 
       document.getElementById("houseButton").disabled = true;
+      document.getElementById("clearHouseButton").disabled = true;
       document.getElementById("distanceFromHome").textContent = "--";
       document.getElementById("houseButton").textContent =
         houseLocation ? "집 위치 변경" : "집 위치 등록";
@@ -1163,6 +1264,9 @@ function displayLocation(position) {
 
     // 처음 실행: 위치 공유 여부와 관계없이 지도와 등록된 집 위치 표시
     initializeMap();
+    document.getElementById("mapContainer").hidden = true;
+    document.getElementById("mapToggleButton").textContent = "▼ 지도 보기";
+    document.getElementById("clearHouseButton").disabled = true;
     loadHouseLocation();
     getData();
     checkShareStatus();
