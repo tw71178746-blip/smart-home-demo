@@ -40,8 +40,27 @@
 
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .section-heading {
+      margin: 0 0 14px;
+      font-size: 20px;
+      color: #e2e8f0;
+    }
+
+    .dashboard-section {
+      margin-top: 24px;
+    }
+
+    .dashboard-section .card {
+      min-width: 0;
+      padding: 18px;
+    }
+
+    .location-card {
+      margin-top: 24px;
     }
 
     .card {
@@ -60,6 +79,23 @@
     .value {
       font-size: 30px;
       font-weight: bold;
+    }
+
+    .device-on {
+      color: #22c55e;
+    }
+
+    .device-off {
+      color: #ef4444;
+    }
+
+    .device-unknown {
+      color: #000000;
+      background: #e5e7eb;
+      display: inline-block;
+      padding: 4px 9px;
+      border-radius: 6px;
+      font-size: 16px;
     }
 
     .unit {
@@ -133,11 +169,47 @@
 
     @media (max-width: 600px) {
       body {
-        padding: 14px;
+        padding: 12px;
+      }
+
+      .container {
+        width: 100%;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+
+      .subtitle {
+        margin-bottom: 20px;
+        font-size: 13px;
+      }
+
+      .grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+      }
+
+      .dashboard-section {
+        margin-top: 20px;
+      }
+
+      .dashboard-section .card,
+      .location-card {
+        padding: 15px;
+      }
+
+      .value {
+        font-size: 26px;
+      }
+
+      button {
+        width: 100%;
+        margin: 5px 0;
       }
 
       #map {
-        height: 280px;
+        height: 260px;
       }
     }
   </style>
@@ -149,61 +221,64 @@
     <h1>SMART HOME</h1>
     <div class="subtitle">스마트홈 환경 모니터링 시스템</div>
 
-    <div class="grid">
-
-      <div class="card">
-        <h3>온도</h3>
-        <div class="value">
-          <span id="temperature">--</span>
-          <span class="unit">°C</span>
+    <div class="dashboard-section">
+      <h2 class="section-heading">센서</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>온도</h3>
+          <div class="value"><span id="temperature">--</span><span class="unit"> °C</span></div>
+        </div>
+        <div class="card">
+          <h3>습도</h3>
+          <div class="value"><span id="humidity">--</span><span class="unit"> %</span></div>
+        </div>
+        <div class="card">
+          <h3>미세먼지</h3>
+          <div class="value"><span id="dust">--</span></div>
+        </div>
+        <div class="card">
+          <h3>내부 유해가스</h3>
+          <div class="value"><span id="gas">--</span></div>
+        </div>
+        <div class="card">
+          <h3>창문 상태</h3>
+          <div class="value" id="windowState">--</div>
+        </div>
+        <div class="card">
+          <h3>빗물 감지</h3>
+          <div class="value" id="rain">--</div>
         </div>
       </div>
-
-      <div class="card">
-        <h3>습도</h3>
-        <div class="value">
-          <span id="humidity">--</span>
-          <span class="unit">%</span>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>미세먼지</h3>
-        <div class="value">
-          <span id="dust">--</span>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>MQ-135 공기질 센서</h3>
-        <div class="value">
-          <span id="gas">--</span>
-        </div>
-      </div>
-
-      <div class="card">
-        <h3>창문 상태</h3>
-        <div class="value" id="windowState">--</div>
-      </div>
-
-      <div class="card">
-        <h3>빗물 감지</h3>
-        <div class="value" id="rain">--</div>
-      </div>
-
-      <div class="card">
-        <h3>가습기</h3>
-        <div class="value" id="humidifier">--</div>
-      </div>
-
-      <div class="card">
-        <h3>환풍기</h3>
-        <div class="value" id="fan">--</div>
-      </div>
-
     </div>
 
-    <div class="section card">
+    <div class="dashboard-section">
+      <h2 class="section-heading">장치</h2>
+      <div class="grid">
+        <div class="card">
+          <h3>가습기</h3>
+          <div class="value device-unknown" id="humidifier">연결 안 됨</div>
+          <button type="button" onclick="sendDeviceCommand('humidifier', 'on')">가습기 켜기</button>
+          <button type="button" class="stop" onclick="sendDeviceCommand('humidifier', 'off')">가습기 끄기</button>
+          <p class="status" id="humidifierCommandMessage">장치 상태를 확인하고 있습니다.</p>
+        </div>
+        <div class="card">
+          <h3>선풍기</h3>
+          <div class="value device-unknown" id="fan">연결 안 됨</div>
+          <button type="button" onclick="sendDeviceCommand('fan', 'on')">선풍기 켜기</button>
+          <button type="button" class="stop" onclick="sendDeviceCommand('fan', 'off')">선풍기 끄기</button>
+          <p class="status" id="fanCommandMessage">장치 상태를 확인하고 있습니다.</p>
+        </div>
+        <div class="card">
+          <h3>창문 원격 제어</h3>
+          <div class="value" id="windowControlStatus">대기 중</div>
+          <button type="button" onclick="sendWindowCommand('open')">창문 열기</button>
+          <button type="button" class="stop" onclick="sendWindowCommand('close')">창문 닫기</button>
+          <p class="status" id="windowCommandMessage">명령을 선택하면 Firebase로 전송합니다.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="section card location-card">
       <h2>사용자 위치 공유</h2>
 
       <p class="status" id="locationStatus">
@@ -222,15 +297,19 @@
       <div class="notice" id="shareNotice">
         위치 공유 대기 중
       </div>
-      <div id="mapArea" style="display: none;">
+      <p class="status">
+        위치 공유를 시작하지 않아도 등록된 집 위치는 지도에서 확인할 수 있습니다.
+        현재 위치는 위치 공유를 시작했을 때만 표시됩니다.
+      </p>
+      <div id="mapArea">
         <p>위도: <span id="latitude">--</span></p>
         <p>경도: <span id="longitude">--</span></p>
 
         <div class="notice" id="houseInstruction">
-          집 위치 등록 버튼을 누른 뒤 지도에서 집 위치를 선택하세요.
+          등록된 집 위치는 항상 지도에 표시됩니다. 집 위치 등록 및 변경은 위치 공유 중에만 가능합니다.
         </div>
 
-        <button id="houseButton" onclick="handleHouseButton()">
+        <button id="houseButton" onclick="handleHouseButton()" disabled>
           집 위치 등록
         </button>
 
@@ -262,6 +341,8 @@
       "https://smart-home-demo-52a8a-default-rtdb.asia-southeast1.firebasedatabase.app";
 
     const LOCATION_URL = FIREBASE_URL + "/locationShare.json";
+    const WINDOW_COMMAND_URL = FIREBASE_URL + "/windowCommand.json";
+    const DEVICE_COMMAND_URL = FIREBASE_URL + "/deviceCommands";
 
     // 위치 공유 설정
     const SHARE_TIME = 30000;
@@ -361,8 +442,6 @@
 
     // 지도 표시
     function showMap() {
-      document.getElementById("mapArea").style.display = "block";
-
       initializeMap();
 
       setTimeout(function() {
@@ -399,6 +478,12 @@
           houseLocation.longitude !== undefined
         ) {
           showHouseMarker();
+          if (!lastPosition) {
+            map.setView([
+              houseLocation.latitude,
+              houseLocation.longitude
+            ], 15);
+          }
 
           document.getElementById("houseStatus").textContent =
             "집 위치가 등록되어 있습니다.";
@@ -439,6 +524,8 @@
 
     // 집 위치 등록/변경 선택 모드 시작
     function handleHouseButton() {
+      if (!isSharing) return;
+
       if (!selectionMode) {
         selectionMode = true;
         pendingHouseLocation = null;
@@ -579,6 +666,102 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
   return R * c;
 }
 
+    // 가습기/선풍기 원격 제어 명령을 Firebase에 전송
+    // 실제 장치가 이 명령을 읽고 작동한 뒤 상태값을 Firebase에 기록해야 합니다.
+    async function sendDeviceCommand(device, command) {
+      const allowedDevices = ["humidifier", "fan"];
+
+      if (!allowedDevices.includes(device)) return;
+      if (command !== "on" && command !== "off") return;
+
+      const message = document.getElementById(device + "CommandMessage");
+      const deviceName = device === "humidifier" ? "가습기" : "선풍기";
+      const actionName = command === "on" ? "켜기" : "끄기";
+
+      message.textContent = deviceName + " " + actionName + " 명령 전송 중...";
+
+      try {
+        const response = await fetch(DEVICE_COMMAND_URL + "/" + device + ".json", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            command: command,
+            updatedAt: Date.now()
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error("Firebase 명령 전송 실패: " + response.status);
+        }
+
+        message.textContent =
+          deviceName + " " + actionName + " 명령을 Firebase에 보냈습니다. 실제 작동 상태는 장치 응답을 기다립니다.";
+      } catch (error) {
+        message.textContent = "명령 전송 실패: " + error.message;
+        console.error(error);
+      }
+    }
+
+    // Firebase에 기록된 장치 상태를 화면에 반영
+    function updateDeviceDisplay(elementId, value) {
+      const element = document.getElementById(elementId);
+      const normalized = value === null || value === undefined
+        ? ""
+        : String(value).trim().toLowerCase();
+
+      const onValues = ["on", "true", "1", "켜짐", "작동 중", "작동중", "운전", "running"];
+      const offValues = ["off", "false", "0", "꺼짐", "정지", "중지", "stopped"];
+
+      element.classList.remove("device-on", "device-off", "device-unknown");
+
+      if (onValues.includes(normalized)) {
+        element.textContent = "켜짐";
+        element.classList.add("device-on");
+      } else if (offValues.includes(normalized)) {
+        element.textContent = "꺼짐";
+        element.classList.add("device-off");
+      } else {
+        // Firebase에 상태값이 없거나 연결/상태를 확인할 수 없으면 검은색으로 표시
+        element.textContent = "연결 안 됨";
+        element.classList.add("device-unknown");
+      }
+    }
+
+    // 창문 원격 제어 명령을 Firebase에 전송
+    // ESP32/라즈베리파이 쪽에서는 windowCommand 값을 읽어 모터를 제어해야 합니다.
+    async function sendWindowCommand(command) {
+      if (command !== "open" && command !== "close") return;
+
+      const label = command === "open" ? "열기" : "닫기";
+      const status = document.getElementById("windowControlStatus");
+      const message = document.getElementById("windowCommandMessage");
+
+      status.textContent = "전송 중";
+      message.textContent = "창문 " + label + " 명령을 전송하고 있습니다.";
+
+      try {
+        const response = await fetch(WINDOW_COMMAND_URL, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            command: command,
+            updatedAt: Date.now()
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error("Firebase 명령 전송 실패: " + response.status);
+        }
+
+        status.textContent = command === "open" ? "열기 명령 전송" : "닫기 명령 전송";
+        message.textContent = "Firebase에 창문 " + label + " 명령을 보냈습니다. 실제 작동 여부는 장치 응답을 확인해야 합니다.";
+      } catch (error) {
+        status.textContent = "전송 실패";
+        message.textContent = error.message;
+        console.error(error);
+      }
+    }
+
     // Firebase 센서 데이터 가져오기
     async function getData() {
       try {
@@ -590,7 +773,11 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 
         const data = await response.json();
 
-        if (!data) return;
+        if (!data) {
+          updateDeviceDisplay("humidifier", null);
+          updateDeviceDisplay("fan", null);
+          return;
+        }
 
         document.getElementById("temperature").textContent =
           data.temperature ?? "--";
@@ -610,11 +797,8 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
         document.getElementById("rain").textContent =
           data.rain ?? "--";
 
-        document.getElementById("humidifier").textContent =
-          data.humidifier ?? "--";
-
-        document.getElementById("fan").textContent =
-          data.fan ?? "--";
+        updateDeviceDisplay("humidifier", data.humidifier);
+        updateDeviceDisplay("fan", data.fan);
 
         document.getElementById("firebaseStatus").textContent =
           "Firebase 연결 성공";
@@ -831,6 +1015,7 @@ function displayLocation(position) {
         await loadHouseLocation();
         document.getElementById("startButton").disabled = true;
         document.getElementById("stopButton").disabled = false;
+        document.getElementById("houseButton").disabled = false;
 
         document.getElementById("shareNotice").textContent =
           "내 위치를 공유하고 있습니다.";
@@ -911,7 +1096,7 @@ function displayLocation(position) {
         pendingHouseMarker = null;
       }
 
-      document.getElementById("mapArea").style.display = "none";
+      document.getElementById("houseButton").disabled = true;
       document.getElementById("distanceFromHome").textContent = "--";
       document.getElementById("houseButton").textContent =
         houseLocation ? "집 위치 변경" : "집 위치 등록";
@@ -973,7 +1158,12 @@ function displayLocation(position) {
       checkShareStatus();
     }
 
-    // 처음 실행
+    // 위치 공유 전에는 집 위치 등록/변경 버튼을 비활성화
+    document.getElementById("houseButton").disabled = true;
+
+    // 처음 실행: 위치 공유 여부와 관계없이 지도와 등록된 집 위치 표시
+    initializeMap();
+    loadHouseLocation();
     getData();
     checkShareStatus();
 
