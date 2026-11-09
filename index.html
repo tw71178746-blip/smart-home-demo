@@ -2,479 +2,647 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>스마트홈 통합 대시보드</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMART HOME</title>
 
-<!-- Leaflet 지도 라이브러리 -->
-<link rel="stylesheet"
- href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  >
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-<style>
-* { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      background: #101827;
+      color: #f1f5f9;
+      font-family: Arial, sans-serif;
+    }
 
-body {
-    margin: 0;
-    padding: 25px;
-    background: #101827;
-    color: white;
-    font-family: Arial, sans-serif;
-}
+    .container {
+      max-width: 1100px;
+      margin: auto;
+    }
 
-.container {
-    max-width: 900px;
-    margin: auto;
-}
+    h1 {
+      margin-bottom: 6px;
+      letter-spacing: 2px;
+    }
 
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 30px;
-}
+    .subtitle {
+      color: #94a3b8;
+      margin-bottom: 30px;
+    }
 
-.logo {
-    font-size: 24px;
-    font-weight: bold;
-    color: #67D5C0;
-}
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+    }
 
-.subtitle {
-    color: #9CAFC4;
-    font-size: 13px;
-    margin-top: 6px;
-}
+    .card {
+      background: #1e293b;
+      padding: 22px;
+      border-radius: 14px;
+      border: 1px solid #334155;
+    }
 
-.online {
-    background: #145C48;
-    color: #6EE7B7;
-    padding: 8px 13px;
-    border-radius: 20px;
-    font-size: 13px;
-}
+    .card h3 {
+      color: #94a3b8;
+      font-size: 15px;
+      margin-top: 0;
+    }
 
-h2 {
-    font-size: 19px;
-    margin: 25px 0 15px;
-}
+    .value {
+      font-size: 30px;
+      font-weight: bold;
+    }
 
-.grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-}
+    .unit {
+      font-size: 16px;
+      color: #94a3b8;
+    }
 
-.card, .control {
-    background: #1D2B40;
-    border-radius: 15px;
-    padding: 20px;
-}
+    .section {
+      margin-top: 28px;
+    }
 
-.icon { font-size: 26px; }
+    button {
+      padding: 12px 18px;
+      border: none;
+      border-radius: 8px;
+      background: #2563eb;
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+      margin: 5px 5px 5px 0;
+    }
 
-.label {
-    color: #AAB9CC;
-    margin-top: 12px;
-    font-size: 14px;
-}
+    button:hover {
+      background: #1d4ed8;
+    }
 
-.value {
-    font-size: 25px;
-    font-weight: bold;
-    margin-top: 8px;
-    overflow-wrap: anywhere;
-}
+    button:disabled {
+      background: #64748b;
+      cursor: not-allowed;
+    }
 
-.description {
-    color: #9CAFC4;
-    font-size: 12px;
-    margin-top: 8px;
-}
+    .stop {
+      background: #dc2626;
+    }
 
-.control { margin-bottom: 15px; }
+    .stop:hover {
+      background: #b91c1c;
+    }
 
-.control-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px;
-}
+    .status {
+      color: #94a3b8;
+      margin: 12px 0;
+      line-height: 1.6;
+    }
 
-.status {
-    color: #67D5C0;
-    font-size: 14px;
-}
+    #map {
+      width: 100%;
+      height: 350px;
+      border-radius: 12px;
+      margin-top: 15px;
+      background: #334155;
+    }
 
-button {
-    border: none;
-    border-radius: 9px;
-    padding: 11px 16px;
-    margin-top: 15px;
-    cursor: pointer;
-    background: #287F78;
-    color: white;
-    font-size: 14px;
-}
+    .notice {
+      padding: 14px;
+      background: #334155;
+      border-radius: 8px;
+      margin-top: 12px;
+      line-height: 1.5;
+    }
 
-button:hover { opacity: 0.8; }
-.secondary { background: #40516B; }
+    @media (max-width: 600px) {
+      body {
+        padding: 14px;
+      }
 
-#map {
-    width: 100%;
-    height: 320px;
-    margin-top: 15px;
-    border-radius: 12px;
-    z-index: 1;
-}
-
-footer {
-    text-align: center;
-    color: #718096;
-    font-size: 12px;
-    margin-top: 30px;
-}
-
-@media (max-width: 480px) {
-    body { padding: 16px; }
-    .card, .control { padding: 15px; }
-    .value { font-size: 22px; }
-}
-</style>
+      #map {
+        height: 280px;
+      }
+    }
+  </style>
 </head>
 
 <body>
-<div class="container">
+  <div class="container">
 
-<header>
-    <div>
-        <div class="logo">⌂ SMART HOME</div>
-        <div class="subtitle">스마트홈 통합 환경 관리 시스템</div>
-    </div>
-    <div class="online">● ONLINE</div>
-</header>
+    <h1>SMART HOME</h1>
+    <div class="subtitle">스마트홈 환경 모니터링 시스템</div>
 
-<h2>실내 환경 모니터링</h2>
+    <div class="grid">
 
-<div class="grid">
+      <div class="card">
+        <h3>온도</h3>
+        <div class="value">
+          <span id="temperature">--</span>
+          <span class="unit">°C</span>
+        </div>
+      </div>
 
-    <div class="card">
-        <div class="icon">🌡️</div>
-        <div class="label">온도</div>
-        <div class="value" id="temp">-- °C</div>
-        <div class="description">실내 온도</div>
-    </div>
+      <div class="card">
+        <h3>습도</h3>
+        <div class="value">
+          <span id="humidity">--</span>
+          <span class="unit">%</span>
+        </div>
+      </div>
 
-    <div class="card">
-        <div class="icon">💧</div>
-        <div class="label">습도</div>
-        <div class="value" id="humidity">-- %</div>
-        <div class="description">실내 습도</div>
-    </div>
+      <div class="card">
+        <h3>미세먼지</h3>
+        <div class="value">
+          <span id="dust">--</span>
+        </div>
+      </div>
 
-    <div class="card">
-        <div class="icon">🌫️</div>
-        <div class="label">미세먼지</div>
-        <div class="value" id="pm">측정 대기</div>
-        <div class="description">에어코리아 API 연동 예정</div>
-    </div>
+      <div class="card">
+        <h3>MQ-135 공기질 센서</h3>
+        <div class="value">
+          <span id="gas">--</span>
+        </div>
+      </div>
 
-    <div class="card">
-        <div class="icon">☣️</div>
-        <div class="label">유해가스 감지</div>
-        <div class="value" id="gas">측정 대기</div>
-        <div class="description">MQ-135 센서값</div>
-    </div>
+      <div class="card">
+        <h3>창문 상태</h3>
+        <div class="value" id="windowState">--</div>
+      </div>
 
-    <div class="card">
-        <div class="icon">🌧️</div>
-        <div class="label">빗물 감지</div>
-        <div class="value" id="rain">측정 대기</div>
-        <div class="description">빗물 감지 센서</div>
-    </div>
+      <div class="card">
+        <h3>빗물 감지</h3>
+        <div class="value" id="rain">--</div>
+      </div>
 
-</div>
+      <div class="card">
+        <h3>가습기</h3>
+        <div class="value" id="humidifier">--</div>
+      </div>
 
-<h2>스마트홈 장치 상태</h2>
+      <div class="card">
+        <h3>환풍기</h3>
+        <div class="value" id="fan">--</div>
+      </div>
 
-<div class="grid">
-
-    <div class="card">
-        <div class="icon">🪟</div>
-        <div class="label">창문 개폐 상태</div>
-        <div class="value" id="windowStatus">닫힘</div>
-        <div class="description">마그네틱 센서 연결 예정</div>
     </div>
 
-    <div class="card">
-        <div class="icon">💦</div>
-        <div class="label">가습기</div>
-        <div class="value" id="humidifierStatus">정지</div>
-        <div class="description">가습 장치 상태</div>
+    <div class="section card">
+      <h2>사용자 위치 공유</h2>
+
+      <p class="status" id="locationStatus">
+        현재 위치 공유가 시작되지 않았습니다.
+      </p>
+
+      <button id="startButton" onclick="startLocationShare()">
+        위치 공유 시작
+      </button>
+
+      <button id="stopButton" class="stop"
+        onclick="stopLocationShare()" disabled>
+        위치 공유 종료
+      </button>
+
+      <div class="notice" id="shareNotice">
+        위치 공유 대기 중
+      </div>
+
+      <p>위도: <span id="latitude">--</span></p>
+      <p>경도: <span id="longitude">--</span></p>
+
+      <div id="map"></div>
     </div>
 
-    <div class="card">
-        <div class="icon">🌀</div>
-        <div class="label">선풍기</div>
-        <div class="value" id="fanStatus">정지</div>
-        <div class="description">환기 장치 상태</div>
-    </div>
+    <p class="status" id="firebaseStatus">
+      Firebase 연결 확인 중...
+    </p>
 
-</div>
+  </div>
 
-<h2>사용자 위치 정보</h2>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
-<div class="card">
-    <div class="icon">📍</div>
-    <div class="label">현재 위치</div>
-    <div class="value" id="locationStatus">위치 확인 전</div>
+  <script>
+    // Firebase 데이터베이스 주소
+    const FIREBASE_URL =
+      "https://smart-home-demo-52a8a-default-rtdb.asia-southeast1.firebasedatabase.app";
 
-    <div class="description">
-        위도: <span id="latitude">--</span>
-    </div>
+    const LOCATION_URL = FIREBASE_URL + "/locationShare.json";
 
-    <div class="description">
-        경도: <span id="longitude">--</span>
-    </div>
+    // 위치 공유 설정
+    const SHARE_TIME = 30000;
+    const HEARTBEAT_TIME = 10000;
 
-    <button onclick="getLocation()">현재 위치 가져오기</button>
-    <div id="map"></div>
-</div>
+    let map = null;
+    let locationMarker = null;
+    let watchId = null;
+    let heartbeatTimer = null;
+    let statusTimer = null;
 
-<h2>장치 제어</h2>
+    let isSharing = false;
 
-<div class="control">
-    <div class="control-row">
-        <strong>🪟 창문 제어</strong>
-        <span class="status" id="windowControl">닫힘</span>
-    </div>
-    <button onclick="setWindow('열림')">창문 열기</button>
-    <button class="secondary" onclick="setWindow('닫힘')">창문 닫기</button>
-</div>
+    // 사용자별 임시 식별값
+    let locationUserId = "";
 
-<div class="control">
-    <div class="control-row">
-        <strong>💦 가습기 제어</strong>
-        <span class="status" id="humidifierControl">OFF</span>
-    </div>
-    <button onclick="toggleHumidifier()">가습기 ON / OFF</button>
-</div>
+    function createUserId() {
+      if (window.crypto && crypto.randomUUID) {
+        return crypto.randomUUID();
+      }
 
-<div class="control">
-    <div class="control-row">
-        <strong>🌀 선풍기 제어</strong>
-        <span class="status" id="fanControl">OFF</span>
-    </div>
-    <button onclick="toggleFan()">선풍기 ON / OFF</button>
-</div>
+      return "user-" + Date.now() + "-" +
+        Math.random().toString(16).slice(2);
+    }
 
-<button onclick="getData()">🔄 센서 데이터 새로고침</button>
+    locationUserId = createUserId();
 
-<p id="message" class="description"></p>
+    // 지도 초기화
+    function initializeMap() {
+      map = L.map("map").setView([37.5665, 126.9780], 13);
 
-<footer>
-    SMART HOME IoT PROJECT
-    <br><br>
-    센서 및 실제 장치 연결 준비 중
-</footer>
+      L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+          attribution: "&copy; OpenStreetMap contributors"
+        }
+      ).addTo(map);
+    }
 
-</div>
+    initializeMap();
 
-<script>
-const FIREBASE_URL =
-"https://smart-home-demo-52a8a-default-rtdb.asia-southeast1.firebasedatabase.app";
+    // 지도에 위치 표시
+    function updateMap(latitude, longitude) {
+      const position = [latitude, longitude];
 
-// Firebase 센서 데이터 가져오기
-async function getData() {
-    try {
+      if (!locationMarker) {
+        locationMarker = L.marker(position).addTo(map);
+        locationMarker.bindPopup("현재 공유 위치");
+      } else {
+        locationMarker.setLatLng(position);
+      }
+
+      map.setView(position, 16);
+    }
+
+    // Firebase 센서 데이터 가져오기
+    async function getData() {
+      try {
         const response = await fetch(FIREBASE_URL + "/.json");
 
         if (!response.ok) {
-            throw new Error("데이터 요청 실패");
+          throw new Error("Firebase 응답 오류: " + response.status);
         }
 
         const data = await response.json();
 
-        if (data.temperature != null) {
-            document.getElementById("temp").innerHTML =
-                data.temperature + " °C";
-        }
+        if (!data) return;
 
-        if (data.humidity != null) {
-            document.getElementById("humidity").innerHTML =
-                data.humidity + " %";
-        }
+        document.getElementById("temperature").textContent =
+          data.temperature ?? "--";
 
-        document.getElementById("message").innerHTML =
-            "Firebase 연결 성공!";
+        document.getElementById("humidity").textContent =
+          data.humidity ?? "--";
 
-    } catch (error) {
-        document.getElementById("message").innerHTML =
-            "Firebase 연결 오류: " + error.message;
+        document.getElementById("dust").textContent =
+          data.dust ?? "--";
+
+        document.getElementById("gas").textContent =
+          data.gas ?? "--";
+
+        document.getElementById("windowState").textContent =
+          data.windowState ?? "--";
+
+        document.getElementById("rain").textContent =
+          data.rain ?? "--";
+
+        document.getElementById("humidifier").textContent =
+          data.humidifier ?? "--";
+
+        document.getElementById("fan").textContent =
+          data.fan ?? "--";
+
+        document.getElementById("firebaseStatus").textContent =
+          "Firebase 연결 성공";
+
+      } catch (error) {
+        document.getElementById("firebaseStatus").textContent =
+          "Firebase 연결 실패: " + error.message;
+
+        console.error(error);
+      }
     }
-}
 
-// 위치 및 지도
-let map = null;
-let locationMarker = null;
+    // 위치 공유 상태 확인
+    async function getShareData() {
+      const response = await fetch(LOCATION_URL);
 
-function getLocation() {
-    const status = document.getElementById("locationStatus");
+      if (!response.ok) {
+        throw new Error("위치 공유 정보 확인 실패");
+      }
 
-    if (!navigator.geolocation) {
-        status.innerHTML = "위치 기능을 지원하지 않는 브라우저";
+      return await response.json();
+    }
+
+    // 위치 공유 잠금 획득
+    async function acquireLocationShare() {
+      const response = await fetch(LOCATION_URL, {
+        method: "GET",
+        headers: {
+          "X-Firebase-ETag": "true"
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error("Firebase 위치 확인 실패");
+      }
+
+      const etag = response.headers.get("ETag");
+
+      if (!etag) {
+        throw new Error("Firebase ETag를 가져오지 못했습니다.");
+      }
+
+      const data = await response.json();
+      const now = Date.now();
+
+      // 다른 사용자의 공유가 아직 유효한 경우
+      if (
+        data &&
+        data.active === true &&
+        data.owner !== locationUserId &&
+        Number(data.expiresAt || 0) > now
+      ) {
+        return false;
+      }
+
+      // 잠금 정보 저장
+      const updateResponse = await fetch(LOCATION_URL, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "if-match": etag
+        },
+        body: JSON.stringify({
+          active: true,
+          owner: locationUserId,
+          latitude: null,
+          longitude: null,
+          lastUpdate: now,
+          expiresAt: now + SHARE_TIME
+        })
+      });
+
+      // 다른 사용자가 먼저 잠금을 획득한 경우
+      if (updateResponse.status === 412) {
+        return false;
+      }
+
+      if (!updateResponse.ok) {
+        throw new Error("위치 공유 잠금 저장 실패");
+      }
+
+      return true;
+    }
+
+    // 위치 공유 상태 화면 갱신
+    async function checkShareStatus() {
+      try {
+        const data = await getShareData();
+
+        if (
+          data &&
+          data.active === true &&
+          Number(data.expiresAt || 0) > Date.now() &&
+          data.owner !== locationUserId
+        ) {
+          document.getElementById("shareNotice").textContent =
+            "현재 위치를 공유하고 있는 사용자가 있습니다.";
+        } else if (!isSharing) {
+          document.getElementById("shareNotice").textContent =
+            "현재 위치 공유 가능";
+        }
+
+      } catch (error) {
+        console.error("공유 상태 확인 오류:", error);
+      }
+    }
+
+    // 실시간 위치 Firebase 전송
+    async function sendLocation(latitude, longitude) {
+      if (!isSharing) return;
+
+      const response = await fetch(LOCATION_URL, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          latitude: latitude,
+          longitude: longitude,
+          lastUpdate: Date.now(),
+          expiresAt: Date.now() + SHARE_TIME
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("위치 전송 실패");
+      }
+    }
+
+    // 위치 정보를 화면에 표시
+    function displayLocation(position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
+
+      document.getElementById("latitude").textContent =
+        latitude.toFixed(6);
+
+      document.getElementById("longitude").textContent =
+        longitude.toFixed(6);
+
+      updateMap(latitude, longitude);
+
+      sendLocation(latitude, longitude).catch(error => {
+        document.getElementById("locationStatus").textContent =
+          error.message;
+
+        console.error(error);
+      });
+    }
+
+    // 위치 공유 시작
+    async function startLocationShare() {
+      if (!navigator.geolocation) {
+        alert("이 브라우저는 위치 정보를 지원하지 않습니다.");
         return;
+      }
+
+      if (isSharing) return;
+
+      document.getElementById("locationStatus").textContent =
+        "위치 공유 확인 중...";
+
+      try {
+        const acquired = await acquireLocationShare();
+
+        if (!acquired) {
+          document.getElementById("shareNotice").textContent =
+            "현재 위치를 공유하고 있는 사용자가 있습니다.";
+
+          document.getElementById("locationStatus").textContent =
+            "다른 사용자의 공유가 끝날 때까지 기다려 주세요.";
+
+          return;
+        }
+
+        isSharing = true;
+
+        document.getElementById("startButton").disabled = true;
+        document.getElementById("stopButton").disabled = false;
+
+        document.getElementById("shareNotice").textContent =
+          "내 위치를 공유하고 있습니다.";
+
+        document.getElementById("locationStatus").textContent =
+          "브라우저 위치 권한을 확인하고 있습니다.";
+
+        watchId = navigator.geolocation.watchPosition(
+          displayLocation,
+
+          async function(error) {
+            document.getElementById("locationStatus").textContent =
+              "위치 확인 실패: " + error.message;
+
+            await stopLocationShare();
+          },
+
+          {
+            enableHighAccuracy: true,
+            maximumAge: 5000,
+            timeout: 15000
+          }
+        );
+
+        // 공유 잠금 갱신
+        heartbeatTimer = setInterval(async function() {
+          try {
+            const data = await getShareData();
+
+            if (!data || data.owner !== locationUserId) {
+              await stopLocationShare();
+              return;
+            }
+
+            await fetch(LOCATION_URL, {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                expiresAt: Date.now() + SHARE_TIME
+              })
+            });
+
+          } catch (error) {
+            console.error("공유 갱신 실패:", error);
+          }
+        }, HEARTBEAT_TIME);
+
+      } catch (error) {
+        document.getElementById("locationStatus").textContent =
+          "위치 공유 실패: " + error.message;
+
+        console.error(error);
+      }
     }
 
-    status.innerHTML = "위치 확인 중...";
+    // 위치 공유 종료
+    async function stopLocationShare() {
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+        watchId = null;
+      }
 
-    navigator.geolocation.getCurrentPosition(
-        function(position) {
-            const latitude = position.coords.latitude;
-            const longitude = position.coords.longitude;
+      if (heartbeatTimer !== null) {
+        clearInterval(heartbeatTimer);
+        heartbeatTimer = null;
+      }
 
-            document.getElementById("latitude").innerHTML =
-                latitude.toFixed(6);
+      isSharing = false;
 
-            document.getElementById("longitude").innerHTML =
-                longitude.toFixed(6);
+      document.getElementById("startButton").disabled = false;
+      document.getElementById("stopButton").disabled = true;
 
-            status.innerHTML = "위치 확인 성공!";
+      document.getElementById("locationStatus").textContent =
+        "위치 공유가 종료되었습니다.";
 
-            // 처음 지도를 만들 때
-            if (map === null) {
-                map = L.map("map").setView(
-                    [latitude, longitude], 16
-                );
+      document.getElementById("shareNotice").textContent =
+        "위치 공유 대기 중";
 
-                L.tileLayer(
-                    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-                    {
-                        attribution: '&copy; OpenStreetMap'
-                    }
-                ).addTo(map);
-            } else {
-                map.setView([latitude, longitude], 16);
-            }
-
-            // 기존 마커 갱신
-            if (locationMarker !== null) {
-                locationMarker.setLatLng([latitude, longitude]);
-            } else {
-                locationMarker = L.marker(
-                    [latitude, longitude]
-                ).addTo(map);
-            }
-
-            locationMarker.bindPopup("현재 사용자 위치").openPopup();
-
-            setTimeout(function() {
-                map.invalidateSize();
-            }, 100);
-
-        },
-
-        function(error) {
-            status.innerHTML = "위치 확인 실패: " + error.message;
-        },
-
-        {
-            enableHighAccuracy: true,
-            timeout: 15000,
-            maximumAge: 0
-        }
-    );
-}
-
-// 위치 공유 상태
-let locationWatchId = null;
-let locationOwner = null;
-
-// 사용자 구분용 임시 ID
-const locationUserId =
-    "user_" + Math.random().toString(36).substring(2, 10);
-
-// Firebase 위치 공유 데이터 경로
-const LOCATION_URL = FIREBASE_URL + "/locationShare.json";
-
-// 위치 공유권 확보
-async function acquireLocationShare() {
-    try {
+      try {
         const response = await fetch(LOCATION_URL, {
-            method: "GET",
-            headers: {
-                "X-Firebase-ETag": "true"
-            }
+          method: "GET",
+          headers: {
+            "X-Firebase-ETag": "true"
+          }
         });
 
-        if (!response.ok) {
-            throw new Error("공유 상태 확인 실패");
-        }
+        if (response.ok) {
+          const etag = response.headers.get("ETag");
+          const data = await response.json();
 
-        const etag = response.headers.get("ETag");
-        const data = await response.json();
-
-        if (data && data.active === true) {
-            return false;
-        }
-
-        const update = await fetch(LOCATION_URL, {
-            method: "PUT",
-            headers: {
+          // 본인이 소유한 공유 정보만 종료
+          if (
+            data &&
+            data.owner === locationUserId &&
+            etag
+          ) {
+            await fetch(LOCATION_URL, {
+              method: "PUT",
+              headers: {
                 "Content-Type": "application/json",
                 "if-match": etag
-            },
-            body: JSON.stringify({
-                active: true,
-                owner: locationUserId,
+              },
+              body: JSON.stringify({
+                active: false,
+                owner: null,
                 latitude: null,
                 longitude: null,
-                lastUpdate: Date.now()
-            })
-        });
+                lastUpdate: Date.now(),
+                expiresAt: 0
+              })
+            });
+          }
+        }
 
-        return update.status === 200;
+      } catch (error) {
+        console.error("공유 종료 처리 오류:", error);
+      }
 
-    } catch (error) {
-        console.error(error);
-        return false;
+      checkShareStatus();
     }
-}
 
-// 창문 제어 화면
-function setWindow(status) {
-    document.getElementById("windowStatus").innerHTML = status;
-    document.getElementById("windowControl").innerHTML = status;
-}
+    // 처음 실행
+    getData();
+    checkShareStatus();
 
-let humidifierOn = false;
+    // 센서 데이터 주기적 갱신
+    setInterval(getData, 3000);
 
-function toggleHumidifier() {
-    humidifierOn = !humidifierOn;
+    // 다른 사용자 공유 상태 주기적 확인
+    statusTimer = setInterval(checkShareStatus, 5000);
 
-    let status = humidifierOn ? "작동 중" : "정지";
-    let control = humidifierOn ? "ON" : "OFF";
-
-    document.getElementById("humidifierStatus").innerHTML = status;
-    document.getElementById("humidifierControl").innerHTML = control;
-}
-
-let fanOn = false;
-
-function toggleFan() {
-    fanOn = !fanOn;
-
-    let status = fanOn ? "작동 중" : "정지";
-    let control = fanOn ? "ON" : "OFF";
-
-    document.getElementById("fanStatus").innerHTML = status;
-    document.getElementById("fanControl").innerHTML = control;
-}
-
-// 첫 화면에서 Firebase 데이터 불러오기
-getData();
-</script>
-
+    // 페이지 종료 시 위치 추적 중단
+    window.addEventListener("beforeunload", function() {
+      if (watchId !== null) {
+        navigator.geolocation.clearWatch(watchId);
+      }
+    });
+  </script>
 </body>
 </html>
