@@ -18,8 +18,8 @@
     body {
       margin: 0;
       padding: 24px;
-      background: #101827;
-      color: #f1f5f9;
+      background: #dce9d8;
+      color: #243b2d;
       font-family: Arial, sans-serif;
     }
 
@@ -34,7 +34,7 @@
     }
 
     .subtitle {
-      color: #94a3b8;
+      color: #58745f;
       margin-bottom: 30px;
     }
 
@@ -47,7 +47,7 @@
     .section-heading {
       margin: 0 0 14px;
       font-size: 20px;
-      color: #e2e8f0;
+      color: #294b35;
     }
 
     .dashboard-section {
@@ -72,13 +72,14 @@
 
     .location-card {
       margin-top: 24px;
-      background: #1e293b;
-      border-color: #334155;
+      background: #c8ddc5;
+      border-color: #a9c5a7;
     }
 
     .location-card .notice {
-      background: #111827;
+      background: #000000;
       border: 1px solid #334155;
+      color: #f1f5f9;
     }
 
     #mapContainer {
@@ -88,14 +89,14 @@
     }
 
     .card {
-      background: #1e293b;
+      background: #f0f6ed;
       padding: 22px;
       border-radius: 14px;
-      border: 1px solid #334155;
+      border: 1px solid #b8cdb5;
     }
 
     .card h3 {
-      color: #ffffff;
+      color: #294b35;
       font-size: 15px;
       margin-top: 0;
     }
@@ -211,7 +212,7 @@
     }
 
     .status {
-      color: #94a3b8;
+      color: #58745f;
       margin: 12px 0;
       line-height: 1.6;
     }
@@ -226,7 +227,9 @@
 
     .notice {
       padding: 14px;
-      background: #334155;
+      background: #e2eee0;
+      border: 1px solid #bfd2bb;
+      color: #294b35;
       border-radius: 8px;
       margin-top: 12px;
       line-height: 1.5;
@@ -376,7 +379,7 @@
         <p>경도: <span id="longitude">--</span></p>
 
         <div class="notice" id="houseInstruction">
-          집 위치는 위치 공유 여부와 관계없이 등록·변경할 수 있으며, 등록된 집 위치는 항상 지도에 표시됩니다. 현재 위치는 위치 공유를 시작한 경우에만 표시됩니다.
+          집 위치는 위치 공유 여부와 관계없이 등록·변경할 수 있으며, 등록된 집 위치는 항상 지도에 표시됩니다.
         </div>
 
         <button id="houseButton" onclick="handleHouseButton()" disabled>
@@ -405,6 +408,10 @@
 
     <p class="status" id="firebaseStatus">
       Firebase 연결 확인 중...
+    </p>
+
+    <p class="notice" id="currentLocationInstruction" style="background:#000000; border-color:#334155; color:#f1f5f9;">
+      현재 위치는 위치 공유를 시작한 경우에만 표시됩니다.
     </p>
 
   </div>
