@@ -387,6 +387,61 @@ function getLocation() {
     );
 }
 
+// 위치 공유 상태
+let locationWatchId = null;
+let locationOwner = null;
+
+// 사용자 구분용 임시 ID
+const locationUserId =
+    "user_" + Math.random().toString(36).substring(2, 10);
+
+// Firebase 위치 공유 데이터 경로
+const LOCATION_URL = FIREBASE_URL + "/locationShare.json";
+
+// 위치 공유권 확보
+async function acquireLocationShare() {
+    try {
+        const response = await fetch(LOCATION_URL, {
+            method: "GET",
+            headers: {
+                "X-Firebase-ETag": "true"
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error("공유 상태 확인 실패");
+        }
+
+        const etag = response.headers.get("ETag");
+        const data = await response.json();
+
+        if (data && data.active === true) {
+            return false;
+        }
+
+        const update = await fetch(LOCATION_URL, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "if-match": etag
+            },
+            body: JSON.stringify({
+                active: true,
+                owner: locationUserId,
+                latitude: null,
+                longitude: null,
+                lastUpdate: Date.now()
+            })
+        });
+
+        return update.status === 200;
+
+    } catch (error) {
+        console.error(error);
+        return false;
+    }
+}
+
 // 창문 제어 화면
 function setWindow(status) {
     document.getElementById("windowStatus").innerHTML = status;
