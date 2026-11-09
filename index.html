@@ -363,7 +363,7 @@
       <h2>사용자 위치 공유</h2>
 
       <p class="notice" id="locationStatus">
-        현재 위치 공유가 시작되지 않았습니다.
+        현재 위치 공유를 시작할 수 있습니다.
       </p>
 
       <button id="shareToggleButton" onclick="toggleLocationShare()">
@@ -1041,6 +1041,11 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
           document.getElementById("shareNotice").textContent =
             "현재 위치를 공유하고 있는 사용자가 있습니다.";
           document.getElementById("shareNotice").hidden = false;
+
+          if (!isSharing) {
+            document.getElementById("locationStatus").textContent =
+              "다른 사용자가 위치를 공유 중입니다. 현재 위치 공유를 시작할 수 없습니다.";
+          }
         } else if (
           data &&
           data.active === true &&
@@ -1054,6 +1059,8 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
         } else if (!isSharing) {
           document.getElementById("shareNotice").textContent = "";
           document.getElementById("shareNotice").hidden = true;
+          document.getElementById("locationStatus").textContent =
+            "현재 위치 공유를 시작할 수 있습니다.";
         }
 
       } catch (error) {
@@ -1161,7 +1168,7 @@ function displayLocation(position) {
           document.getElementById("shareNotice").hidden = false;
 
           document.getElementById("locationStatus").textContent =
-            "다른 사용자의 공유가 끝날 때까지 기다려 주세요.";
+            "다른 사용자가 위치를 공유 중입니다. 현재 위치 공유를 시작할 수 없습니다.";
 
           return;
         }
