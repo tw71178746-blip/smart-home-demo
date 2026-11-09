@@ -61,6 +61,19 @@
 
     .location-card {
       margin-top: 24px;
+      background: #000000;
+      border-color: #334155;
+    }
+
+    .location-card .notice {
+      background: #111827;
+      border: 1px solid #334155;
+    }
+
+    #mapContainer {
+      background: #000000;
+      border-radius: 12px;
+      padding: 8px;
     }
 
     .card {
@@ -301,7 +314,7 @@
         </div>
         <div class="card device-card device-unknown" id="windowCard">
           <div class="device-heading"><h3>창문 원격 제어</h3><span class="device-connection" id="windowConnection">연결 안 됨</span></div>
-          <div class="value" id="windowControlStatus">상태 확인 중</div>
+          <div class="value" id="windowControlStatus">연결 안 됨</div>
           <button type="button" onclick="sendWindowCommand('open')">창문 열기</button>
           <button type="button" class="stop" onclick="sendWindowCommand('close')">창문 닫기</button>
           <p class="status" id="windowCommandMessage">명령을 선택하면 Firebase로 전송합니다.</p>
@@ -337,7 +350,7 @@
         <p>경도: <span id="longitude">--</span></p>
 
         <div class="notice" id="houseInstruction">
-          등록된 집 위치는 항상 지도에 표시됩니다. 집 위치 등록 및 변경은 위치 공유 중에만 가능합니다.
+          등록된 집 위치는 항상 지도에 표시됩니다. 위치 공유 여부와 관계없이 집 위치를 등록·변경할 수 있습니다.
         </div>
 
         <button id="houseButton" onclick="handleHouseButton()" disabled>
@@ -445,7 +458,7 @@
 
       // 집 위치 선택 모드일 때만 지도 클릭을 처리
       map.on("click", function(event) {
-        if (!isSharing || !selectionMode) return;
+        if (!selectionMode) return;
 
         pendingHouseLocation = {
           latitude: event.latlng.lat,
@@ -545,7 +558,7 @@
 
           document.getElementById("houseButton").textContent =
             "집 위치 변경";
-          document.getElementById("clearHouseButton").disabled = !isSharing;
+          document.getElementById("clearHouseButton").disabled = false;
         } else {
           houseLocation = null;
 
@@ -581,7 +594,12 @@
 
     // 집 위치 등록/변경 선택 모드 시작
     function handleHouseButton() {
-      if (!isSharing) return;
+      if (!map) initializeMap();
+      if (document.getElementById("mapContainer").hidden) {
+        document.getElementById("mapContainer").hidden = false;
+        document.getElementById("mapToggleButton").textContent = "▲ 지도 접기";
+        showMap();
+      }
 
       if (!selectionMode) {
         selectionMode = true;
@@ -614,7 +632,7 @@
 
     // 등록된 집 위치 삭제 전 사용자 확인
     async function confirmDeleteHouseLocation() {
-      if (!isSharing || !houseLocation) return;
+      if (!houseLocation) return;
 
       const confirmed = confirm("등록된 집 위치를 삭제할까요?\n삭제하면 지도에서도 집 위치 표시가 사라집니다.");
       if (!confirmed) return;
@@ -811,7 +829,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 
       if (!connected || (!onValues.includes(normalized) && !offValues.includes(normalized))) {
         card.classList.add("device-unknown");
-        valueElement.textContent = "상태 확인 불가";
+        valueElement.textContent = "연결 안 됨";
         connectionElement.textContent = "연결 안 됨";
       } else if (onValues.includes(normalized)) {
         card.classList.add("device-on");
@@ -1196,8 +1214,6 @@ function displayLocation(position) {
         pendingHouseMarker = null;
       }
 
-      document.getElementById("houseButton").disabled = true;
-      document.getElementById("clearHouseButton").disabled = true;
       document.getElementById("distanceFromHome").textContent = "--";
       document.getElementById("houseButton").textContent =
         houseLocation ? "집 위치 변경" : "집 위치 등록";
@@ -1206,6 +1222,15 @@ function displayLocation(position) {
         "집 위치 등록 버튼을 누른 뒤 지도에서 집 위치를 선택하세요.";
 
       lastPosition = null;
+
+      if (locationMarker && map) {
+        map.removeLayer(locationMarker);
+        locationMarker = null;
+      }
+
+      if (houseLocation && map) {
+        map.setView([houseLocation.latitude, houseLocation.longitude], 15);
+      }
 
       document.getElementById("startButton").disabled = false;
       document.getElementById("stopButton").disabled = true;
@@ -1259,8 +1284,8 @@ function displayLocation(position) {
       checkShareStatus();
     }
 
-    // 위치 공유 전에는 집 위치 등록/변경 버튼을 비활성화
-    document.getElementById("houseButton").disabled = true;
+    // 집 위치 관리는 위치 공유 여부와 관계없이 가능
+    document.getElementById("houseButton").disabled = false;
 
     // 처음 실행: 위치 공유 여부와 관계없이 지도와 등록된 집 위치 표시
     initializeMap();
