@@ -196,6 +196,24 @@ footer {
 
 </div>
 
+<h2>사용자 위치 정보</h2>
+
+<div class="card">
+    <div class="icon">📍</div>
+    <div class="label">현재 위치</div>
+    <div class="value" id="locationStatus">위치 확인 전</div>
+
+    <div class="description">
+        위도: <span id="latitude">--</span>
+    </div>
+
+    <div class="description">
+        경도: <span id="longitude">--</span>
+    </div>
+
+    <button onclick="getLocation()">현재 위치 가져오기</button>
+</div>
+
 <h2>스마트홈 장치 상태</h2>
 
 <div class="grid">
@@ -322,6 +340,34 @@ function toggleFan() {
 
 getData();
 </script>
+function getLocation() {
+    const status = document.getElementById("locationStatus");
 
+    if (!navigator.geolocation) {
+        status.innerHTML = "위치 기능을 지원하지 않는 브라우저";
+        return;
+    }
+
+    status.innerHTML = "위치 확인 중...";
+
+    navigator.geolocation.getCurrentPosition(
+        function(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            document.getElementById("latitude").innerHTML =
+                latitude;
+
+            document.getElementById("longitude").innerHTML =
+                longitude;
+
+            status.innerHTML = "위치 확인 성공!";
+        },
+
+        function(error) {
+            status.innerHTML = "위치 확인 실패: " + error.message;
+        }
+    );
+}
 </body>
 </html>
