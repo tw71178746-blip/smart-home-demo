@@ -18,8 +18,8 @@
     body {
       margin: 0;
       padding: 24px;
-      background: #dce9d8;
-      color: #243b2d;
+      background: #101827;
+      color: #ffffff;
       font-family: Arial, sans-serif;
     }
 
@@ -34,7 +34,7 @@
     }
 
     .subtitle {
-      color: #58745f;
+      color: #94a3b8;
       margin-bottom: 30px;
     }
 
@@ -47,7 +47,7 @@
     .section-heading {
       margin: 0 0 14px;
       font-size: 20px;
-      color: #294b35;
+      color: #e2e8f0;
     }
 
     .dashboard-section {
@@ -72,31 +72,30 @@
 
     .location-card {
       margin-top: 24px;
-      background: #c8ddc5;
-      border-color: #a9c5a7;
+      background: #1e293b;
+      border-color: #334155;
     }
 
     .location-card .notice {
-      background: #000000;
-      border: 1px solid #9ca3a0;
-      color: #f1f5f9;
+      background: #111827;
+      border: 1px solid #334155;
     }
 
     #mapContainer {
-      background: #000000;
+      background: #6b7280;
       border-radius: 12px;
       padding: 8px;
     }
 
     .card {
-      background: #f0f6ed;
+      background: #1e293b;
       padding: 22px;
       border-radius: 14px;
-      border: 1px solid #b8cdb5;
+      border: 1px solid #334155;
     }
 
     .card h3 {
-      color: #294b35;
+      color: #ffffff;
       font-size: 15px;
       margin-top: 0;
     }
@@ -121,8 +120,8 @@
     }
 
     .device-card.device-unknown {
-      background: #000000;
-      border-color: #9ca3a0;
+      background: #6b7280;
+      border-color: #475569;
     }
 
     .device-heading {
@@ -212,7 +211,7 @@
     }
 
     .status {
-      color: #58745f;
+      color: #94a3b8;
       margin: 12px 0;
       line-height: 1.6;
     }
@@ -227,9 +226,7 @@
 
     .notice {
       padding: 14px;
-      background: #e2eee0;
-      border: 1px solid #bfd2bb;
-      color: #294b35;
+      background: #334155;
       border-radius: 8px;
       margin-top: 12px;
       line-height: 1.5;
@@ -379,7 +376,7 @@
         <p>경도: <span id="longitude">--</span></p>
 
         <div class="notice" id="houseInstruction">
-          집 위치는 위치 공유 여부와 관계없이 등록·변경할 수 있으며, 등록된 집 위치는 항상 지도에 표시됩니다.
+          등록된 집 위치는 항상 지도에 표시됩니다. 위치 공유 여부와 관계없이 집 위치를 등록·변경할 수 있습니다.
         </div>
 
         <button id="houseButton" onclick="handleHouseButton()" disabled>
@@ -400,13 +397,12 @@
         </p>
 
         <button type="button" id="mapToggleButton" onclick="toggleMap()">▼ 지도 보기</button>
-
-        <p class="notice" id="currentLocationInstruction" style="background:#000000; border-color:#9ca3a0; color:#f1f5f9;">
-          현재 위치는 위치 공유를 시작한 경우에만 표시됩니다.
-        </p>
         <div id="mapContainer" hidden>
           <div id="map"></div>
         </div>
+      </div>
+      <div class="notice" id="shareInstruction">
+        위치 공유를 시작하지 않아도 등록된 집 위치는 지도에서 확인할 수 있습니다. 현재 위치는 위치 공유를 시작했을 때만 표시됩니다.
       </div>
     </div>
 
