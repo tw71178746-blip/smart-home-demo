@@ -59,9 +59,20 @@
       padding: 18px;
     }
 
+    .temperature-humidity {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .temperature-humidity .card {
+      padding: 18px;
+    }
+
     .location-card {
       margin-top: 24px;
-      background: #000000;
+      background: #1e293b;
       border-color: #334155;
     }
 
@@ -238,6 +249,14 @@
         gap: 10px;
       }
 
+      .temperature-humidity {
+        gap: 10px;
+      }
+
+      .temperature-humidity .card {
+        padding: 12px;
+      }
+
       .dashboard-section {
         margin-top: 20px;
       }
@@ -272,13 +291,15 @@
     <div class="dashboard-section">
       <h2 class="section-heading">센서</h2>
       <div class="grid">
-        <div class="card">
-          <h3>온도</h3>
-          <div class="value"><span id="temperature">--</span><span class="unit"> °C</span></div>
-        </div>
-        <div class="card">
-          <h3>습도</h3>
-          <div class="value"><span id="humidity">--</span><span class="unit"> %</span></div>
+        <div class="temperature-humidity">
+          <div class="card">
+            <h3>온도</h3>
+            <div class="value"><span id="temperature">--</span><span class="unit"> °C</span></div>
+          </div>
+          <div class="card">
+            <h3>습도</h3>
+            <div class="value"><span id="humidity">--</span><span class="unit"> %</span></div>
+          </div>
         </div>
         <div class="card">
           <h3>미세먼지</h3>
@@ -298,26 +319,26 @@
     <div class="dashboard-section">
       <h2 class="section-heading">장치</h2>
       <div class="grid">
-        <div class="card device-card device-unknown" id="humidifierCard">
-          <div class="device-heading"><h3>가습기</h3><span class="device-connection" id="humidifierConnection">연결 안 됨</span></div>
-          <div class="value" id="humidifier">--</div>
-          <button type="button" onclick="sendDeviceCommand('humidifier', 'on')">가습기 켜기</button>
-          <button type="button" class="stop" onclick="sendDeviceCommand('humidifier', 'off')">가습기 끄기</button>
-          <p class="status" id="humidifierCommandMessage">장치 상태를 확인하고 있습니다.</p>
+        <div class="card device-card device-unknown" id="windowCard">
+          <div class="device-heading"><h3>창문</h3><span class="device-connection" id="windowConnection">연결 안 됨</span></div>
+          <div class="value" id="window">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</div>
+          <button type="button" id="windowOpenButton" onclick="sendWindowCommand('open')" disabled>창문 열기</button>
+          <button type="button" class="stop" id="windowCloseButton" onclick="sendWindowCommand('close')" disabled>창문 닫기</button>
+          <p class="status" id="windowCommandMessage">버튼을 누르면 명령이 Firebase로 전송됩니다.</p>
         </div>
         <div class="card device-card device-unknown" id="fanCard">
           <div class="device-heading"><h3>선풍기</h3><span class="device-connection" id="fanConnection">연결 안 됨</span></div>
-          <div class="value" id="fan">--</div>
-          <button type="button" onclick="sendDeviceCommand('fan', 'on')">선풍기 켜기</button>
-          <button type="button" class="stop" onclick="sendDeviceCommand('fan', 'off')">선풍기 끄기</button>
-          <p class="status" id="fanCommandMessage">장치 상태를 확인하고 있습니다.</p>
+          <div class="value" id="fan">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</div>
+          <button type="button" id="fanOnButton" onclick="sendDeviceCommand('fan', 'on')" disabled>선풍기 켜기</button>
+          <button type="button" class="stop" id="fanOffButton" onclick="sendDeviceCommand('fan', 'off')" disabled>선풍기 끄기</button>
+          <p class="status" id="fanCommandMessage">버튼을 누르면 명령이 Firebase로 전송됩니다.</p>
         </div>
-        <div class="card device-card device-unknown" id="windowCard">
-          <div class="device-heading"><h3>창문 원격 제어</h3><span class="device-connection" id="windowConnection">연결 안 됨</span></div>
-          <div class="value" id="windowControlStatus">연결 안 됨</div>
-          <button type="button" onclick="sendWindowCommand('open')">창문 열기</button>
-          <button type="button" class="stop" onclick="sendWindowCommand('close')">창문 닫기</button>
-          <p class="status" id="windowCommandMessage">명령을 선택하면 Firebase로 전송합니다.</p>
+        <div class="card device-card device-unknown" id="humidifierCard">
+          <div class="device-heading"><h3>가습기</h3><span class="device-connection" id="humidifierConnection">연결 안 됨</span></div>
+          <div class="value" id="humidifier">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</div>
+          <button type="button" id="humidifierOnButton" onclick="sendDeviceCommand('humidifier', 'on')" disabled>가습기 켜기</button>
+          <button type="button" class="stop" id="humidifierOffButton" onclick="sendDeviceCommand('humidifier', 'off')" disabled>가습기 끄기</button>
+          <p class="status" id="humidifierCommandMessage">버튼을 누르면 명령이 Firebase로 전송됩니다.</p>
         </div>
       </div>
     </div>
@@ -329,22 +350,14 @@
         현재 위치 공유가 시작되지 않았습니다.
       </p>
 
-      <button id="startButton" onclick="startLocationShare()">
+      <button id="shareToggleButton" onclick="toggleLocationShare()">
         위치 공유 시작
       </button>
 
-      <button id="stopButton" class="stop"
-        onclick="stopLocationShare()" disabled>
-        위치 공유 종료
-      </button>
-
-      <div class="notice" id="shareNotice">
-        위치 공유 대기 중
+      <div class="notice" id="shareNotice" hidden></div>
+      <div class="notice" id="shareInstruction">
+        위치 공유를 시작하지 않아도 등록된 집 위치는 지도에서 확인할 수 있습니다. 현재 위치는 위치 공유를 시작했을 때만 표시됩니다.
       </div>
-      <p class="status">
-        위치 공유를 시작하지 않아도 등록된 집 위치는 지도에서 확인할 수 있습니다.
-        현재 위치는 위치 공유를 시작했을 때만 표시됩니다.
-      </p>
       <div id="mapArea">
         <p>위도: <span id="latitude">--</span></p>
         <p>경도: <span id="longitude">--</span></p>
@@ -360,14 +373,14 @@
           등록 위치 삭제
         </button>
 
-        <p class="status" id="houseStatus">
-          등록된 집 위치가 없습니다.
-        </p>
-
         <p class="value">
           집과의 거리:
           <span id="distanceFromHome">--</span>
           <span class="unit">km</span>
+        </p>
+
+        <p class="status" id="houseStatus">
+          등록된 집 위치가 없습니다.
         </p>
 
         <button type="button" id="mapToggleButton" onclick="toggleMap()">▼ 지도 보기</button>
@@ -784,6 +797,8 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 
       if (!allowedDevices.includes(device)) return;
       if (command !== "on" && command !== "off") return;
+      const requestedButton = document.getElementById(device + (command === "on" ? "OnButton" : "OffButton"));
+      if (!requestedButton || requestedButton.disabled) return;
 
       const message = document.getElementById(device + "CommandMessage");
       const deviceName = device === "humidifier" ? "가습기" : "선풍기";
@@ -813,32 +828,42 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
       }
     }
 
-    // 장치 상태에 따라 항목 전체 배경색과 오른쪽 연결 문구 갱신
+    // 장치 상태와 연결 여부에 따라 카드 색상 및 제어 버튼 갱신
     function updateDeviceDisplay(device, value, connected = true) {
       const card = document.getElementById(device + "Card");
-      const valueElement = document.getElementById(device);
+      const valueElement = document.getElementById(device === "window" ? "window" : device);
       const connectionElement = document.getElementById(device + "Connection");
+      const onButton = document.getElementById(device === "window" ? "windowOpenButton" : device + "OnButton");
+      const offButton = document.getElementById(device === "window" ? "windowCloseButton" : device + "OffButton");
       const normalized = value === null || value === undefined
         ? ""
         : String(value).trim().toLowerCase();
 
       const onValues = ["on", "true", "1", "켜짐", "작동 중", "작동중", "운전", "running", "open", "opened", "열림"];
       const offValues = ["off", "false", "0", "꺼짐", "정지", "중지", "stopped", "closed", "close", "닫힘"];
+      const isOn = onValues.includes(normalized);
+      const isOff = offValues.includes(normalized);
 
       card.classList.remove("device-on", "device-off", "device-unknown");
 
-      if (!connected || (!onValues.includes(normalized) && !offValues.includes(normalized))) {
+      if (!connected || (!isOn && !isOff)) {
         card.classList.add("device-unknown");
-        valueElement.textContent = "연결 안 됨";
+        valueElement.textContent = "연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.";
         connectionElement.textContent = "연결 안 됨";
-      } else if (onValues.includes(normalized)) {
+        onButton.disabled = true;
+        offButton.disabled = true;
+      } else if (isOn) {
         card.classList.add("device-on");
         valueElement.textContent = device === "window" ? "열림" : "켜짐";
         connectionElement.textContent = "연결됨";
+        onButton.disabled = true;
+        offButton.disabled = false;
       } else {
         card.classList.add("device-off");
         valueElement.textContent = device === "window" ? "닫힘" : "꺼짐";
         connectionElement.textContent = "연결됨";
+        onButton.disabled = false;
+        offButton.disabled = true;
       }
     }
 
@@ -846,12 +871,11 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     // ESP32/라즈베리파이 쪽에서는 windowCommand 값을 읽어 모터를 제어해야 합니다.
     async function sendWindowCommand(command) {
       if (command !== "open" && command !== "close") return;
+      const requestedButton = document.getElementById(command === "open" ? "windowOpenButton" : "windowCloseButton");
+      if (!requestedButton || requestedButton.disabled) return;
 
       const label = command === "open" ? "열기" : "닫기";
-      const status = document.getElementById("windowControlStatus");
       const message = document.getElementById("windowCommandMessage");
-
-      status.textContent = "전송 중";
       message.textContent = "창문 " + label + " 명령을 전송하고 있습니다.";
 
       try {
@@ -868,11 +892,9 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
           throw new Error("Firebase 명령 전송 실패: " + response.status);
         }
 
-        status.textContent = command === "open" ? "열기 명령 전송" : "닫기 명령 전송";
         message.textContent = "Firebase에 창문 " + label + " 명령을 보냈습니다. 실제 작동 여부는 장치 응답을 확인해야 합니다.";
       } catch (error) {
-        status.textContent = "전송 실패";
-        message.textContent = error.message;
+        message.textContent = "명령 전송 실패: " + error.message;
         console.error(error);
       }
     }
@@ -1013,6 +1035,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
         ) {
           document.getElementById("shareNotice").textContent =
             "현재 위치를 공유하고 있는 사용자가 있습니다.";
+          document.getElementById("shareNotice").hidden = false;
         } else if (
           data &&
           data.active === true &&
@@ -1022,9 +1045,10 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
         ) {
           document.getElementById("shareNotice").textContent =
             "이 기기의 이전 공유 기록이 남아 있습니다. 다시 공유를 시작할 수 있습니다.";
+          document.getElementById("shareNotice").hidden = false;
         } else if (!isSharing) {
-          document.getElementById("shareNotice").textContent =
-            "현재 위치 공유 가능";
+          document.getElementById("shareNotice").textContent = "";
+          document.getElementById("shareNotice").hidden = true;
         }
 
       } catch (error) {
@@ -1102,6 +1126,15 @@ function displayLocation(position) {
   });
 }
 
+    // 하나의 버튼으로 위치 공유 시작/종료 전환
+    async function toggleLocationShare() {
+      if (isSharing) {
+        await stopLocationShare();
+      } else {
+        await startLocationShare();
+      }
+    }
+
     // 위치 공유 시작
     async function startLocationShare() {
       if (!navigator.geolocation) {
@@ -1120,6 +1153,7 @@ function displayLocation(position) {
         if (!acquired) {
           document.getElementById("shareNotice").textContent =
             "현재 위치를 공유하고 있는 사용자가 있습니다.";
+          document.getElementById("shareNotice").hidden = false;
 
           document.getElementById("locationStatus").textContent =
             "다른 사용자의 공유가 끝날 때까지 기다려 주세요.";
@@ -1130,13 +1164,17 @@ function displayLocation(position) {
         isSharing = true;
         showMap();
         await loadHouseLocation();
-        document.getElementById("startButton").disabled = true;
-        document.getElementById("stopButton").disabled = false;
+        const shareToggleButton = document.getElementById("shareToggleButton");
+        shareToggleButton.textContent = "위치 공유 종료";
+        shareToggleButton.classList.add("stop");
+        shareToggleButton.disabled = false;
+        document.getElementById("shareNotice").hidden = false;
         document.getElementById("houseButton").disabled = false;
         document.getElementById("clearHouseButton").disabled = !houseLocation;
 
         document.getElementById("shareNotice").textContent =
           "내 위치를 공유하고 있습니다.";
+        document.getElementById("shareNotice").hidden = false;
 
         document.getElementById("locationStatus").textContent =
           "브라우저 위치 권한을 확인하고 있습니다.";
@@ -1232,14 +1270,16 @@ function displayLocation(position) {
         map.setView([houseLocation.latitude, houseLocation.longitude], 15);
       }
 
-      document.getElementById("startButton").disabled = false;
-      document.getElementById("stopButton").disabled = true;
+      const shareToggleButton = document.getElementById("shareToggleButton");
+      shareToggleButton.textContent = "위치 공유 시작";
+      shareToggleButton.classList.remove("stop");
+      shareToggleButton.disabled = false;
 
       document.getElementById("locationStatus").textContent =
         "위치 공유가 종료되었습니다.";
 
-      document.getElementById("shareNotice").textContent =
-        "위치 공유 대기 중";
+      document.getElementById("shareNotice").textContent = "";
+      document.getElementById("shareNotice").hidden = true;
 
       try {
         const response = await fetch(LOCATION_URL, {
@@ -1286,6 +1326,8 @@ function displayLocation(position) {
 
     // 집 위치 관리는 위치 공유 여부와 관계없이 가능
     document.getElementById("houseButton").disabled = false;
+    document.getElementById("shareToggleButton").textContent = "위치 공유 시작";
+    document.getElementById("shareNotice").hidden = true;
 
     // 처음 실행: 위치 공유 여부와 관계없이 지도와 등록된 집 위치 표시
     initializeMap();
