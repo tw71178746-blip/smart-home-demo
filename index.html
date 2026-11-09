@@ -135,11 +135,18 @@
       margin-bottom: 12px;
     }
 
-    .device-connection {
-      flex-shrink: 0;
+    .device-status {
+      min-height: 18px;
+      margin-top: 12px;
+      margin-bottom: 0;
       font-size: 12px;
-      color: #e2e8f0;
-      text-align: right;
+      line-height: 1.4;
+      text-align: left;
+    }
+
+    .device-connection {
+      color: #94a3b8;
+      font-size: 12px;
     }
 
     .device-card .value {
@@ -329,25 +336,25 @@
       <h2 class="section-heading">장치</h2>
       <div class="grid">
         <div class="card device-card device-unknown" id="windowCard">
-          <div class="device-heading"><h3>창문</h3><span class="device-connection" id="windowConnection">연결 안 됨</span></div>
+          <div class="device-heading"><h3>창문</h3></div>
           <div class="value" id="window">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</div>
           <button type="button" id="windowOpenButton" onclick="sendWindowCommand('open')" disabled>창문 열기</button>
           <button type="button" class="stop" id="windowCloseButton" onclick="sendWindowCommand('close')" disabled>창문 닫기</button>
-          <p class="status" id="windowCommandMessage">버튼을 누르면 명령이 Firebase로 전송됩니다.</p>
+          <p class="status device-status"><span class="device-connection" id="windowConnection">연결 안 됨</span></p>
         </div>
         <div class="card device-card device-unknown" id="fanCard">
-          <div class="device-heading"><h3>선풍기</h3><span class="device-connection" id="fanConnection">연결 안 됨</span></div>
+          <div class="device-heading"><h3>선풍기</h3></div>
           <div class="value" id="fan">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</div>
           <button type="button" id="fanOnButton" onclick="sendDeviceCommand('fan', 'on')" disabled>선풍기 켜기</button>
           <button type="button" class="stop" id="fanOffButton" onclick="sendDeviceCommand('fan', 'off')" disabled>선풍기 끄기</button>
-          <p class="status" id="fanCommandMessage">버튼을 누르면 명령이 Firebase로 전송됩니다.</p>
+          <p class="status device-status"><span class="device-connection" id="fanConnection">연결 안 됨</span></p>
         </div>
         <div class="card device-card device-unknown" id="humidifierCard">
-          <div class="device-heading"><h3>가습기</h3><span class="device-connection" id="humidifierConnection">연결 안 됨</span></div>
+          <div class="device-heading"><h3>가습기</h3></div>
           <div class="value" id="humidifier">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</div>
           <button type="button" id="humidifierOnButton" onclick="sendDeviceCommand('humidifier', 'on')" disabled>가습기 켜기</button>
           <button type="button" class="stop" id="humidifierOffButton" onclick="sendDeviceCommand('humidifier', 'off')" disabled>가습기 끄기</button>
-          <p class="status" id="humidifierCommandMessage">버튼을 누르면 명령이 Firebase로 전송됩니다.</p>
+          <p class="status device-status"><span class="device-connection" id="humidifierConnection">연결 안 됨</span></p>
         </div>
       </div>
     </div>
@@ -355,7 +362,7 @@
     <div class="section card location-card">
       <h2>사용자 위치 공유</h2>
 
-      <p class="status" id="locationStatus">
+      <p class="notice" id="locationStatus">
         현재 위치 공유가 시작되지 않았습니다.
       </p>
 
@@ -364,9 +371,6 @@
       </button>
 
       <div class="notice" id="shareNotice" hidden></div>
-      <div class="notice" id="shareInstruction">
-        위치 공유를 시작하지 않아도 등록된 집 위치는 지도에서 확인할 수 있습니다. 현재 위치는 위치 공유를 시작했을 때만 표시됩니다.
-      </div>
       <div id="mapArea">
         <p>위도: <span id="latitude">--</span></p>
         <p>경도: <span id="longitude">--</span></p>
@@ -388,7 +392,7 @@
           <span class="unit">km</span>
         </p>
 
-        <p class="status" id="houseStatus">
+        <p class="notice" id="houseStatus">
           등록된 집 위치가 없습니다.
         </p>
 
@@ -396,6 +400,9 @@
         <div id="mapContainer" hidden>
           <div id="map"></div>
         </div>
+      </div>
+      <div class="notice" id="shareInstruction">
+        위치 공유를 시작하지 않아도 등록된 집 위치는 지도에서 확인할 수 있습니다. 현재 위치는 위치 공유를 시작했을 때만 표시됩니다.
       </div>
     </div>
 
@@ -809,11 +816,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
       const requestedButton = document.getElementById(device + (command === "on" ? "OnButton" : "OffButton"));
       if (!requestedButton || requestedButton.disabled) return;
 
-      const message = document.getElementById(device + "CommandMessage");
       const deviceName = device === "humidifier" ? "가습기" : "선풍기";
-      const actionName = command === "on" ? "켜기" : "끄기";
-
-      message.textContent = deviceName + " " + actionName + " 명령 전송 중...";
 
       try {
         const response = await fetch(DEVICE_COMMAND_URL + "/" + device + ".json", {
@@ -829,11 +832,8 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
           throw new Error("Firebase 명령 전송 실패: " + response.status);
         }
 
-        message.textContent =
-          deviceName + " " + actionName + " 명령을 Firebase에 보냈습니다. 실제 작동 상태는 장치 응답을 기다립니다.";
       } catch (error) {
-        message.textContent = "명령 전송 실패: " + error.message;
-        console.error(error);
+        console.error(deviceName + " 명령 전송 실패:", error);
       }
     }
 
@@ -884,8 +884,6 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
       if (!requestedButton || requestedButton.disabled) return;
 
       const label = command === "open" ? "열기" : "닫기";
-      const message = document.getElementById("windowCommandMessage");
-      message.textContent = "창문 " + label + " 명령을 전송하고 있습니다.";
 
       try {
         const response = await fetch(WINDOW_COMMAND_URL, {
@@ -901,10 +899,8 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
           throw new Error("Firebase 명령 전송 실패: " + response.status);
         }
 
-        message.textContent = "Firebase에 창문 " + label + " 명령을 보냈습니다. 실제 작동 여부는 장치 응답을 확인해야 합니다.";
       } catch (error) {
-        message.textContent = "명령 전송 실패: " + error.message;
-        console.error(error);
+        console.error("창문 명령 전송 실패:", error);
       }
     }
 
