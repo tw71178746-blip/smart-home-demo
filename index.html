@@ -18,67 +18,286 @@
     body {
       margin: 0;
       padding: 24px;
-      background: #dce9d8;
-      color: #243b2d;
+      background: #dce8d8;
+      color: #203326;
       font-family: Arial, sans-serif;
     }
 
-    .container { max-width: 1100px; margin: auto; }
-    h1 { margin-bottom: 6px; letter-spacing: 2px; }
-    .subtitle { color: #58745f; margin-bottom: 30px; }
-    .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-    .section-heading { margin: 0 0 14px; font-size: 20px; color: #294b35; }
-    .dashboard-section { margin-top: 24px; }
-    .dashboard-section .card { min-width: 0; padding: 18px; }
-    .temperature-humidity { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; min-width: 0; }
-    .temperature-humidity .card { padding: 18px; }
+    .container {
+      max-width: 1100px;
+      margin: auto;
+    }
 
-    .location-card { margin-top: 24px; background: #c8ddc5; border-color: #a9c5a7; }
-    .location-card .notice { background: #6b7280; border: 1px solid #9ca3af; color: #ffffff; }
-    #mapContainer { background: #6b7280; border-radius: 12px; padding: 8px; }
+    h1 {
+      margin-bottom: 6px;
+      letter-spacing: 2px;
+    }
 
-    .card { background: #f0f6ed; padding: 22px; border-radius: 14px; border: 1px solid #b8cdb5; }
-    .card h3 { color: #294b35; font-size: 15px; margin-top: 0; }
-    .value { font-size: 30px; font-weight: bold; }
-    .device-card { transition: background-color 0.2s ease; }
-    .device-card.device-on { background: #14532d; border-color: #22c55e; }
-    .device-card.device-off { background: #7f1d1d; border-color: #ef4444; }
-    .device-card.device-unknown { background: #6b7280; border-color: #9ca3af; }
-    .device-heading { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
-    .device-heading h3 { margin-bottom: 12px; }
-    .device-status { min-height: 18px; margin-top: 12px; margin-bottom: 0; font-size: 12px; line-height: 1.4; text-align: left; }
-    .device-connection { color: #e5e7eb; font-size: 12px; }
-    .device-card .value { color: #ffffff; margin-bottom: 10px; }
-    .unit { font-size: 16px; color: #e5e7eb; }
-    .section { margin-top: 28px; }
+    .subtitle {
+      color: #d4dfd2;
+      margin-bottom: 30px;
+    }
 
-    button { padding: 12px 18px; border: none; border-radius: 8px; background: #2563eb; color: white; font-size: 15px; cursor: pointer; margin: 5px 5px 5px 0; }
-    button:hover { background: #1d4ed8; }
-    button:disabled { background: #2563eb; opacity: 0.55; cursor: not-allowed; }
-    button:disabled:hover { background: #2563eb; }
-    button.stop:disabled { background: #dc2626; opacity: 0.55; cursor: not-allowed; }
-    button.stop:disabled:hover { background: #dc2626; }
-    #mapContainer[hidden] { display: none; }
-    .stop { background: #dc2626; }
-    .stop:hover { background: #b91c1c; }
-    .status { color: #58745f; margin: 12px 0; line-height: 1.6; }
-    #map { width: 100%; height: 350px; border-radius: 12px; margin-top: 15px; background: #334155; }
-    .notice { padding: 14px; background: #e2eee0; border: 1px solid #bfd2bb; color: #294b35; border-radius: 8px; margin-top: 12px; line-height: 1.5; }
-    .cancel-marker { background: #dc2626; color: white; border: none; border-radius: 5px; padding: 5px 9px; margin-top: 7px; cursor: pointer; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .section-heading {
+      margin: 0 0 14px;
+      font-size: 20px;
+      color: #294532;
+    }
+
+    .dashboard-section {
+      margin-top: 24px;
+    }
+
+    .dashboard-section .card {
+      min-width: 0;
+      padding: 18px;
+    }
+
+    .temperature-humidity {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      min-width: 0;
+    }
+
+    .temperature-humidity .card {
+      padding: 18px;
+    }
+
+    .location-card {
+      margin-top: 24px;
+      background: #526f58;
+      border-color: #9ca99b;
+    }
+
+    .location-card .notice {
+      background: #385440;
+      border: 1px solid #9ca99b;
+    }
+
+    #mapContainer {
+      background: #3b5741;
+      border-radius: 12px;
+      padding: 8px;
+    }
+
+    .card {
+      background: #526f58;
+      padding: 22px;
+      border-radius: 14px;
+      border: 1px solid #9ca99b;
+      color: #f1f5ed;
+    }
+
+    .card h3 {
+      color: #ffffff;
+      font-size: 15px;
+      margin-top: 0;
+    }
+
+    .value {
+      font-size: 30px;
+      font-weight: bold;
+    }
+
+    .device-card {
+      transition: background-color 0.2s ease;
+    }
+
+    .device-card.device-on {
+      background: #426b49;
+      border-color: #a4c99a;
+    }
+
+    .device-card.device-off {
+      background: #76534f;
+      border-color: #d89b91;
+    }
+
+    .device-card.device-unknown {
+      background: #3b5741;
+      border-color: #a5b1a2;
+    }
+
+    .device-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .device-heading h3 {
+      margin-bottom: 12px;
+    }
+
+    .device-status {
+      min-height: 18px;
+      margin-top: 12px;
+      margin-bottom: 0;
+      font-size: 12px;
+      line-height: 1.4;
+      text-align: left;
+    }
+
+    .device-connection {
+      color: #d4dfd2;
+      font-size: 12px;
+    }
+
+    .device-card .value {
+      color: #ffffff;
+      margin-bottom: 10px;
+    }
+
+    .unit {
+      font-size: 16px;
+      color: #d4dfd2;
+    }
+
+    .section {
+      margin-top: 28px;
+    }
+
+    button {
+      padding: 12px 18px;
+      border: none;
+      border-radius: 8px;
+      background: #2563eb;
+      color: white;
+      font-size: 15px;
+      cursor: pointer;
+      margin: 5px 5px 5px 0;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    button:disabled {
+      background: #2563eb;
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    button:disabled:hover {
+      background: #2563eb;
+    }
+
+    button.stop:disabled {
+      background: #dc2626;
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    button.stop:disabled:hover {
+      background: #dc2626;
+    }
+
+    #mapContainer[hidden] {
+      display: none;
+    }
+
+    .stop {
+      background: #dc2626;
+    }
+
+    .stop:hover {
+      background: #b91c1c;
+    }
+
+    .status {
+      color: #d4dfd2;
+      margin: 12px 0;
+      line-height: 1.6;
+    }
+
+    #map {
+      width: 100%;
+      height: 350px;
+      border-radius: 12px;
+      margin-top: 15px;
+      background: #385440;
+      border: 1px solid #9ca99b;
+    }
+
+    .notice {
+      padding: 14px;
+      background: #385440;
+      border: 1px solid #9ca99b;
+      border-radius: 8px;
+      margin-top: 12px;
+      line-height: 1.5;
+      color: #f1f5ed;
+    }
+
+    .cancel-marker {
+      background: #dc2626;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      padding: 5px 9px;
+      margin-top: 7px;
+      cursor: pointer;
+    }
 
     @media (max-width: 600px) {
-      body { padding: 12px; }
-      .container { width: 100%; }
-      h1 { font-size: 25px; }
-      .subtitle { margin-bottom: 20px; font-size: 13px; }
-      .grid { grid-template-columns: minmax(0, 1fr); gap: 10px; }
-      .temperature-humidity { gap: 10px; }
-      .temperature-humidity .card { padding: 12px; }
-      .dashboard-section { margin-top: 20px; }
-      .dashboard-section .card, .location-card { padding: 15px; }
-      .value { font-size: 26px; }
-      button { width: 100%; margin: 5px 0; }
-      #map { height: 260px; }
+      body {
+        padding: 12px;
+      }
+
+      .container {
+        width: 100%;
+      }
+
+      h1 {
+        font-size: 25px;
+      }
+
+      .subtitle {
+        margin-bottom: 20px;
+        font-size: 13px;
+      }
+
+      .grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+      }
+
+      .temperature-humidity {
+        gap: 10px;
+      }
+
+      .temperature-humidity .card {
+        padding: 12px;
+      }
+
+      .dashboard-section {
+        margin-top: 20px;
+      }
+
+      .dashboard-section .card,
+      .location-card {
+        padding: 15px;
+      }
+
+      .value {
+        font-size: 26px;
+      }
+
+      button {
+        width: 100%;
+        margin: 5px 0;
+      }
+
+      #map {
+        height: 260px;
+      }
     }
   </style>
 </head>
@@ -182,9 +401,9 @@
         </p>
 
         <button type="button" id="mapToggleButton" onclick="toggleMap()">▼ 지도 보기</button>
-        <p class="notice" id="currentLocationInstruction" style="background:#6b7280; border-color:#9ca3af; color:#ffffff;">
+        <div class="notice" id="shareInstruction">
           현재 위치는 위치 공유를 시작한 경우에만 표시됩니다.
-        </p>
+        </div>
         <div id="mapContainer" hidden>
           <div id="map"></div>
         </div>
