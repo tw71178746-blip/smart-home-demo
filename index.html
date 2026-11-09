@@ -213,11 +213,31 @@
       <div class="notice" id="shareNotice">
         위치 공유 대기 중
       </div>
+      <div id="mapArea" style="display: none;">
+  <p>위도: <span id="latitude">--</span></p>
+  <p>경도: <span id="longitude">--</span></p>
 
-      <p>위도: <span id="latitude">--</span></p>
-      <p>경도: <span id="longitude">--</span></p>
+      <div class="notice">
+    지도를 클릭해서 집 위치를 선택하세요.
+  </div>
 
-      <div id="map"></div>
+  <button id="saveHouseButton"
+    onclick="saveHouseLocation()" disabled>
+    집 위치 등록
+  </button>
+
+  <p class="status" id="houseStatus">
+    등록된 집 위치가 없습니다.
+  </p>
+
+  <p class="value">
+    집과의 거리:
+    <span id="distanceFromHome">--</span>
+    <span class="unit">km</span>
+  </p>
+
+  <div id="map"></div>
+</div>
     </div>
 
     <p class="status" id="firebaseStatus">
@@ -242,6 +262,16 @@
     let map = null;
     let locationMarker = null;
     let watchId = null;
+    // 집 위치 관련 변수
+    let houseMarker = null;
+    let pendingHouseMarker = null;
+
+    let houseLocation = null;
+    let pendingHouseLocation = null;
+    let lastPosition = null;
+
+// Firebase 집 위치 저장 주소
+const HOUSE_URL = FIREBASE_URL + "/houseLocation.json";
     let heartbeatTimer = null;
     let statusTimer = null;
 
@@ -262,18 +292,59 @@
     locationUserId = createUserId();
 
     // 지도 초기화
-    function initializeMap() {
-      map = L.map("map").setView([37.5665, 126.9780], 13);
+    // 지도 초기화
+function initializeMap() {
+  if (map !== null) return;
 
-      L.tileLayer(
-        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        {
-          attribution: "&copy; OpenStreetMap contributors"
-        }
-      ).addTo(map);
+  map = L.map("map").setView([37.5665, 126.9780], 13);
+
+  L.tileLayer(
+    "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    {
+      attribution: "&copy; OpenStreetMap contributors"
+    }
+  ).addTo(map);
+
+  // 지도 클릭 시 집 위치 후보 선택
+  map.on("click", function(event) {
+    if (!isSharing) return;
+
+    const latitude = event.latlng.lat;
+    const longitude = event.latlng.lng;
+
+    pendingHouseLocation = {
+      latitude: latitude,
+      longitude: longitude
+    };
+
+    if (pendingHouseMarker) {
+      map.removeLayer(pendingHouseMarker);
     }
 
-    initializeMap();
+    pendingHouseMarker = L.marker([
+      latitude,
+      longitude
+    ]).addTo(map);
+
+    pendingHouseMarker.bindPopup("등록할 집 위치").openPopup();
+
+    document.getElementById("saveHouseButton").disabled = false;
+
+    document.getElementById("houseStatus").textContent =
+      "집 위치 후보 선택 완료. 등록 버튼을 눌러 저장하세요.";
+  });
+}
+
+// 지도 표시
+function showMap() {
+  document.getElementById("mapArea").style.display = "block";
+
+  initializeMap();
+
+  setTimeout(function() {
+    map.invalidateSize();
+  }, 200);
+}
 
     // 지도에 위치 표시
     function updateMap(latitude, longitude) {
@@ -288,6 +359,134 @@
 
       map.setView(position, 16);
     }
+    // Firebase에 저장된 집 위치 가져오기
+async function loadHouseLocation() {
+  try {
+    const response = await fetch(HOUSE_URL);
+
+    if (!response.ok) {
+      throw new Error("집 위치 확인 실패");
+    }
+
+    houseLocation = await response.json();
+
+    if (houseLocation &&
+        houseLocation.latitude !== undefined &&
+        houseLocation.longitude !== undefined) {
+
+      showHouseMarker();
+
+      document.getElementById("houseStatus").textContent =
+        "집 위치가 등록되어 있습니다.";
+
+    } else {
+      houseLocation = null;
+
+      document.getElementById("houseStatus").textContent =
+        "등록된 집 위치가 없습니다.";
+    }
+
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+// 집 위치 지도 표시
+function showHouseMarker() {
+  if (!houseLocation || !map) return;
+
+  if (houseMarker) {
+    map.removeLayer(houseMarker);
+  }
+
+  houseMarker = L.marker([
+    houseLocation.latitude,
+    houseLocation.longitude
+  ]).addTo(map);
+
+  houseMarker.bindPopup("등록된 집 위치");
+}
+
+// 집 위치 Firebase 저장
+async function saveHouseLocation() {
+  if (!pendingHouseLocation) {
+    alert("먼저 지도에서 집 위치를 선택하세요.");
+    return;
+  }
+
+  try {
+    const response = await fetch(HOUSE_URL, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        latitude: pendingHouseLocation.latitude,
+        longitude: pendingHouseLocation.longitude,
+        lastUpdate: Date.now()
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error("집 위치 저장 실패");
+    }
+
+    houseLocation = pendingHouseLocation;
+    pendingHouseLocation = null;
+
+    if (pendingHouseMarker) {
+      map.removeLayer(pendingHouseMarker);
+      pendingHouseMarker = null;
+    }
+
+    document.getElementById("saveHouseButton").disabled = true;
+
+    showHouseMarker();
+
+    document.getElementById("houseStatus").textContent =
+      "집 위치가 Firebase에 저장되었습니다.";
+
+    // 현재 위치가 있다면 거리도 다시 계산
+    if (lastPosition) {
+      sendLocation(
+        lastPosition.latitude,
+        lastPosition.longitude
+      );
+    }
+
+    alert("집 위치 등록 성공!");
+
+  } catch (error) {
+    alert(error.message);
+    console.error(error);
+  }
+}
+
+// 두 좌표 사이의 직선거리 계산
+function calculateDistance(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+
+  const toRad = function(value) {
+    return value * Math.PI / 180;
+  };
+
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(toRad(lat1)) *
+    Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(
+    Math.sqrt(a),
+    Math.sqrt(1 - a)
+  );
+
+  return R * c;
+}
 
     // Firebase 센서 데이터 가져오기
     async function getData() {
@@ -433,47 +632,74 @@
     }
 
     // 실시간 위치 Firebase 전송
-    async function sendLocation(latitude, longitude) {
-      if (!isSharing) return;
+    // 실시간 위치 Firebase 전송
+async function sendLocation(latitude, longitude) {
+  if (!isSharing) return;
 
-      const response = await fetch(LOCATION_URL, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          latitude: latitude,
-          longitude: longitude,
-          lastUpdate: Date.now(),
-          expiresAt: Date.now() + SHARE_TIME
-        })
-      });
+  let distance = null;
 
-      if (!response.ok) {
-        throw new Error("위치 전송 실패");
-      }
-    }
+  if (houseLocation) {
+    distance = calculateDistance(
+      latitude,
+      longitude,
+      houseLocation.latitude,
+      houseLocation.longitude
+    );
+
+    document.getElementById("distanceFromHome").textContent =
+      distance.toFixed(2);
+  } else {
+    document.getElementById("distanceFromHome").textContent = "--";
+  }
+
+  const response = await fetch(LOCATION_URL, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      latitude: latitude,
+      longitude: longitude,
+      distanceFromHome: distance === null
+        ? null
+        : Number(distance.toFixed(2)),
+      distanceUnit: "km",
+      lastUpdate: Date.now(),
+      expiresAt: Date.now() + SHARE_TIME
+    })
+  });
+
+  if (!response.ok) {
+    throw new Error("위치 전송 실패");
+  }
+}
 
     // 위치 정보를 화면에 표시
-    function displayLocation(position) {
-      const latitude = position.coords.latitude;
-      const longitude = position.coords.longitude;
+    // 위치 정보를 화면에 표시
+function displayLocation(position) {
+  const latitude = position.coords.latitude;
+  const longitude = position.coords.longitude;
 
-      document.getElementById("latitude").textContent =
-        latitude.toFixed(6);
+  lastPosition = {
+    latitude: latitude,
+    longitude: longitude
+  };
 
-      document.getElementById("longitude").textContent =
-        longitude.toFixed(6);
+  document.getElementById("latitude").textContent =
+    latitude.toFixed(6);
 
-      updateMap(latitude, longitude);
+  document.getElementById("longitude").textContent =
+    longitude.toFixed(6);
 
-      sendLocation(latitude, longitude).catch(error => {
-        document.getElementById("locationStatus").textContent =
-          error.message;
+  updateMap(latitude, longitude);
 
-        console.error(error);
-      });
-    }
+  sendLocation(latitude, longitude).catch(error => {
+    document.getElementById("locationStatus").textContent =
+      error.message;
+
+    console.error(error);
+  });
+}
 
     // 위치 공유 시작
     async function startLocationShare() {
@@ -501,7 +727,8 @@
         }
 
         isSharing = true;
-
+        showMap();
+        loadHouseLocation();
         document.getElementById("startButton").disabled = true;
         document.getElementById("stopButton").disabled = false;
 
@@ -574,7 +801,14 @@
       }
 
       isSharing = false;
+      // 지도 숨기기
+      document.getElementById("mapArea").style.display = "none";
 
+      pendingHouseLocation = null;
+      lastPosition = null;
+
+      document.getElementById("distanceFromHome").textContent = "--";
+      document.getElementById("saveHouseButton").disabled = true;
       document.getElementById("startButton").disabled = false;
       document.getElementById("stopButton").disabled = true;
 
