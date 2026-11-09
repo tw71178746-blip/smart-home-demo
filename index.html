@@ -400,6 +400,10 @@
         </p>
 
         <button type="button" id="mapToggleButton" onclick="toggleMap()">▼ 지도 보기</button>
+
+        <p class="notice" id="currentLocationInstruction" style="background:#000000; border-color:#334155; color:#f1f5f9;">
+          현재 위치는 위치 공유를 시작한 경우에만 표시됩니다.
+        </p>
         <div id="mapContainer" hidden>
           <div id="map"></div>
         </div>
@@ -408,10 +412,6 @@
 
     <p class="status" id="firebaseStatus">
       Firebase 연결 확인 중...
-    </p>
-
-    <p class="notice" id="currentLocationInstruction" style="background:#000000; border-color:#334155; color:#f1f5f9;">
-      현재 위치는 위치 공유를 시작한 경우에만 표시됩니다.
     </p>
 
   </div>
