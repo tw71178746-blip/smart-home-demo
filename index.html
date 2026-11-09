@@ -318,16 +318,16 @@
           </div>
         </div>
         <div class="card">
+          <h3>빗물 감지</h3>
+          <div class="value" id="rain">--</div>
+        </div>
+        <div class="card">
           <h3>미세먼지</h3>
           <div class="value"><span id="dust">--</span></div>
         </div>
         <div class="card">
           <h3>내부 유해가스</h3>
           <div class="value"><span id="gas">--</span></div>
-        </div>
-        <div class="card">
-          <h3>빗물 감지</h3>
-          <div class="value" id="rain">--</div>
         </div>
       </div>
     </div>
@@ -337,24 +337,24 @@
       <div class="grid">
         <div class="card device-card device-unknown" id="windowCard">
           <div class="device-heading"><h3>창문</h3></div>
-          <div class="value" id="window">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</div>
+          <div class="value" id="window"></div>
           <button type="button" id="windowOpenButton" onclick="sendWindowCommand('open')" disabled>창문 열기</button>
           <button type="button" class="stop" id="windowCloseButton" onclick="sendWindowCommand('close')" disabled>창문 닫기</button>
-          <p class="status device-status"><span class="device-connection" id="windowConnection">연결 안 됨</span></p>
+          <p class="status device-status"><span class="device-connection" id="windowConnection">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</span></p>
         </div>
         <div class="card device-card device-unknown" id="fanCard">
           <div class="device-heading"><h3>선풍기</h3></div>
-          <div class="value" id="fan">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</div>
+          <div class="value" id="fan"></div>
           <button type="button" id="fanOnButton" onclick="sendDeviceCommand('fan', 'on')" disabled>선풍기 켜기</button>
           <button type="button" class="stop" id="fanOffButton" onclick="sendDeviceCommand('fan', 'off')" disabled>선풍기 끄기</button>
-          <p class="status device-status"><span class="device-connection" id="fanConnection">연결 안 됨</span></p>
+          <p class="status device-status"><span class="device-connection" id="fanConnection">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</span></p>
         </div>
         <div class="card device-card device-unknown" id="humidifierCard">
           <div class="device-heading"><h3>가습기</h3></div>
-          <div class="value" id="humidifier">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</div>
+          <div class="value" id="humidifier"></div>
           <button type="button" id="humidifierOnButton" onclick="sendDeviceCommand('humidifier', 'on')" disabled>가습기 켜기</button>
           <button type="button" class="stop" id="humidifierOffButton" onclick="sendDeviceCommand('humidifier', 'off')" disabled>가습기 끄기</button>
-          <p class="status device-status"><span class="device-connection" id="humidifierConnection">연결 안 됨</span></p>
+          <p class="status device-status"><span class="device-connection" id="humidifierConnection">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</span></p>
         </div>
       </div>
     </div>
@@ -857,8 +857,8 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 
       if (!connected || (!isOn && !isOff)) {
         card.classList.add("device-unknown");
-        valueElement.textContent = "연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.";
-        connectionElement.textContent = "연결 안 됨";
+        valueElement.textContent = "";
+        connectionElement.textContent = "연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.";
         onButton.disabled = true;
         offButton.disabled = true;
       } else if (isOn) {
