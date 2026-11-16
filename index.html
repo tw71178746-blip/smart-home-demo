@@ -164,6 +164,74 @@
       margin-top: 28px;
     }
 
+    .auto-control-card {
+      margin-top: 24px;
+      background: #526f58;
+      border-color: #9ca99b;
+    }
+
+    .auto-control-description {
+      color: #e1eadf;
+      line-height: 1.5;
+      margin: 0 0 16px;
+      font-size: 14px;
+    }
+
+    .auto-master-row,
+    .auto-device-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 0;
+      border-top: 1px solid rgba(241, 245, 237, 0.22);
+    }
+
+    .auto-master-row {
+      border-top: 0;
+      padding-top: 0;
+    }
+
+    .auto-device-name {
+      font-weight: bold;
+    }
+
+    .auto-device-help {
+      display: block;
+      color: #d4dfd2;
+      font-size: 12px;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    .auto-toggle {
+      min-width: 112px;
+      margin: 0;
+      flex-shrink: 0;
+      background: #426b49;
+      border: 1px solid #a4c99a;
+    }
+
+    .auto-toggle.is-off {
+      background: #76534f;
+      border-color: #d89b91;
+    }
+
+    .auto-toggle:disabled {
+      opacity: 0.55;
+    }
+
+    .auto-control-status {
+      margin: 14px 0 0;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: #385440;
+      border: 1px solid #9ca99b;
+      color: #f1f5ed;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
     button {
       padding: 12px 18px;
       border: none;
@@ -295,6 +363,17 @@
         margin: 5px 0;
       }
 
+      .auto-master-row,
+      .auto-device-row {
+        align-items: flex-start;
+      }
+
+      .auto-toggle {
+        width: auto;
+        min-width: 104px;
+        margin: 0;
+      }
+
       #map {
         height: 260px;
       }
@@ -334,6 +413,47 @@
           <div class="value"><span id="gas">--</span></div>
         </div>
       </div>
+    </div>
+
+    <div class="section card auto-control-card">
+      <h2>자동제어 설정</h2>
+      <p class="auto-control-description">
+        자동제어 설정을 라즈베리파이에 전달합니다. 실제 환경 판단과 장치 작동은 라즈베리파이에서 수행하며, 수동 제어는 항상 사용할 수 있습니다.
+      </p>
+
+      <div class="auto-master-row">
+        <div>
+          <span class="auto-device-name">전체 자동제어</span>
+          <span class="auto-device-help">전체 자동제어를 끄면 장치별 설정은 유지되고 자동 작동만 중지됩니다.</span>
+        </div>
+        <button type="button" class="auto-toggle" id="autoMasterButton" onclick="toggleAutoControl('master')">불러오는 중...</button>
+      </div>
+
+      <div class="auto-device-row">
+        <div>
+          <span class="auto-device-name">창문 자동제어</span>
+          <span class="auto-device-help">온도·습도·공기질·빗물 등 환경 정보를 기준으로 제어</span>
+        </div>
+        <button type="button" class="auto-toggle" id="autoWindowButton" onclick="toggleAutoControl('window')">불러오는 중...</button>
+      </div>
+
+      <div class="auto-device-row">
+        <div>
+          <span class="auto-device-name">선풍기 자동제어</span>
+          <span class="auto-device-help">환경 조건에 따라 자동으로 켜고 끄도록 설정</span>
+        </div>
+        <button type="button" class="auto-toggle" id="autoFanButton" onclick="toggleAutoControl('fan')">불러오는 중...</button>
+      </div>
+
+      <div class="auto-device-row">
+        <div>
+          <span class="auto-device-name">가습기 자동제어</span>
+          <span class="auto-device-help">습도 조건에 따라 자동으로 켜고 끄도록 설정</span>
+        </div>
+        <button type="button" class="auto-toggle" id="autoHumidifierButton" onclick="toggleAutoControl('humidifier')">불러오는 중...</button>
+      </div>
+
+      <p class="auto-control-status" id="autoControlStatus">Firebase에서 자동제어 설정을 확인하고 있습니다.</p>
     </div>
 
     <div class="dashboard-section">
@@ -426,6 +546,18 @@
     const LOCATION_URL = FIREBASE_URL + "/locationShare.json";
     const WINDOW_COMMAND_URL = FIREBASE_URL + "/windowCommand.json";
     const DEVICE_COMMAND_URL = FIREBASE_URL + "/deviceCommands";
+    const AUTO_CONTROL_URL = FIREBASE_URL + "/autoControl.json";
+
+    // 전체 자동제어는 기본 OFF, 장치별 설정은 기본 ON으로 저장합니다.
+    // 전체 자동제어가 OFF이면 장치별 설정값은 유지된 채 자동 작동만 멈춥니다.
+    let autoControlSettings = {
+      master: false,
+      window: true,
+      fan: true,
+      humidifier: true
+    };
+
+    let autoControlSaving = false;
 
     // 위치 공유 설정
     const SHARE_TIME = 30000;
@@ -810,6 +942,95 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
   return R * c;
 }
 
+    // Firebase의 자동제어 설정을 화면에 표시
+    function updateAutoControlDisplay(settings) {
+      if (settings && typeof settings === "object") {
+        autoControlSettings = {
+          master: settings.master === true,
+          window: settings.window !== false,
+          fan: settings.fan !== false,
+          humidifier: settings.humidifier !== false
+        };
+      }
+
+      const controls = [
+        ["master", "autoMasterButton"],
+        ["window", "autoWindowButton"],
+        ["fan", "autoFanButton"],
+        ["humidifier", "autoHumidifierButton"]
+      ];
+
+      controls.forEach(([key, buttonId]) => {
+        const button = document.getElementById(buttonId);
+        const enabled = autoControlSettings[key] === true;
+        button.textContent = key === "master"
+          ? (enabled ? "전체 자동 ON" : "전체 자동 OFF")
+          : (enabled ? "자동 ON" : "자동 OFF");
+        button.classList.toggle("is-off", !enabled);
+        button.disabled = autoControlSaving;
+      });
+
+      const status = document.getElementById("autoControlStatus");
+      if (!autoControlSettings.master) {
+        status.textContent = "전체 자동제어 OFF · 장치별 설정은 저장되어 있으며 자동 작동은 중지됩니다. 수동 제어는 가능합니다.";
+      } else {
+        const activeDevices = [];
+        if (autoControlSettings.window) activeDevices.push("창문");
+        if (autoControlSettings.fan) activeDevices.push("선풍기");
+        if (autoControlSettings.humidifier) activeDevices.push("가습기");
+        status.textContent = activeDevices.length
+          ? "전체 자동제어 ON · 자동제어 대상: " + activeDevices.join(", ")
+          : "전체 자동제어 ON · 장치별 자동제어가 모두 OFF라 자동으로 작동하는 장치가 없습니다.";
+      }
+    }
+
+    // 웹사이트는 자동제어 설정 신호만 Firebase에 기록합니다.
+    // 센서 판단과 실제 장치 작동은 라즈베리파이에서 처리합니다.
+    async function toggleAutoControl(target) {
+      const allowedTargets = ["master", "window", "fan", "humidifier"];
+      if (!allowedTargets.includes(target) || autoControlSaving) return;
+
+      const previousSettings = { ...autoControlSettings };
+      autoControlSettings[target] = !autoControlSettings[target];
+      autoControlSaving = true;
+      updateAutoControlDisplay();
+      document.getElementById("autoControlStatus").textContent = "자동제어 설정을 Firebase에 전송하고 있습니다...";
+
+      try {
+        const response = await fetch(AUTO_CONTROL_URL, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            ...autoControlSettings,
+            updatedAt: Date.now(),
+            updatedBy: "web"
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error("자동제어 설정 전송 실패: " + response.status);
+        }
+
+        autoControlSaving = false;
+        updateAutoControlDisplay();
+        const targetNames = {
+          master: "전체 자동제어",
+          window: "창문 자동제어",
+          fan: "선풍기 자동제어",
+          humidifier: "가습기 자동제어"
+        };
+        document.getElementById("autoControlStatus").textContent =
+          targetNames[target] + " 설정을 Firebase에 전송했습니다. 라즈베리파이가 설정을 확인하면 적용됩니다.";
+      } catch (error) {
+        autoControlSettings = previousSettings;
+        autoControlSaving = false;
+        updateAutoControlDisplay();
+        document.getElementById("autoControlStatus").textContent =
+          "설정 전송 실패: " + error.message;
+        console.error("자동제어 설정 전송 오류:", error);
+      }
+    }
+
     // 가습기/선풍기 원격 제어 명령을 Firebase에 전송
     // 실제 장치가 이 명령을 읽고 작동한 뒤 상태값을 Firebase에 기록해야 합니다.
     async function sendDeviceCommand(device, command) {
@@ -918,6 +1139,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
         }
 
         const data = await response.json();
+        updateAutoControlDisplay(data && data.autoControl ? data.autoControl : null);
 
         if (!data) {
           updateDeviceDisplay("humidifier", null, false);
@@ -1347,6 +1569,7 @@ function displayLocation(position) {
 
     // 처음 실행: 위치 공유 여부와 관계없이 지도와 등록된 집 위치 표시
     initializeMap();
+    updateAutoControlDisplay();
     document.getElementById("mapContainer").hidden = true;
     document.getElementById("mapToggleButton").textContent = "▼ 지도 보기";
     document.getElementById("clearHouseButton").disabled = true;
