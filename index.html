@@ -1141,10 +1141,13 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
         const button = document.getElementById(buttonId);
         const isMaster = key === "master";
         const settingEnabled = isMaster ? masterAutoEnabled : autoControlSettings[key] === true;
+        // 개별 토글의 위치/표시는 Firebase의 개별 설정값을 그대로 반영합니다.
+        // 전체 OFF 상태에서도 설정값은 보존하고, 토글만 비활성화합니다.
+        const toggleOn = settingEnabled;
         const effectiveAuto = isMaster ? settingEnabled : (masterAutoEnabled && settingEnabled);
-        button.classList.toggle("is-on", effectiveAuto);
-        button.classList.toggle("is-off", !effectiveAuto);
-        button.setAttribute("aria-pressed", String(effectiveAuto));
+        button.classList.toggle("is-on", toggleOn);
+        button.classList.toggle("is-off", !toggleOn);
+        button.setAttribute("aria-pressed", String(toggleOn));
         button.disabled = autoControlSaving || (!isMaster && !masterAutoEnabled);
 
         if (labelId) {
@@ -1152,6 +1155,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
           if (isMaster) {
             modeLabel.textContent = effectiveAuto ? "ON" : "OFF";
           } else {
+            // 글자는 실제 적용 모드 기준: 전체 OFF면 개별 설정이 ON이어도 수동모드.
             modeLabel.textContent = effectiveAuto ? "자동모드" : "수동모드";
             modeLabel.classList.toggle("mode-auto", effectiveAuto);
             modeLabel.classList.toggle("mode-manual", !effectiveAuto);
