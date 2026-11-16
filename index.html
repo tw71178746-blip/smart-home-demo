@@ -489,31 +489,30 @@
       letter-spacing: 0.2px;
     }
 
-    /* 통합 자동제어 토글 옆에서 현재 작동 모드를 명확하게 표시 */
-    #autoMasterLabel {
-      font-size: 13px;
-      font-weight: 800;
-      white-space: nowrap;
-      margin-right: 8px;
-      transition: color 0.2s ease;
-    }
-    #autoMasterLabel.mode-auto { color: #168044; }
-    #autoMasterLabel.mode-manual { color: #d13d3d; }
-
-    /* 장치별 자동 기능임을 ON/OFF 표시와 구분해 보여주는 라벨 */
+    /* 장치별 자동/수동 모드 표시 */
     .auto-mode-label {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       padding: 3px 7px;
       border-radius: 6px;
-      background: #e5f1e8;
-      border: 1px solid #b9d4c0;
-      color: #39734a;
+      border: 1px solid transparent;
       font-size: 11px;
       font-weight: 800;
       line-height: 1.2;
       letter-spacing: 0.2px;
+      white-space: nowrap;
+      transition: color 0.2s ease, background-color 0.2s ease;
+    }
+    .auto-mode-label.mode-auto {
+      color: #168044;
+      background: #e5f1e8;
+      border-color: #b9d4c0;
+    }
+    .auto-mode-label.mode-manual {
+      color: #d13d3d;
+      background: #fff0ef;
+      border-color: #e3b4af;
     }
 
     .auto-toggle.is-off:not(:disabled) {
@@ -616,7 +615,7 @@
           <span class="auto-device-name">자동설정</span>
           <span class="auto-device-help">자동설정을 끄면 장치별 자동 기능은 일시 중지되며, 개별 설정은 유지됩니다.</span>
         </div>
-        <div class="auto-switch-wrap"><span id="autoMasterLabel" class="mode-manual">수동모드</span><button type="button" class="auto-toggle" id="autoMasterButton" aria-label="자동설정" aria-pressed="false" onclick="toggleAutoControl('master')" disabled></button></div>
+        <div class="auto-switch-wrap"><span id="autoMasterLabel" class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoMasterButton" aria-label="자동설정" aria-pressed="false" onclick="toggleAutoControl('master')" disabled></button></div>
       </div>
 
       <p class="auto-control-status" id="autoControlStatus">Firebase에서 자동설정을 확인하고 있습니다.</p>
@@ -629,7 +628,7 @@
           <div class="device-control-row">
             <button type="button" id="windowOpenButton" onclick="sendWindowCommand('open')" disabled>창문 열기</button>
             <button type="button" class="stop" id="windowCloseButton" onclick="sendWindowCommand('close')" disabled>창문 닫기</button>
-            <div class="auto-switch-wrap"><span class="auto-mode-label">자동</span><span class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoWindowButton" aria-label="창문 자동설정" aria-pressed="true" onclick="toggleAutoControl('window')" disabled></button><span class="auto-side-label">ON</span></div>
+            <div class="auto-switch-wrap"><span id="autoWindowLabel" class="auto-mode-label mode-auto">자동모드</span><span class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoWindowButton" aria-label="창문 자동설정" aria-pressed="true" onclick="toggleAutoControl('window')" disabled></button><span class="auto-side-label">ON</span></div>
           </div>
         </div>
         <div class="card device-card device-unknown" id="fanCard">
@@ -638,7 +637,7 @@
           <div class="device-control-row">
             <button type="button" id="fanOnButton" onclick="sendDeviceCommand('fan', 'on')" disabled>선풍기 켜기</button>
             <button type="button" class="stop" id="fanOffButton" onclick="sendDeviceCommand('fan', 'off')" disabled>선풍기 끄기</button>
-            <div class="auto-switch-wrap"><span class="auto-mode-label">자동</span><span class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoFanButton" aria-label="선풍기 자동설정" aria-pressed="true" onclick="toggleAutoControl('fan')" disabled></button><span class="auto-side-label">ON</span></div>
+            <div class="auto-switch-wrap"><span id="autoFanLabel" class="auto-mode-label mode-auto">자동모드</span><span class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoFanButton" aria-label="선풍기 자동설정" aria-pressed="true" onclick="toggleAutoControl('fan')" disabled></button><span class="auto-side-label">ON</span></div>
           </div>
         </div>
         <div class="card device-card device-unknown" id="humidifierCard">
@@ -647,7 +646,7 @@
           <div class="device-control-row">
             <button type="button" id="humidifierOnButton" onclick="sendDeviceCommand('humidifier', 'on')" disabled>가습기 켜기</button>
             <button type="button" class="stop" id="humidifierOffButton" onclick="sendDeviceCommand('humidifier', 'off')" disabled>가습기 끄기</button>
-            <div class="auto-switch-wrap"><span class="auto-mode-label">자동</span><span class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoHumidifierButton" aria-label="가습기 자동설정" aria-pressed="true" onclick="toggleAutoControl('humidifier')" disabled></button><span class="auto-side-label">ON</span></div>
+            <div class="auto-switch-wrap"><span id="autoHumidifierLabel" class="auto-mode-label mode-auto">자동모드</span><span class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoHumidifierButton" aria-label="가습기 자동설정" aria-pressed="true" onclick="toggleAutoControl('humidifier')" disabled></button><span class="auto-side-label">ON</span></div>
           </div>
         </div>
       </div>
@@ -1125,9 +1124,9 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 
       const controls = [
         ["master", "autoMasterButton", "autoMasterLabel"],
-        ["window", "autoWindowButton", null],
-        ["fan", "autoFanButton", null],
-        ["humidifier", "autoHumidifierButton", null]
+        ["window", "autoWindowButton", "autoWindowLabel"],
+        ["fan", "autoFanButton", "autoFanLabel"],
+        ["humidifier", "autoHumidifierButton", "autoHumidifierLabel"]
       ];
 
       controls.forEach(([key, buttonId, labelId]) => {
@@ -1139,9 +1138,15 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
         button.disabled = autoControlSaving || (key !== "master" && !autoControlSettings.master);
         if (labelId) {
           const modeLabel = document.getElementById(labelId);
-          modeLabel.textContent = enabled ? "자동모드" : "수동모드";
-          modeLabel.classList.toggle("mode-auto", enabled);
-          modeLabel.classList.toggle("mode-manual", !enabled);
+          if (key === "master") {
+            // 통합 자동설정은 기존 ON/OFF 표시를 그대로 유지합니다.
+            modeLabel.textContent = enabled ? "ON" : "OFF";
+          } else {
+            // 각 장치의 개별 자동설정 상태에 따라 모드 문구와 색상을 갱신합니다.
+            modeLabel.textContent = enabled ? "자동모드" : "수동모드";
+            modeLabel.classList.toggle("mode-auto", enabled);
+            modeLabel.classList.toggle("mode-manual", !enabled);
+          }
         }
       });
 
