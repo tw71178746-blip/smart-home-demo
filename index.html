@@ -204,22 +204,91 @@
       line-height: 1.4;
     }
 
-    .auto-toggle {
-      min-width: 112px;
-      margin: 0;
+    .auto-switch-wrap {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       flex-shrink: 0;
-      background: #426b49;
-      border: 1px solid #a4c99a;
+      color: #f1f5ed;
+      font-size: 13px;
+      font-weight: bold;
     }
 
-    .auto-toggle.is-off {
+    .auto-toggle {
+      position: relative;
+      width: 54px;
+      min-width: 54px;
+      height: 30px;
+      padding: 0;
+      margin: 0;
+      border: 1px solid #9ca99b;
+      border-radius: 999px;
       background: #76534f;
-      border-color: #d89b91;
+      transition: background-color 0.2s ease, opacity 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .auto-toggle::after {
+      content: "";
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #ffffff;
+      transition: transform 0.2s ease;
+    }
+
+    .auto-toggle.is-on {
+      background: #22a05a;
+      border-color: #8bd5a6;
+    }
+
+    .auto-toggle.is-on::after {
+      transform: translateX(24px);
     }
 
     .auto-toggle:disabled {
-      opacity: 0.55;
+      background: #777f79;
+      border-color: #aeb5af;
+      opacity: 0.65;
+      cursor: not-allowed;
     }
+
+    .device-control-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+
+    .device-control-row .auto-switch-wrap {
+      margin-left: auto;
+      padding-left: 8px;
+    }
+
+    .rain-status {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 9px;
+      min-height: 36px;
+      font-size: 22px;
+      font-weight: bold;
+    }
+
+    .rain-indicator {
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      display: inline-block;
+      background: #9ca3af;
+      border: 2px solid rgba(255,255,255,0.65);
+    }
+
+    .rain-status.is-clear .rain-indicator { background: #facc15; }
+    .rain-status.is-rain .rain-indicator { background: #3b82f6; }
 
     .auto-control-status {
       margin: 14px 0 0;
@@ -369,9 +438,23 @@
       }
 
       .auto-toggle {
-        width: auto;
-        min-width: 104px;
+        width: 54px;
+        min-width: 54px;
         margin: 0;
+      }
+
+      .device-control-row {
+        align-items: center;
+      }
+
+      .device-control-row > button {
+        flex: 1 1 42%;
+        width: auto;
+      }
+
+      .device-control-row .auto-switch-wrap {
+        flex: 0 0 auto;
+        margin-left: auto;
       }
 
       #map {
@@ -402,7 +485,7 @@
         </div>
         <div class="card">
           <h3>빗물 감지</h3>
-          <div class="value" id="rain">--</div>
+          <div class="rain-status" id="rainStatus"><span class="rain-indicator"></span><span id="rain">--</span></div>
         </div>
         <div class="card">
           <h3>미세먼지</h3>
@@ -416,44 +499,20 @@
     </div>
 
     <div class="section card auto-control-card">
-      <h2>자동제어 설정</h2>
+      <h2>자동설정</h2>
       <p class="auto-control-description">
-        자동제어 설정을 라즈베리파이에 전달합니다. 실제 환경 판단과 장치 작동은 라즈베리파이에서 수행하며, 수동 제어는 항상 사용할 수 있습니다.
+        자동설정을 라즈베리파이에 전달합니다. 실제 환경 판단과 장치 작동은 라즈베리파이에서 수행하며, 수동 제어는 항상 사용할 수 있습니다.
       </p>
 
       <div class="auto-master-row">
         <div>
-          <span class="auto-device-name">전체 자동제어</span>
-          <span class="auto-device-help">전체 자동제어를 끄면 장치별 설정은 유지되고 자동 작동만 중지됩니다.</span>
+          <span class="auto-device-name">자동설정</span>
+          <span class="auto-device-help">자동설정을 끄면 장치별 자동 기능은 일시 중지되며, 개별 설정은 유지됩니다.</span>
         </div>
-        <button type="button" class="auto-toggle" id="autoMasterButton" onclick="toggleAutoControl('master')">불러오는 중...</button>
+        <div class="auto-switch-wrap"><span id="autoMasterLabel">OFF</span><button type="button" class="auto-toggle" id="autoMasterButton" aria-label="자동설정" aria-pressed="false" onclick="toggleAutoControl('master')" disabled></button></div>
       </div>
 
-      <div class="auto-device-row">
-        <div>
-          <span class="auto-device-name">창문 자동제어</span>
-          <span class="auto-device-help">온도·습도·공기질·빗물 등 환경 정보를 기준으로 제어</span>
-        </div>
-        <button type="button" class="auto-toggle" id="autoWindowButton" onclick="toggleAutoControl('window')">불러오는 중...</button>
-      </div>
-
-      <div class="auto-device-row">
-        <div>
-          <span class="auto-device-name">선풍기 자동제어</span>
-          <span class="auto-device-help">환경 조건에 따라 자동으로 켜고 끄도록 설정</span>
-        </div>
-        <button type="button" class="auto-toggle" id="autoFanButton" onclick="toggleAutoControl('fan')">불러오는 중...</button>
-      </div>
-
-      <div class="auto-device-row">
-        <div>
-          <span class="auto-device-name">가습기 자동제어</span>
-          <span class="auto-device-help">습도 조건에 따라 자동으로 켜고 끄도록 설정</span>
-        </div>
-        <button type="button" class="auto-toggle" id="autoHumidifierButton" onclick="toggleAutoControl('humidifier')">불러오는 중...</button>
-      </div>
-
-      <p class="auto-control-status" id="autoControlStatus">Firebase에서 자동제어 설정을 확인하고 있습니다.</p>
+      <p class="auto-control-status" id="autoControlStatus">Firebase에서 자동설정을 확인하고 있습니다.</p>
     </div>
 
     <div class="dashboard-section">
@@ -462,22 +521,31 @@
         <div class="card device-card device-unknown" id="windowCard">
           <div class="device-heading"><h3>창문</h3></div>
           <div class="value" id="window"></div>
-          <button type="button" id="windowOpenButton" onclick="sendWindowCommand('open')" disabled>창문 열기</button>
-          <button type="button" class="stop" id="windowCloseButton" onclick="sendWindowCommand('close')" disabled>창문 닫기</button>
+          <div class="device-control-row">
+            <button type="button" id="windowOpenButton" onclick="sendWindowCommand('open')" disabled>창문 열기</button>
+            <button type="button" class="stop" id="windowCloseButton" onclick="sendWindowCommand('close')" disabled>창문 닫기</button>
+            <div class="auto-switch-wrap"><span>자동</span><button type="button" class="auto-toggle" id="autoWindowButton" aria-label="창문 자동설정" aria-pressed="true" onclick="toggleAutoControl('window')" disabled></button></div>
+          </div>
           <p class="status device-status"><span class="device-connection" id="windowConnection">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</span></p>
         </div>
         <div class="card device-card device-unknown" id="fanCard">
           <div class="device-heading"><h3>선풍기</h3></div>
           <div class="value" id="fan"></div>
-          <button type="button" id="fanOnButton" onclick="sendDeviceCommand('fan', 'on')" disabled>선풍기 켜기</button>
-          <button type="button" class="stop" id="fanOffButton" onclick="sendDeviceCommand('fan', 'off')" disabled>선풍기 끄기</button>
+          <div class="device-control-row">
+            <button type="button" id="fanOnButton" onclick="sendDeviceCommand('fan', 'on')" disabled>선풍기 켜기</button>
+            <button type="button" class="stop" id="fanOffButton" onclick="sendDeviceCommand('fan', 'off')" disabled>선풍기 끄기</button>
+            <div class="auto-switch-wrap"><span>자동</span><button type="button" class="auto-toggle" id="autoFanButton" aria-label="선풍기 자동설정" aria-pressed="true" onclick="toggleAutoControl('fan')" disabled></button></div>
+          </div>
           <p class="status device-status"><span class="device-connection" id="fanConnection">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</span></p>
         </div>
         <div class="card device-card device-unknown" id="humidifierCard">
           <div class="device-heading"><h3>가습기</h3></div>
           <div class="value" id="humidifier"></div>
-          <button type="button" id="humidifierOnButton" onclick="sendDeviceCommand('humidifier', 'on')" disabled>가습기 켜기</button>
-          <button type="button" class="stop" id="humidifierOffButton" onclick="sendDeviceCommand('humidifier', 'off')" disabled>가습기 끄기</button>
+          <div class="device-control-row">
+            <button type="button" id="humidifierOnButton" onclick="sendDeviceCommand('humidifier', 'on')" disabled>가습기 켜기</button>
+            <button type="button" class="stop" id="humidifierOffButton" onclick="sendDeviceCommand('humidifier', 'off')" disabled>가습기 끄기</button>
+            <div class="auto-switch-wrap"><span>자동</span><button type="button" class="auto-toggle" id="autoHumidifierButton" aria-label="가습기 자동설정" aria-pressed="true" onclick="toggleAutoControl('humidifier')" disabled></button></div>
+          </div>
           <p class="status device-status"><span class="device-connection" id="humidifierConnection">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</span></p>
         </div>
       </div>
@@ -942,7 +1010,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
   return R * c;
 }
 
-    // Firebase의 자동제어 설정을 화면에 표시
+    // Firebase의 자동설정 값을 화면의 슬라이드 스위치에 표시합니다.
     function updateAutoControlDisplay(settings) {
       if (settings && typeof settings === "object") {
         autoControlSettings = {
@@ -954,33 +1022,33 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
       }
 
       const controls = [
-        ["master", "autoMasterButton"],
-        ["window", "autoWindowButton"],
-        ["fan", "autoFanButton"],
-        ["humidifier", "autoHumidifierButton"]
+        ["master", "autoMasterButton", "autoMasterLabel"],
+        ["window", "autoWindowButton", null],
+        ["fan", "autoFanButton", null],
+        ["humidifier", "autoHumidifierButton", null]
       ];
 
-      controls.forEach(([key, buttonId]) => {
+      controls.forEach(([key, buttonId, labelId]) => {
         const button = document.getElementById(buttonId);
         const enabled = autoControlSettings[key] === true;
-        button.textContent = key === "master"
-          ? (enabled ? "전체 자동 ON" : "전체 자동 OFF")
-          : (enabled ? "자동 ON" : "자동 OFF");
+        button.classList.toggle("is-on", enabled);
         button.classList.toggle("is-off", !enabled);
-        button.disabled = autoControlSaving;
+        button.setAttribute("aria-pressed", String(enabled));
+        button.disabled = autoControlSaving || (key !== "master" && !autoControlSettings.master);
+        if (labelId) document.getElementById(labelId).textContent = enabled ? "ON" : "OFF";
       });
 
       const status = document.getElementById("autoControlStatus");
       if (!autoControlSettings.master) {
-        status.textContent = "전체 자동제어 OFF · 장치별 설정은 저장되어 있으며 자동 작동은 중지됩니다. 수동 제어는 가능합니다.";
+        status.textContent = "자동설정 OFF · 장치별 설정은 유지되며 자동 작동은 중지됩니다. 수동 제어는 가능합니다.";
       } else {
         const activeDevices = [];
         if (autoControlSettings.window) activeDevices.push("창문");
         if (autoControlSettings.fan) activeDevices.push("선풍기");
         if (autoControlSettings.humidifier) activeDevices.push("가습기");
         status.textContent = activeDevices.length
-          ? "전체 자동제어 ON · 자동제어 대상: " + activeDevices.join(", ")
-          : "전체 자동제어 ON · 장치별 자동제어가 모두 OFF라 자동으로 작동하는 장치가 없습니다.";
+          ? "자동설정 ON · 자동 작동 대상: " + activeDevices.join(", ")
+          : "자동설정 ON · 장치별 자동 기능이 모두 OFF입니다.";
       }
     }
 
@@ -994,7 +1062,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
       autoControlSettings[target] = !autoControlSettings[target];
       autoControlSaving = true;
       updateAutoControlDisplay();
-      document.getElementById("autoControlStatus").textContent = "자동제어 설정을 Firebase에 전송하고 있습니다...";
+      document.getElementById("autoControlStatus").textContent = "자동설정을 Firebase에 전송하고 있습니다...";
 
       try {
         const response = await fetch(AUTO_CONTROL_URL, {
@@ -1008,16 +1076,16 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
         });
 
         if (!response.ok) {
-          throw new Error("자동제어 설정 전송 실패: " + response.status);
+          throw new Error("자동설정 전송 실패: " + response.status);
         }
 
         autoControlSaving = false;
         updateAutoControlDisplay();
         const targetNames = {
-          master: "전체 자동제어",
-          window: "창문 자동제어",
-          fan: "선풍기 자동제어",
-          humidifier: "가습기 자동제어"
+          master: "자동설정",
+          window: "창문 자동설정",
+          fan: "선풍기 자동설정",
+          humidifier: "가습기 자동설정"
         };
         document.getElementById("autoControlStatus").textContent =
           targetNames[target] + " 설정을 Firebase에 전송했습니다. 라즈베리파이가 설정을 확인하면 적용됩니다.";
@@ -1027,7 +1095,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
         updateAutoControlDisplay();
         document.getElementById("autoControlStatus").textContent =
           "설정 전송 실패: " + error.message;
-        console.error("자동제어 설정 전송 오류:", error);
+        console.error("자동설정 전송 오류:", error);
       }
     }
 
@@ -1063,6 +1131,20 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     }
 
     // 장치 상태와 연결 여부에 따라 카드 색상 및 제어 버튼 갱신
+    function updateRainDisplay(value) {
+      const status = document.getElementById("rainStatus");
+      const label = document.getElementById("rain");
+      const normalized = String(value).trim().toLowerCase();
+      const isRain = value === true || value === 1 || normalized === "1" ||
+        ["true", "rain", "raining", "비", "비 감지", "비가 감지됨", "감지", "wet", "rain detected"].includes(normalized);
+      const isClear = value === false || value === 0 || normalized === "0" ||
+        ["false", "clear", "sunny", "맑음", "미감지", "dry", "no rain"].includes(normalized);
+
+      status.classList.toggle("is-rain", isRain);
+      status.classList.toggle("is-clear", isClear);
+      label.textContent = isRain ? "비" : (isClear ? "맑음" : "--");
+    }
+
     function updateDeviceDisplay(device, value, connected = true) {
       const card = document.getElementById(device + "Card");
       const valueElement = document.getElementById(device === "window" ? "window" : device);
@@ -1160,8 +1242,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
         document.getElementById("gas").textContent =
           data.gas ?? "--";
 
-        document.getElementById("rain").textContent =
-          data.rain ?? "--";
+        updateRainDisplay(data.rain);
 
         updateDeviceDisplay("humidifier", data.humidifier, data.humidifier !== undefined && data.humidifier !== null);
         updateDeviceDisplay("fan", data.fan, data.fan !== undefined && data.fan !== null);
