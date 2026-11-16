@@ -604,7 +604,6 @@
             <button type="button" class="stop" id="windowCloseButton" onclick="sendWindowCommand('close')" disabled>창문 닫기</button>
             <div class="auto-switch-wrap"><span class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoWindowButton" aria-label="창문 자동설정" aria-pressed="true" onclick="toggleAutoControl('window')" disabled></button><span class="auto-side-label">ON</span></div>
           </div>
-          <p class="status device-status"><span class="device-connection" id="windowConnection">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</span></p>
         </div>
         <div class="card device-card device-unknown" id="fanCard">
           <div class="device-heading"><h3>선풍기</h3></div>
@@ -614,7 +613,6 @@
             <button type="button" class="stop" id="fanOffButton" onclick="sendDeviceCommand('fan', 'off')" disabled>선풍기 끄기</button>
             <div class="auto-switch-wrap"><span class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoFanButton" aria-label="선풍기 자동설정" aria-pressed="true" onclick="toggleAutoControl('fan')" disabled></button><span class="auto-side-label">ON</span></div>
           </div>
-          <p class="status device-status"><span class="device-connection" id="fanConnection">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</span></p>
         </div>
         <div class="card device-card device-unknown" id="humidifierCard">
           <div class="device-heading"><h3>가습기</h3></div>
@@ -624,7 +622,6 @@
             <button type="button" class="stop" id="humidifierOffButton" onclick="sendDeviceCommand('humidifier', 'off')" disabled>가습기 끄기</button>
             <div class="auto-switch-wrap"><span class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoHumidifierButton" aria-label="가습기 자동설정" aria-pressed="true" onclick="toggleAutoControl('humidifier')" disabled></button><span class="auto-side-label">ON</span></div>
           </div>
-          <p class="status device-status"><span class="device-connection" id="humidifierConnection">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</span></p>
         </div>
       </div>
     </div>
@@ -1223,7 +1220,6 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     function updateDeviceDisplay(device, value, connected = true) {
       const card = document.getElementById(device + "Card");
       const valueElement = document.getElementById(device === "window" ? "window" : device);
-      const connectionElement = document.getElementById(device + "Connection");
       const onButton = document.getElementById(device === "window" ? "windowOpenButton" : device + "OnButton");
       const offButton = document.getElementById(device === "window" ? "windowCloseButton" : device + "OffButton");
       const normalized = value === null || value === undefined
@@ -1240,19 +1236,16 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
       if (!connected || (!isOn && !isOff)) {
         card.classList.add("device-unknown");
         valueElement.textContent = "";
-        connectionElement.textContent = "연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.";
         onButton.disabled = true;
         offButton.disabled = true;
       } else if (isOn) {
         card.classList.add("device-on");
         valueElement.textContent = device === "window" ? "열림" : "켜짐";
-        connectionElement.textContent = "연결됨";
         onButton.disabled = true;
         offButton.disabled = false;
       } else {
         card.classList.add("device-off");
         valueElement.textContent = device === "window" ? "닫힘" : "꺼짐";
-        connectionElement.textContent = "연결됨";
         onButton.disabled = false;
         offButton.disabled = true;
       }
