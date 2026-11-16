@@ -489,6 +489,17 @@
       letter-spacing: 0.2px;
     }
 
+    /* 통합 자동제어 토글 옆에서 현재 작동 모드를 명확하게 표시 */
+    #autoMasterLabel {
+      font-size: 13px;
+      font-weight: 800;
+      white-space: nowrap;
+      margin-right: 8px;
+      transition: color 0.2s ease;
+    }
+    #autoMasterLabel.mode-auto { color: #168044; }
+    #autoMasterLabel.mode-manual { color: #d13d3d; }
+
     /* 장치별 자동 기능임을 ON/OFF 표시와 구분해 보여주는 라벨 */
     .auto-mode-label {
       display: inline-flex;
@@ -605,7 +616,7 @@
           <span class="auto-device-name">자동설정</span>
           <span class="auto-device-help">자동설정을 끄면 장치별 자동 기능은 일시 중지되며, 개별 설정은 유지됩니다.</span>
         </div>
-        <div class="auto-switch-wrap"><span id="autoMasterLabel">OFF</span><button type="button" class="auto-toggle" id="autoMasterButton" aria-label="자동설정" aria-pressed="false" onclick="toggleAutoControl('master')" disabled></button></div>
+        <div class="auto-switch-wrap"><span id="autoMasterLabel" class="mode-manual">수동모드</span><button type="button" class="auto-toggle" id="autoMasterButton" aria-label="자동설정" aria-pressed="false" onclick="toggleAutoControl('master')" disabled></button></div>
       </div>
 
       <p class="auto-control-status" id="autoControlStatus">Firebase에서 자동설정을 확인하고 있습니다.</p>
@@ -1126,7 +1137,12 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
         button.classList.toggle("is-off", !enabled);
         button.setAttribute("aria-pressed", String(enabled));
         button.disabled = autoControlSaving || (key !== "master" && !autoControlSettings.master);
-        if (labelId) document.getElementById(labelId).textContent = enabled ? "ON" : "OFF";
+        if (labelId) {
+          const modeLabel = document.getElementById(labelId);
+          modeLabel.textContent = enabled ? "자동모드" : "수동모드";
+          modeLabel.classList.toggle("mode-auto", enabled);
+          modeLabel.classList.toggle("mode-manual", !enabled);
+        }
       });
 
       const status = document.getElementById("autoControlStatus");
