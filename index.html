@@ -268,28 +268,6 @@
       padding-left: 8px;
     }
 
-    .rain-status {
-      display: flex;
-      align-items: center;
-      justify-content: flex-end;
-      gap: 9px;
-      min-height: 36px;
-      font-size: 22px;
-      font-weight: bold;
-    }
-
-    .rain-indicator {
-      width: 17px;
-      height: 17px;
-      border-radius: 50%;
-      display: inline-block;
-      background: #9ca3af;
-      border: 2px solid rgba(255,255,255,0.65);
-    }
-
-    .rain-status.is-clear .rain-indicator { background: #facc15; }
-    .rain-status.is-rain .rain-indicator { background: #3b82f6; }
-
     .auto-control-status {
       margin: 14px 0 0;
       padding: 10px 12px;
@@ -556,38 +534,6 @@
       background: #e9edf0;
       border-color: #cbd2d9;
     }
-    .rain-status {
-      justify-content: center;
-      min-height: 66px;
-    }
-    .rain-indicator {
-      width: 58px;
-      height: 58px;
-      min-width: 58px;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid rgba(35, 45, 55, 0.16);
-      background: #9ca3af;
-      color: #202428;
-      font-size: 16px;
-      font-weight: 800;
-      line-height: 1;
-    }
-    .rain-status.is-clear .rain-indicator {
-      background: #facc15;
-      color: #3d3200;
-    }
-    .rain-status.is-rain .rain-indicator {
-      background: #3b82f6;
-      color: #ffffff;
-    }
-    .rain-status:not(.is-clear):not(.is-rain) .rain-indicator {
-      background: #cbd1d7;
-      color: #303840;
-    }
-
     @media (max-width: 600px) {
       .auto-side-label { font-size: 11px; }
       .auto-switch-wrap { gap: 6px; }
@@ -617,7 +563,7 @@
         </div>
         <div class="card">
           <h3>빗물 감지</h3>
-          <div class="rain-status" id="rainStatus"><span class="rain-indicator"><span id="rain">--</span></span></div>
+          <div class="value" id="rainStatus"><span id="rain">--</span></div>
         </div>
         <div class="card">
           <h3>미세먼지</h3>
@@ -1264,7 +1210,6 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 
     // 장치 상태와 연결 여부에 따라 카드 색상 및 제어 버튼 갱신
     function updateRainDisplay(value) {
-      const status = document.getElementById("rainStatus");
       const label = document.getElementById("rain");
       const normalized = String(value).trim().toLowerCase();
       const isRain = value === true || value === 1 || normalized === "1" ||
@@ -1272,8 +1217,6 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
       const isClear = value === false || value === 0 || normalized === "0" ||
         ["false", "clear", "sunny", "맑음", "미감지", "dry", "no rain"].includes(normalized);
 
-      status.classList.toggle("is-rain", isRain);
-      status.classList.toggle("is-clear", isClear);
       label.textContent = isRain ? "비" : (isClear ? "맑음" : "--");
     }
 
