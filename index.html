@@ -690,8 +690,8 @@
       "https://smart-home-demo-52a8a-default-rtdb.asia-southeast1.firebasedatabase.app";
 
     const LOCATION_URL = FIREBASE_URL + "/locationShare.json";
-    const WINDOW_COMMAND_URL = FIREBASE_URL + "/windowCommand.json";
     const DEVICE_COMMAND_URL = FIREBASE_URL + "/deviceCommands";
+    const WINDOW_COMMAND_URL = DEVICE_COMMAND_URL + "/window.json";
     const AUTO_CONTROL_URL = FIREBASE_URL + "/autoControl.json";
 
     // 전체 자동제어는 기본 OFF, 장치별 설정은 기본 ON으로 저장합니다.
@@ -1258,8 +1258,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
       }
     }
 
-    // 창문 원격 제어 명령을 Firebase에 전송
-    // ESP32/라즈베리파이 쪽에서는 windowCommand 값을 읽어 모터를 제어해야 합니다.
+    // 창문 원격 제어 명령을 deviceCommands/window 경로에 전송
     async function sendWindowCommand(command) {
       if (command !== "open" && command !== "close") return;
       const requestedButton = document.getElementById(command === "open" ? "windowOpenButton" : "windowCloseButton");
