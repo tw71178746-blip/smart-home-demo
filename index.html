@@ -621,7 +621,7 @@
         </div>
         <div class="card">
           <h3>미세먼지</h3>
-          <div class="value"><span id="dust">--</span></div>
+          <div class="value"><span id="pm25">--</span><span class="unit"> ㎍/㎥</span></div>
         </div>
         <div class="card">
           <h3>내부 유해가스</h3>
@@ -1368,13 +1368,15 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
         document.getElementById("humidity").textContent =
           data.humidity ?? "--";
 
-        document.getElementById("dust").textContent =
-          data.dust ?? "--";
+        // 미세먼지는 새 키 pm25를 우선 사용하고, 기존 dust 키도 호환합니다.
+        document.getElementById("pm25").textContent =
+          data.pm25 ?? data.dust ?? "--";
 
         document.getElementById("gas").textContent =
           data.gas ?? "--";
 
-        updateRainDisplay(data.rain);
+        // 빗물 감지는 새 키 rainDetected를 우선 사용하고, 기존 rain 키도 호환합니다.
+        updateRainDisplay(data.rainDetected ?? data.rain);
 
         updateDeviceDisplay("humidifier", data.humidifier, data.humidifier !== undefined && data.humidifier !== null);
         updateDeviceDisplay("fan", data.fan, data.fan !== undefined && data.fan !== null);
