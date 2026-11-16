@@ -461,6 +461,138 @@
         height: 260px;
       }
     }
+
+
+    /* 밝은 무채색 테마: 모든 주요 글자와 상태 안내의 대비를 확보합니다. */
+    body {
+      background: #f4f5f6;
+      color: #202428;
+    }
+
+    h1, h2, .section-heading { color: #202428; }
+    .subtitle { color: #5f6871; }
+
+    .card,
+    .auto-control-card,
+    .location-card {
+      background: #ffffff;
+      color: #252a30;
+      border-color: #d7dce1;
+      box-shadow: 0 2px 8px rgba(25, 35, 45, 0.05);
+    }
+
+    .card h3 { color: #343b43; }
+    .value, .device-card .value { color: #202428; }
+    .unit, .device-connection, .auto-device-help,
+    .status, .auto-control-description { color: #59636e; }
+
+    .device-card.device-on {
+      background: #edf7ef;
+      border-color: #a8d3b1;
+    }
+    .device-card.device-off {
+      background: #fff0ef;
+      border-color: #e3b4af;
+    }
+    .device-card.device-unknown {
+      background: #eef0f2;
+      border-color: #cbd1d7;
+    }
+
+    .auto-master-row, .auto-device-row {
+      border-top-color: #e1e5e9;
+    }
+    .auto-device-name { color: #252a30; }
+    .auto-switch-wrap { color: #303840; }
+    .auto-side-label {
+      color: #46515c;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .auto-toggle.is-off:not(:disabled) {
+      background: #dc4545;
+      border-color: #c93434;
+    }
+    .auto-toggle.is-off:not(:disabled):hover,
+    .auto-toggle.is-off:not(:disabled):focus,
+    .auto-toggle.is-off:not(:disabled):active {
+      background: #dc4545;
+      border-color: #c93434;
+    }
+    .auto-toggle.is-on:not(:disabled),
+    .auto-toggle.is-on:not(:disabled):hover,
+    .auto-toggle.is-on:not(:disabled):focus,
+    .auto-toggle.is-on:not(:disabled):active {
+      background: #229b59;
+      border-color: #188348;
+    }
+
+    /* 전체 자동설정 OFF 또는 저장 중인 개별 토글은 hover/focus에도 회색 고정 */
+    button.auto-toggle:disabled,
+    button.auto-toggle:disabled:hover,
+    button.auto-toggle:disabled:focus,
+    button.auto-toggle:disabled:active {
+      background: #c5cbd1;
+      border-color: #aeb6be;
+      opacity: 1;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    button.auto-toggle:disabled::after { background: #f7f8f9; }
+
+    .auto-control-status,
+    .notice,
+    .location-card .notice {
+      background: #f0f2f4;
+      border-color: #d5dbe1;
+      color: #303840;
+    }
+    #mapContainer {
+      background: #e9edf0;
+    }
+    #map {
+      background: #e9edf0;
+      border-color: #cbd2d9;
+    }
+    .rain-status {
+      justify-content: center;
+      min-height: 66px;
+    }
+    .rain-indicator {
+      width: 58px;
+      height: 58px;
+      min-width: 58px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid rgba(35, 45, 55, 0.16);
+      background: #9ca3af;
+      color: #202428;
+      font-size: 16px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .rain-status.is-clear .rain-indicator {
+      background: #facc15;
+      color: #3d3200;
+    }
+    .rain-status.is-rain .rain-indicator {
+      background: #3b82f6;
+      color: #ffffff;
+    }
+    .rain-status:not(.is-clear):not(.is-rain) .rain-indicator {
+      background: #cbd1d7;
+      color: #303840;
+    }
+
+    @media (max-width: 600px) {
+      .auto-side-label { font-size: 11px; }
+      .auto-switch-wrap { gap: 6px; }
+    }
+
   </style>
 </head>
 
@@ -485,7 +617,7 @@
         </div>
         <div class="card">
           <h3>빗물 감지</h3>
-          <div class="rain-status" id="rainStatus"><span class="rain-indicator"></span><span id="rain">--</span></div>
+          <div class="rain-status" id="rainStatus"><span class="rain-indicator"><span id="rain">--</span></span></div>
         </div>
         <div class="card">
           <h3>미세먼지</h3>
@@ -524,7 +656,7 @@
           <div class="device-control-row">
             <button type="button" id="windowOpenButton" onclick="sendWindowCommand('open')" disabled>창문 열기</button>
             <button type="button" class="stop" id="windowCloseButton" onclick="sendWindowCommand('close')" disabled>창문 닫기</button>
-            <div class="auto-switch-wrap"><span>자동</span><button type="button" class="auto-toggle" id="autoWindowButton" aria-label="창문 자동설정" aria-pressed="true" onclick="toggleAutoControl('window')" disabled></button></div>
+            <div class="auto-switch-wrap"><span class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoWindowButton" aria-label="창문 자동설정" aria-pressed="true" onclick="toggleAutoControl('window')" disabled></button><span class="auto-side-label">ON</span></div>
           </div>
           <p class="status device-status"><span class="device-connection" id="windowConnection">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</span></p>
         </div>
@@ -534,7 +666,7 @@
           <div class="device-control-row">
             <button type="button" id="fanOnButton" onclick="sendDeviceCommand('fan', 'on')" disabled>선풍기 켜기</button>
             <button type="button" class="stop" id="fanOffButton" onclick="sendDeviceCommand('fan', 'off')" disabled>선풍기 끄기</button>
-            <div class="auto-switch-wrap"><span>자동</span><button type="button" class="auto-toggle" id="autoFanButton" aria-label="선풍기 자동설정" aria-pressed="true" onclick="toggleAutoControl('fan')" disabled></button></div>
+            <div class="auto-switch-wrap"><span class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoFanButton" aria-label="선풍기 자동설정" aria-pressed="true" onclick="toggleAutoControl('fan')" disabled></button><span class="auto-side-label">ON</span></div>
           </div>
           <p class="status device-status"><span class="device-connection" id="fanConnection">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</span></p>
         </div>
@@ -544,7 +676,7 @@
           <div class="device-control-row">
             <button type="button" id="humidifierOnButton" onclick="sendDeviceCommand('humidifier', 'on')" disabled>가습기 켜기</button>
             <button type="button" class="stop" id="humidifierOffButton" onclick="sendDeviceCommand('humidifier', 'off')" disabled>가습기 끄기</button>
-            <div class="auto-switch-wrap"><span>자동</span><button type="button" class="auto-toggle" id="autoHumidifierButton" aria-label="가습기 자동설정" aria-pressed="true" onclick="toggleAutoControl('humidifier')" disabled></button></div>
+            <div class="auto-switch-wrap"><span class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoHumidifierButton" aria-label="가습기 자동설정" aria-pressed="true" onclick="toggleAutoControl('humidifier')" disabled></button><span class="auto-side-label">ON</span></div>
           </div>
           <p class="status device-status"><span class="device-connection" id="humidifierConnection">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</span></p>
         </div>
