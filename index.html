@@ -5,12 +5,16 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SMART HOME</title>
 
+  <!-- 지도 표시용 Leaflet CSS -->
   <link
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   >
 
   <style>
+    /* =========================================================
+       기본 테마 & 레이아웃
+    ========================================================= */
     * {
       box-sizing: border-box;
     }
@@ -20,7 +24,7 @@
       padding: 24px;
       background: #f4f5f6;
       color: #202428;
-      font-family: Arial, sans-serif;
+      font-family: "Inter", -apple-system, BlinkMacSystemFont, "Malgun Gothic", Arial, sans-serif;
     }
 
     .container {
@@ -100,6 +104,34 @@
       margin-top: 0;
     }
 
+    /* 센서 카드 상단 헤더 (제목 + 오른쪽 위 작은 상태 표시) */
+    .sensor-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .sensor-heading h3 {
+      margin: 0;
+    }
+
+    .sensor-state {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: -0.2px;
+      line-height: 1.2;
+      white-space: nowrap;
+      opacity: 0.88;
+      color: #59636e;
+      transition: color 0.3s ease;
+    }
+
+    .sensor-state:empty {
+      display: none;
+    }
+
     .value,
     .device-card .value {
       font-size: 30px;
@@ -139,6 +171,7 @@
 
     .device-card .value {
       margin-bottom: 10px;
+      min-height: 36px;
     }
 
     .unit {
@@ -156,6 +189,9 @@
       margin-top: 28px;
     }
 
+    /* =========================================================
+       자동설정 및 토글 스위치 UI
+    ========================================================= */
     .auto-control-description {
       line-height: 1.5;
       margin: 0 0 16px;
@@ -206,7 +242,7 @@
       letter-spacing: 0.2px;
     }
 
-    /* 장치별 자동/수동 모드 표시 */
+    /* 장치별 자동/수동 모드 표시 배지 */
     .auto-mode-label {
       display: inline-flex;
       align-items: center;
@@ -337,14 +373,14 @@
       transition: background 0.45s ease, border-color 0.45s ease, color 0.35s ease;
     }
 
-    #tempCard > *,
+    #tempCard > :not(.temp-haze),
     #humidityCard > *,
     #rainCard > *,
     #pm25Card > *,
     #autoControlCard > *,
     #windowCard > *,
     #fanCard > *,
-    #humidifierCard > * {
+    #humidifierCard > :not(.humid-bubbles) {
       position: relative;
       z-index: 3;
     }
@@ -372,6 +408,42 @@
 
     /* ================= 온도 카드 (#tempCard) ================= */
 
+    /* 온도 아지랑이 래퍼는 더움 상태일 때만 활성화 */
+    .temp-haze {
+      display: none;
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+      -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 6%,
+        rgba(0, 0, 0, 0.35) 34%,
+        rgba(0, 0, 0, 0.88) 64%,
+        #000000 84%
+      );
+      mask-image: linear-gradient(
+        to bottom,
+        transparent 6%,
+        rgba(0, 0, 0, 0.35) 34%,
+        rgba(0, 0, 0, 0.88) 64%,
+        #000000 84%
+      );
+    }
+
+    #tempCard.temp-hot .temp-haze {
+      display: block;
+    }
+
+    .temp-haze .haze-white,
+    .temp-haze .haze-red {
+      position: absolute;
+      pointer-events: none;
+      background-repeat: repeat;
+      will-change: transform, opacity;
+    }
+
     /* 온도 - 추움 (18°C 미만): 서리 블루 + 2겹 잦은 눈송이 */
     #tempCard.temp-cold {
       border-color: #9ec8ea;
@@ -380,7 +452,8 @@
         linear-gradient(145deg, #d7ecff 0%, #c1e0fb 55%, #e5f3ff 100%);
     }
 
-    #tempCard.temp-cold h3 { color: #1f4f7a; }
+    #tempCard.temp-cold h3,
+    #tempCard.temp-cold .sensor-state { color: #1f4f7a; }
     #tempCard.temp-cold .value { color: #0e3254; }
     #tempCard.temp-cold .unit { color: #2f608c; }
 
@@ -410,7 +483,8 @@
         linear-gradient(135deg, #e7faef 0%, #d3f3e2 55%, #edfbf4 100%);
     }
 
-    #tempCard.temp-comfort h3 { color: #216143; }
+    #tempCard.temp-comfort h3,
+    #tempCard.temp-comfort .sensor-state { color: #216143; }
     #tempCard.temp-comfort .value { color: #13442d; }
     #tempCard.temp-comfort .unit { color: #2e7251; }
 
@@ -437,41 +511,51 @@
       animation: softPulse 6s ease-in-out infinite;
     }
 
-    /* 온도 - 더움 (26°C 초과): 따뜻한 코랄 앰버 + 일렁이는 2겹 아지랑이 */
+    /* 온도 - 더움 (26°C 초과): 우측 상단 햇빛 채도 + 최대 20% 긴 호흡 교차 아지랑이 */
     #tempCard.temp-hot {
-      border-color: #f0ab7e;
+      border-color: #eea06b;
       background:
-        radial-gradient(ellipse at 50% 108%, rgba(255, 118, 52, 0.36) 0%, rgba(255, 152, 76, 0.16) 44%, transparent 72%),
-        radial-gradient(circle at 86% 18%, rgba(255, 240, 200, 0.72) 0%, transparent 45%),
-        linear-gradient(155deg, #fff1de 0%, #ffd9b4 54%, #ffc394 100%);
+        radial-gradient(circle at 96% 4%, rgba(255, 253, 232, 0.96) 0%, rgba(255, 233, 162, 0.78) 18%, rgba(255, 198, 114, 0.34) 44%, transparent 70%),
+        radial-gradient(ellipse 88% 96% at 86% 12%, rgba(255, 212, 124, 0.48) 0%, rgba(255, 148, 68, 0.24) 56%, transparent 84%),
+        linear-gradient(228deg, #fff6d4 0%, #ffe0a6 28%, #ffc685 62%, #ffa866 100%);
     }
 
-    #tempCard.temp-hot h3 { color: #823516; }
-    #tempCard.temp-hot .value { color: #5c1f09; }
-    #tempCard.temp-hot .unit { color: #8f3f1d; }
+    #tempCard.temp-hot h3,
+    #tempCard.temp-hot .sensor-state { color: #7e2f12; }
+    #tempCard.temp-hot .value { color: #541a06; }
+    #tempCard.temp-hot .unit { color: #8a3816; }
 
     #tempCard.temp-hot::before {
-      z-index: 2;
-      inset: -20px -24px -120px -24px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='120' viewBox='0 0 140 120'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M16 120 C 9 100, 23 80, 16 60 C 9 40, 23 20, 16 0' stroke='%23fff8ec' stroke-width='3.2' opacity='0.58'/%3E%3Cpath d='M44 120 C 52 100, 36 80, 44 60 C 52 40, 36 20, 44 0' stroke='%23ff7b3b' stroke-width='2.8' opacity='0.34'/%3E%3Cpath d='M74 120 C 66 100, 82 80, 74 60 C 66 40, 82 20, 74 0' stroke='%23fff4df' stroke-width='3.4' opacity='0.55'/%3E%3Cpath d='M104 120 C 112 100, 96 80, 104 60 C 112 40, 96 20, 104 0' stroke='%23ff6c2b' stroke-width='2.6' opacity='0.32'/%3E%3Cpath d='M128 120 C 122 100, 134 80, 128 60 C 122 40, 134 20, 128 0' stroke='%23fff7e8' stroke-width='2.8' opacity='0.48'/%3E%3C/g%3E%3C/svg%3E");
-      background-size: 140px 120px;
-      background-repeat: repeat;
-      filter: blur(0.9px);
-      -webkit-mask-image: linear-gradient(to top, transparent 4%, rgba(0, 0, 0, 0.92) 28%, rgba(0, 0, 0, 0.68) 76%, transparent 98%);
-      mask-image: linear-gradient(to top, transparent 4%, rgba(0, 0, 0, 0.92) 28%, rgba(0, 0, 0, 0.68) 76%, transparent 98%);
-      animation: hazeRiseFront 3.8s linear infinite;
+      content: none;
     }
 
+    /* 더움 - 오른쪽 위에서 대각선으로 쏟아지는 햇살 줄기 오버레이 */
     #tempCard.temp-hot::after {
-      z-index: 1;
-      inset: -20px -24px -140px -24px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='140' viewBox='0 0 160 140'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M28 140 C 16 116, 40 94, 28 70 C 16 46, 40 24, 28 0' stroke='%23ff8c42' stroke-width='6.5' opacity='0.28'/%3E%3Cpath d='M72 140 C 86 116, 58 94, 72 70 C 86 46, 58 24, 72 0' stroke='%23fff2d6' stroke-width='7' opacity='0.44'/%3E%3Cpath d='M116 140 C 102 116, 130 94, 116 70 C 102 46, 130 24, 116 0' stroke='%23ff7333' stroke-width='6' opacity='0.26'/%3E%3Cpath d='M148 140 C 158 116, 138 94, 148 70 C 158 46, 138 24, 148 0' stroke='%23ffebd0' stroke-width='5.5' opacity='0.38'/%3E%3C/g%3E%3C/svg%3E");
-      background-size: 160px 140px;
-      background-repeat: repeat;
-      filter: blur(2.6px);
-      -webkit-mask-image: linear-gradient(to top, transparent 2%, rgba(0, 0, 0, 0.85) 32%, rgba(0, 0, 0, 0.5) 80%, transparent 100%);
-      mask-image: linear-gradient(to top, transparent 2%, rgba(0, 0, 0, 0.85) 32%, rgba(0, 0, 0, 0.5) 80%, transparent 100%);
-      animation: hazeRiseBack 5.6s linear infinite;
+      z-index: 2;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 140' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='rayMain' x1='96%25' y1='0%25' x2='24%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23fffef2' stop-opacity='0.64'/%3E%3Cstop offset='42%25' stop-color='%23ffeaa8' stop-opacity='0.26'/%3E%3Cstop offset='100%25' stop-color='%23ffd080' stop-opacity='0'/%3E%3C/linearGradient%3E%3ClinearGradient id='raySub' x1='98%25' y1='0%25' x2='44%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' stop-opacity='0.52'/%3E%3Cstop offset='50%25' stop-color='%23ffe396' stop-opacity='0.18'/%3E%3Cstop offset='100%25' stop-color='%23ffc875' stop-opacity='0'/%3E%3C/linearGradient%3E%3CradialGradient id='sunCore' cx='95%25' cy='4%25' r='34%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' stop-opacity='0.78'/%3E%3Cstop offset='45%25' stop-color='%23ffefba' stop-opacity='0.34'/%3E%3Cstop offset='100%25' stop-color='%23ffe090' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cpolygon points='320,0 218,0 74,140 162,140' fill='url(%23rayMain)'/%3E%3Cpolygon points='320,0 278,0 186,140 250,140' fill='url(%23raySub)'/%3E%3Cpolygon points='320,14 320,66 264,140 302,140' fill='url(%23raySub)' opacity='0.72'/%3E%3Crect width='320' height='140' fill='url(%23sunCore)'/%3E%3C/svg%3E");
+      background-size: 100% 100%;
+      background-repeat: no-repeat;
+    }
+
+    /* 더움 - 흰색 아지랑이 (무이음새 상승 + 최대 불투명도 20%) */
+    #tempCard.temp-hot .haze-white {
+      inset: 0 0 -120px 0;
+      background-size: 140px 120px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='120' viewBox='0 0 140 120'%3E%3Cg fill='none'%3E%3Cpath d='M18 0 C18 22, 10 38, 10 60 C10 82, 18 98, 18 120' stroke='%23fffaf0' stroke-width='11' opacity='0.28'/%3E%3Cpath d='M18 0 C18 22, 10 38, 10 60 C10 82, 18 98, 18 120' stroke='%23fffaf0' stroke-width='3.8' opacity='0.78'/%3E%3Cpath d='M64 0 C64 22, 72 38, 72 60 C72 82, 64 98, 64 120' stroke='%23fffaf0' stroke-width='12' opacity='0.26'/%3E%3Cpath d='M64 0 C64 22, 72 38, 72 60 C72 82, 64 98, 64 120' stroke='%23fffaf0' stroke-width='4' opacity='0.74'/%3E%3Cpath d='M112 0 C112 22, 104 38, 104 60 C104 82, 112 98, 112 120' stroke='%23fffaf0' stroke-width='10' opacity='0.25'/%3E%3Cpath d='M112 0 C112 22, 104 38, 104 60 C104 82, 112 98, 112 120' stroke='%23fffaf0' stroke-width='3.6' opacity='0.70'/%3E%3C/g%3E%3C/svg%3E");
+      animation:
+        hazeRise120 4.4s linear infinite,
+        hazeWhiteGradual 14s linear infinite;
+    }
+
+    /* 더움 - 붉은색 아지랑이 (무이음새 상승 + 최대 불투명도 20% 비대칭 교차) */
+    #tempCard.temp-hot .haze-red {
+      inset: 0 0 -140px 0;
+      background-size: 140px 140px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='none'%3E%3Cpath d='M40 0 C40 26, 48 44, 48 70 C48 96, 40 114, 40 140' stroke='%23ff6b35' stroke-width='11' opacity='0.28'/%3E%3Cpath d='M40 0 C40 26, 48 44, 48 70 C48 96, 40 114, 40 140' stroke='%23ff5a26' stroke-width='3.6' opacity='0.74'/%3E%3Cpath d='M88 0 C88 26, 80 44, 80 70 C80 96, 88 114, 88 140' stroke='%23ff6b35' stroke-width='12' opacity='0.26'/%3E%3Cpath d='M88 0 C88 26, 80 44, 80 70 C80 96, 88 114, 88 140' stroke='%23ff5a26' stroke-width='3.8' opacity='0.70'/%3E%3Cpath d='M130 0 C130 26, 137 44, 137 70 C137 96, 130 114, 130 140' stroke='%23ff6b35' stroke-width='10' opacity='0.25'/%3E%3Cpath d='M130 0 C130 26, 137 44, 137 70 C137 96, 130 114, 130 140' stroke='%23ff5a26' stroke-width='3.4' opacity='0.66'/%3E%3C/g%3E%3C/svg%3E");
+      animation:
+        hazeRise140 5.2s linear infinite,
+        hazeRedGradual 14s linear infinite;
     }
 
     /* ================= 습도 카드 (#humidityCard) ================= */
@@ -482,7 +566,8 @@
       background: linear-gradient(145deg, #fdf5e4 0%, #f6e4c1 58%, #faeed7 100%);
     }
 
-    #humidityCard.hum-dry h3 { color: #7c5625; }
+    #humidityCard.hum-dry h3,
+    #humidityCard.hum-dry .sensor-state { color: #7c5625; }
     #humidityCard.hum-dry .value { color: #563912; }
     #humidityCard.hum-dry .unit { color: #856130; }
 
@@ -512,7 +597,8 @@
         linear-gradient(140deg, #e1f8f4 0%, #c9f1ea 55%, #e8fbf8 100%);
     }
 
-    #humidityCard.hum-comfort h3 { color: #195d57; }
+    #humidityCard.hum-comfort h3,
+    #humidityCard.hum-comfort .sensor-state { color: #195d57; }
     #humidityCard.hum-comfort .value { color: #0e3f3b; }
     #humidityCard.hum-comfort .unit { color: #276e67; }
 
@@ -544,7 +630,8 @@
       background: linear-gradient(155deg, #2b445e 0%, #3d5f80 56%, #52789a 100%);
     }
 
-    #humidityCard.hum-humid h3 { color: rgba(232, 244, 255, 0.9); }
+    #humidityCard.hum-humid h3,
+    #humidityCard.hum-humid .sensor-state { color: rgba(232, 244, 255, 0.92); }
     #humidityCard.hum-humid .value { color: #ffffff; text-shadow: 0 2px 8px rgba(14, 26, 40, 0.35); }
     #humidityCard.hum-humid .unit { color: rgba(220, 238, 255, 0.88); }
 
@@ -649,7 +736,8 @@
         linear-gradient(135deg, #dff4ff 0%, #c6e9ff 54%, #eaf8ff 100%);
     }
 
-    #pm25Card.pm-good h3 { color: #1c557d; }
+    #pm25Card.pm-good h3,
+    #pm25Card.pm-good .sensor-state { color: #1c557d; }
     #pm25Card.pm-good .value { color: #0e3857; }
     #pm25Card.pm-good .unit { color: #2b6891; }
 
@@ -683,7 +771,8 @@
         linear-gradient(140deg, #ebf9ed 0%, #d8f2dc 55%, #eefaf0 100%);
     }
 
-    #pm25Card.pm-moderate h3 { color: #2c6239; }
+    #pm25Card.pm-moderate h3,
+    #pm25Card.pm-moderate .sensor-state { color: #2c6239; }
     #pm25Card.pm-moderate .value { color: #194524; }
     #pm25Card.pm-moderate .unit { color: #3a7047; }
 
@@ -717,7 +806,8 @@
         linear-gradient(145deg, #fdf0d5 0%, #f5d69d 54%, #edc480 100%);
     }
 
-    #pm25Card.pm-bad h3 { color: #7c4b14; }
+    #pm25Card.pm-bad h3,
+    #pm25Card.pm-bad .sensor-state { color: #7c4b14; }
     #pm25Card.pm-bad .value { color: #543008; }
     #pm25Card.pm-bad .unit { color: #87551c; }
 
@@ -752,7 +842,8 @@
         linear-gradient(155deg, #2b1e11 0%, #45301c 54%, #614427 100%);
     }
 
-    #pm25Card.pm-very-bad h3 { color: rgba(252, 238, 222, 0.92); }
+    #pm25Card.pm-very-bad h3,
+    #pm25Card.pm-very-bad .sensor-state { color: rgba(252, 238, 222, 0.92); }
     #pm25Card.pm-very-bad .value { color: #ffffff; text-shadow: 0 2px 10px rgba(20, 12, 5, 0.5); }
     #pm25Card.pm-very-bad .unit { color: rgba(246, 226, 200, 0.88); }
 
@@ -858,12 +949,10 @@
 
     /* ================= 창문 카드 (#windowCard) ================= */
 
-    /* 창문 열림: 바깥 날씨 없이 깔끔한 연초록 환기 배경 + 양쪽 활짝 열린 여닫이 창문 + 환기 바람결 */
+    /* 창문 열림: 바깥 날씨 없이 깔끔한 연초록 환기 배경 + 양쪽 활짝 열린 여닫이 창문 */
     #windowCard.device-on {
       border-color: #96d1ac;
-      background:
-        radial-gradient(circle at 86% 24%, rgba(255, 255, 255, 0.66) 0%, transparent 54%),
-        linear-gradient(135deg, #e7f8ee 0%, #d5f2e1 55%, #ebfaf2 100%);
+      background: linear-gradient(135deg, #eaf9f0 0%, #d8f2e3 58%, #ecf9f2 100%);
     }
 
     #windowCard.device-on h3 { color: #1d573b; }
@@ -875,23 +964,26 @@
       left: 0;
       width: calc(100% + 240px);
       height: 100%;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='140' viewBox='0 0 240 140'%3E%3Cg fill='none' stroke='%23ffffff' stroke-linecap='round'%3E%3Cpath d='M0 38 Q 60 22 120 38 T 240 38' stroke-width='2.6' opacity='0.72'/%3E%3Cpath d='M0 74 Q 60 58 120 74 T 240 74' stroke-width='2.1' opacity='0.54'/%3E%3Cpath d='M0 108 Q 60 94 120 108 T 240 108' stroke-width='1.6' opacity='0.42'/%3E%3C/g%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='140' viewBox='0 0 240 140'%3E%3Cg fill='none' stroke='%23ffffff' stroke-linecap='round'%3E%3Cpath d='M0 34 Q 60 18 120 34 T 240 34' stroke-width='2.6' opacity='0.72'/%3E%3Cpath d='M0 70 Q 60 54 120 70 T 240 70' stroke-width='2.1' opacity='0.54'/%3E%3Cpath d='M0 106 Q 60 92 120 106 T 240 106' stroke-width='1.7' opacity='0.44'/%3E%3C/g%3E%3C/svg%3E");
       background-repeat: repeat-x;
       background-size: 240px 100%;
-      animation: windowBreezeFlow 10s linear infinite;
+      animation: windowBreezeFlow 9.5s linear infinite;
     }
 
-    /* 양쪽으로 활짝 열린 여닫이 창문 + 중앙 환기 바람 화살표 */
+    /* 양쪽으로 활짝 열린 3D 여닫이 창문 + 중앙 환기 바람 화살표 */
     #windowCard.device-on::after {
       z-index: 2;
-      top: 10px;
-      right: 16px;
+      top: 8px;
+      right: 14px;
       width: 116px;
       height: 92px;
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 100'%3E%3Crect x='24' y='10' width='82' height='74' rx='4' fill='%23ffffff' fill-opacity='0.34' stroke='%23228b52' stroke-width='2.6' stroke-opacity='0.38'/%3E%3Cpolygon points='24,10 6,2 6,78 24,84' fill='%23ffffff' fill-opacity='0.55' stroke='%23228b52' stroke-width='2.4' stroke-linejoin='round' stroke-opacity='0.44'/%3E%3Cline x1='15' y1='6' x2='15' y2='81' stroke='%23228b52' stroke-width='1.3' stroke-opacity='0.28'/%3E%3Cline x1='6' y1='40' x2='24' y2='47' stroke='%23228b52' stroke-width='1.3' stroke-opacity='0.28'/%3E%3Cpolygon points='106,10 124,2 124,78 106,84' fill='%23ffffff' fill-opacity='0.55' stroke='%23228b52' stroke-width='2.4' stroke-linejoin='round' stroke-opacity='0.44'/%3E%3Cline x1='115' y1='6' x2='115' y2='81' stroke='%23228b52' stroke-width='1.3' stroke-opacity='0.28'/%3E%3Cline x1='106' y1='47' x2='124' y2='40' stroke='%23228b52' stroke-width='1.3' stroke-opacity='0.28'/%3E%3Crect x='16' y='84' width='98' height='6' rx='3' fill='%23228b52' fill-opacity='0.28'/%3E%3Cg fill='none' stroke='%231c854d' stroke-linecap='round' stroke-linejoin='round' opacity='0.44'%3E%3Cpath d='M38 38 Q 54 29 70 38 T 94 34' stroke-width='2.5'/%3E%3Cpath d='M88 30 L 95 34 L 90 40' stroke-width='2.2'/%3E%3Cpath d='M36 58 Q 52 50 68 58 T 90 54' stroke-width='2.2' opacity='0.78'/%3E%3Cpath d='M85 50 L 91 54 L 86 59' stroke-width='2.0' opacity='0.78'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 120'%3E%3Cdefs%3E%3ClinearGradient id='openAir' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' stop-opacity='0.64'/%3E%3Cstop offset='100%25' stop-color='%23d4f2e1' stop-opacity='0.28'/%3E%3C/linearGradient%3E%3ClinearGradient id='paneOn' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' stop-opacity='0.82'/%3E%3Cstop offset='100%25' stop-color='%23c5ebd6' stop-opacity='0.52'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='40' y='16' width='80' height='78' rx='2' fill='url(%23openAir)' stroke='%23238255' stroke-width='2.6'/%3E%3Cpolygon points='40,16 10,7 10,103 40,94' fill='url(%23paneOn)' stroke='%23238255' stroke-width='2.4' stroke-linejoin='round'/%3E%3Cline x1='10' y1='55' x2='40' y2='55' stroke='%23238255' stroke-width='1.8' opacity='0.85'/%3E%3Cline x1='18' y1='25' x2='32' y2='35' stroke='%23ffffff' stroke-width='2.1' stroke-linecap='round' opacity='0.9'/%3E%3Cline x1='18' y1='68' x2='32' y2='78' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round' opacity='0.78'/%3E%3Cline x1='16' y1='48' x2='16' y2='62' stroke='%23175c3c' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpolygon points='120,16 150,7 150,103 120,94' fill='url(%23paneOn)' stroke='%23238255' stroke-width='2.4' stroke-linejoin='round'/%3E%3Cline x1='120' y1='55' x2='150' y2='55' stroke='%23238255' stroke-width='1.8' opacity='0.85'/%3E%3Cline x1='128' y1='34' x2='142' y2='24' stroke='%23ffffff' stroke-width='2.1' stroke-linecap='round' opacity='0.9'/%3E%3Cline x1='128' y1='77' x2='142' y2='67' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round' opacity='0.78'/%3E%3Cline x1='144' y1='48' x2='144' y2='62' stroke='%23175c3c' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M48 41 Q 68 31 88 41 T 111 38' fill='none' stroke='%23238c5b' stroke-width='2.1' stroke-linecap='round' opacity='0.66'/%3E%3Cpath d='M106 34.5 L 112 38 L 106.5 42' fill='none' stroke='%23238c5b' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round' opacity='0.66'/%3E%3Cpath d='M45 58 Q 68 47 91 58 T 114 55' fill='none' stroke='%23ffffff' stroke-width='4.2' stroke-linecap='round' opacity='0.92'/%3E%3Cpath d='M45 58 Q 68 47 91 58 T 114 55' fill='none' stroke='%231d7a4f' stroke-width='2.2' stroke-linecap='round' opacity='0.8'/%3E%3Cpath d='M108.5 51 L 115 55 L 109 59.5' fill='none' stroke='%231d7a4f' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' opacity='0.8'/%3E%3Cpath d='M50 75 Q 70 66 91 75 T 110 73' fill='none' stroke='%23238c5b' stroke-width='1.9' stroke-linecap='round' opacity='0.54'/%3E%3Cpath d='M105.5 70 L 111 73 L 106 76.5' fill='none' stroke='%23238c5b' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round' opacity='0.54'/%3E%3Crect x='30' y='94' width='100' height='9' rx='3' fill='%23eefbf4' stroke='%23238255' stroke-width='2.3'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
     }
 
-    /* 창문 닫힘: 열림과 동일한 크기·위치의 닫힌 양문 격자 창틀 */
+    /* 창문 닫힘: 동일 크기·위치의 닫힌 여닫이 창문 */
     #windowCard.device-off {
       border-color: #e3b4af;
       background: linear-gradient(145deg, #fff3f2 0%, #fce5e3 58%, #f8dad7 100%);
@@ -900,13 +992,20 @@
     #windowCard.device-off h3 { color: #7d3632; }
     #windowCard.device-off .value { color: #571f1c; }
 
+    #windowCard.device-off::before {
+      content: none;
+    }
+
     #windowCard.device-off::after {
       z-index: 1;
-      top: 10px;
-      right: 16px;
+      top: 8px;
+      right: 14px;
       width: 116px;
       height: 92px;
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 100'%3E%3Crect x='24' y='10' width='82' height='74' rx='4' fill='%23ffffff' fill-opacity='0.42' stroke='%23c86a62' stroke-width='2.6' stroke-opacity='0.34'/%3E%3Cline x1='65' y1='10' x2='65' y2='84' stroke='%23c86a62' stroke-width='2.4' stroke-opacity='0.34'/%3E%3Cline x1='24' y1='47' x2='106' y2='47' stroke='%23c86a62' stroke-width='2.0' stroke-opacity='0.26'/%3E%3Crect x='58' y='41' width='3' height='12' rx='1.5' fill='%23c86a62' fill-opacity='0.42'/%3E%3Crect x='69' y='41' width='3' height='12' rx='1.5' fill='%23c86a62' fill-opacity='0.42'/%3E%3Cline x1='32' y1='34' x2='46' y2='20' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round' opacity='0.72'/%3E%3Cline x1='74' y1='72' x2='90' y2='56' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round' opacity='0.64'/%3E%3Crect x='16' y='84' width='98' height='6' rx='3' fill='%23c86a62' fill-opacity='0.26'/%3E%3C/svg%3E") center / contain no-repeat;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 120'%3E%3Crect x='40' y='16' width='80' height='78' rx='2' fill='%23ffffff' fill-opacity='0.52' stroke='%23c86a62' stroke-width='2.6'/%3E%3Crect x='44' y='20' width='34' height='70' fill='%23e8aaa4' fill-opacity='0.16'/%3E%3Crect x='82' y='20' width='34' height='70' fill='%23e8aaa4' fill-opacity='0.16'/%3E%3Cline x1='80' y1='16' x2='80' y2='94' stroke='%23c86a62' stroke-width='2.6'/%3E%3Cline x1='40' y1='55' x2='120' y2='55' stroke='%23c86a62' stroke-width='1.8' opacity='0.82'/%3E%3Cline x1='74' y1='48' x2='74' y2='62' stroke='%23a64c44' stroke-width='2.4' stroke-linecap='round'/%3E%3Cline x1='86' y1='48' x2='86' y2='62' stroke='%23a64c44' stroke-width='2.4' stroke-linecap='round'/%3E%3Cline x1='49' y1='37' x2='65' y2='23' stroke='%23ffffff' stroke-width='2.3' stroke-linecap='round' opacity='0.84'/%3E%3Cline x1='55' y1='42' x2='67' y2='31' stroke='%23ffffff' stroke-width='1.6' stroke-linecap='round' opacity='0.68'/%3E%3Cline x1='92' y1='83' x2='109' y2='68' stroke='%23ffffff' stroke-width='2.3' stroke-linecap='round' opacity='0.8'/%3E%3Crect x='30' y='94' width='100' height='9' rx='3' fill='%23fff6f5' stroke='%23c86a62' stroke-width='2.3'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
     }
 
     /* ================= 선풍기 카드 (#fanCard) ================= */
@@ -954,6 +1053,10 @@
     #fanCard.device-off h3 { color: #7d3632; }
     #fanCard.device-off .value { color: #571f1c; }
 
+    #fanCard.device-off::before {
+      content: none;
+    }
+
     #fanCard.device-off::after {
       z-index: 1;
       top: 10px;
@@ -965,27 +1068,74 @@
 
     /* ================= 가습기 카드 (#humidifierCard) ================= */
 
-    /* 가습기 켜짐: 피어오르는 미스트 + 탁상용 캡슐 가습기 본체 (분무 3줄기 · 물결 수면 · 초록 LED) */
-    #humidifierCard.device-on {
-      border-color: #8ed1be;
-      background:
-        radial-gradient(circle at 86% 68%, rgba(255, 255, 255, 0.72) 0%, transparent 52%),
-        linear-gradient(140deg, #e5f8f2 0%, #cceee6 55%, #dff6f3 100%);
+    /* 가습기 파란 거품 래퍼: 켜짐일 때만 표시, 얕은 상단 페이드(0~26%)로 상단 끝 가까이까지 상승 후 소멸 */
+    .humid-bubbles {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 0, 0, 0.42) 13%,
+        #000000 26%,
+        #000000 94%,
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 0, 0, 0.42) 13%,
+        #000000 26%,
+        #000000 94%,
+        transparent 100%
+      );
     }
 
-    #humidifierCard.device-on h3 { color: #17594d; }
-    #humidifierCard.device-on .value { color: #0d3d35; }
+    /* 투명도 65% (불투명도 0.35) */
+    #humidifierCard.device-on .humid-bubbles {
+      opacity: 0.35;
+    }
+
+    .humid-bubbles .bubble-layer {
+      position: absolute;
+      pointer-events: none;
+      background-repeat: repeat;
+      will-change: transform;
+    }
+
+    /* 큰 파란 광택 거품 (느린 속도: 6.4초) */
+    .humid-bubbles .bubble-slow {
+      inset: 0 0 -140px 0;
+      background-size: 160px 140px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='140' viewBox='0 0 160 140'%3E%3Cdefs%3E%3CradialGradient id='bSlow' cx='32%25' cy='28%25' r='68%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' stop-opacity='0.95'/%3E%3Cstop offset='52%25' stop-color='%2393d5ff' stop-opacity='0.52'/%3E%3Cstop offset='100%25' stop-color='%232b8fe0' stop-opacity='0.34'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cg%3E%3Ccircle cx='34' cy='38' r='10.5' fill='url(%23bSlow)' stroke='%234da8f0' stroke-width='1.2' stroke-opacity='0.78'/%3E%3Ccircle cx='30.5' cy='34.2' r='2.8' fill='%23ffffff' opacity='0.95'/%3E%3Ccircle cx='108' cy='62' r='12.5' fill='url(%23bSlow)' stroke='%234da8f0' stroke-width='1.3' stroke-opacity='0.75'/%3E%3Ccircle cx='103.8' cy='57.5' r='3.3' fill='%23ffffff' opacity='0.95'/%3E%3Ccircle cx='66' cy='112' r='9.0' fill='url(%23bSlow)' stroke='%234da8f0' stroke-width='1.1' stroke-opacity='0.74'/%3E%3Ccircle cx='63' cy='108.8' r='2.3' fill='%23ffffff' opacity='0.92'/%3E%3Ccircle cx='142' cy='124' r='7.8' fill='url(%23bSlow)' stroke='%234da8f0' stroke-width='1.0' stroke-opacity='0.70'/%3E%3Ccircle cx='139.5' cy='121.2' r='2.0' fill='%23ffffff' opacity='0.92'/%3E%3C/g%3E%3C/svg%3E");
+      animation: bubbleRise140 6.4s linear infinite;
+    }
+
+    /* 작은 파란 광택 거품 (빠른 속도: 3.7초) */
+    .humid-bubbles .bubble-fast {
+      inset: 0 0 -110px 0;
+      background-size: 130px 110px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='130' height='110' viewBox='0 0 130 110'%3E%3Cdefs%3E%3CradialGradient id='bFast' cx='32%25' cy='28%25' r='68%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' stop-opacity='0.95'/%3E%3Cstop offset='54%25' stop-color='%237ccbff' stop-opacity='0.58'/%3E%3Cstop offset='100%25' stop-color='%232382d6' stop-opacity='0.38'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cg%3E%3Ccircle cx='20' cy='24' r='5.2' fill='url(%23bFast)' stroke='%233d9be8' stroke-width='1.0' stroke-opacity='0.78'/%3E%3Ccircle cx='18.3' cy='22.2' r='1.4' fill='%23ffffff' opacity='0.96'/%3E%3Ccircle cx='78' cy='18' r='4.2' fill='url(%23bFast)' stroke='%233d9be8' stroke-width='0.9' stroke-opacity='0.74'/%3E%3Ccircle cx='76.6' cy='16.6' r='1.1' fill='%23ffffff' opacity='0.94'/%3E%3Ccircle cx='52' cy='58' r='6.2' fill='url(%23bFast)' stroke='%233d9be8' stroke-width='1.0' stroke-opacity='0.78'/%3E%3Ccircle cx='50' cy='55.8' r='1.7' fill='%23ffffff' opacity='0.95'/%3E%3Ccircle cx='112' cy='46' r='4.8' fill='url(%23bFast)' stroke='%233d9be8' stroke-width='0.9' stroke-opacity='0.74'/%3E%3Ccircle cx='110.4' cy='44.4' r='1.3' fill='%23ffffff' opacity='0.94'/%3E%3Ccircle cx='90' cy='88' r='5.6' fill='url(%23bFast)' stroke='%233d9be8' stroke-width='1.0' stroke-opacity='0.76'/%3E%3Ccircle cx='88.2' cy='86' r='1.5' fill='%23ffffff' opacity='0.95'/%3E%3Ccircle cx='28' cy='94' r='3.8' fill='url(%23bFast)' stroke='%233d9be8' stroke-width='0.85' stroke-opacity='0.72'/%3E%3Ccircle cx='26.8' cy='92.8' r='1.0' fill='%23ffffff' opacity='0.92'/%3E%3C/g%3E%3C/svg%3E");
+      animation: bubbleRise110 3.7s linear infinite;
+    }
+
+    /* 가습기 켜짐: 파란 청량 배경 + 2중 속도 파란 거품(줄기선 없음) + 탁상용 본체 */
+    #humidifierCard.device-on {
+      border-color: #93c9e8;
+      background:
+        radial-gradient(circle at 86% 74%, rgba(255, 255, 255, 0.78) 0%, transparent 54%),
+        linear-gradient(140deg, #e7f6ff 0%, #d2ecfc 55%, #e3f4ff 100%);
+    }
+
+    #humidifierCard.device-on h3 { color: #194f75; }
+    #humidifierCard.device-on .value { color: #0d3552; }
 
     #humidifierCard.device-on::before {
-      z-index: 1;
-      inset: -16px -12px -120px -12px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='120' viewBox='0 0 160 120'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M36 120 C 26 96, 46 72, 36 48 C 26 24, 46 10, 36 0' stroke='%23ffffff' stroke-width='7' opacity='0.52'/%3E%3Cpath d='M92 120 C 104 94, 80 70, 92 44 C 104 20, 80 10, 92 0' stroke='%23ffffff' stroke-width='9' opacity='0.44'/%3E%3Cpath d='M138 120 C 128 96, 148 74, 138 48 C 128 24, 148 10, 138 0' stroke='%234db8a3' stroke-width='6' opacity='0.18'/%3E%3C/g%3E%3Cg fill='%23ffffff'%3E%3Ccircle cx='56' cy='28' r='2.6' opacity='0.72'/%3E%3Ccircle cx='116' cy='62' r='3.0' opacity='0.68'/%3E%3Ccircle cx='24' cy='78' r='2.4' opacity='0.64'/%3E%3C/g%3E%3C/svg%3E");
-      background-size: 160px 120px;
-      background-repeat: repeat;
-      filter: blur(1.4px);
-      -webkit-mask-image: linear-gradient(to top, transparent 2%, rgba(0, 0, 0, 0.88) 30%, rgba(0, 0, 0, 0.65) 75%, transparent 100%);
-      mask-image: linear-gradient(to top, transparent 2%, rgba(0, 0, 0, 0.88) 30%, rgba(0, 0, 0, 0.65) 75%, transparent 100%);
-      animation: humidMistRise 4.8s linear infinite;
+      content: none;
     }
 
     #humidifierCard.device-on::after {
@@ -994,10 +1144,13 @@
       right: 16px;
       width: 96px;
       height: 96px;
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M50 28 C 46 21, 54 14, 50 7' stroke='%2322947b' stroke-width='2.4' opacity='0.48'/%3E%3Cpath d='M41 29 C 36 22, 40 15, 35 10' stroke='%23ffffff' stroke-width='2.6' opacity='0.88'/%3E%3Cpath d='M59 29 C 64 22, 60 15, 65 10' stroke='%23ffffff' stroke-width='2.6' opacity='0.88'/%3E%3C/g%3E%3Ccircle cx='44' cy='16' r='2.2' fill='%23ffffff' opacity='0.85'/%3E%3Ccircle cx='57' cy='13' r='1.8' fill='%23ffffff' opacity='0.8'/%3E%3Crect x='40' y='30' width='20' height='6' rx='3' fill='%23248c77' fill-opacity='0.34'/%3E%3Crect x='24' y='35' width='52' height='53' rx='18' fill='%23ffffff' fill-opacity='0.52' stroke='%23248c77' stroke-width='2.4' stroke-opacity='0.42'/%3E%3Cpath d='M25.5 62 Q 38 56 50 62 T 74.5 62 L 74.5 70 C 74.5 79.5 66.8 86.8 57.5 86.8 L 42.5 86.8 C 33.2 86.8 25.5 79.5 25.5 70 Z' fill='%233eb59b' fill-opacity='0.28'/%3E%3Cpath d='M26 62 Q 38 56 50 62 T 74 62' fill='none' stroke='%23248c77' stroke-width='1.5' stroke-opacity='0.34'/%3E%3Ccircle cx='50' cy='48' r='6.5' fill='%23229b59' fill-opacity='0.22'/%3E%3Ccircle cx='50' cy='48' r='3.3' fill='%231f9d5c' fill-opacity='0.78'/%3E%3Crect x='31' y='89' width='38' height='4' rx='2' fill='%23248c77' fill-opacity='0.24'/%3E%3C/svg%3E") center / contain no-repeat;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 112 112'%3E%3Cdefs%3E%3ClinearGradient id='tankBlueOn' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' stop-opacity='0.88'/%3E%3Cstop offset='100%25' stop-color='%23d2edff' stop-opacity='0.64'/%3E%3C/linearGradient%3E%3ClinearGradient id='waterBlueOn' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%235cb8f5' stop-opacity='0.48'/%3E%3Cstop offset='100%25' stop-color='%232884d4' stop-opacity='0.34'/%3E%3C/linearGradient%3E%3ClinearGradient id='baseBlueOn' x1='0%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23dcefff'/%3E%3Cstop offset='100%25' stop-color='%23b2d9f7'/%3E%3C/linearGradient%3E%3CclipPath id='tankClipBlueOn'%3E%3Cpath d='M30 54 C30 45 37 40 46 40 L66 40 C75 40 82 45 82 54 L82 79 L30 79 Z'/%3E%3C/clipPath%3E%3C/defs%3E%3Ccircle cx='56' cy='21' r='4.2' fill='%23ffffff' fill-opacity='0.78' stroke='%234da8f0' stroke-width='1.1' stroke-opacity='0.6'/%3E%3Ccircle cx='54.6' cy='19.5' r='1.2' fill='%23ffffff'/%3E%3Ccircle cx='46' cy='12' r='3.0' fill='%23ffffff' fill-opacity='0.7' stroke='%234da8f0' stroke-width='1' stroke-opacity='0.52'/%3E%3Ccircle cx='65' cy='14' r='2.6' fill='%23ffffff' fill-opacity='0.68' stroke='%234da8f0' stroke-width='0.9' stroke-opacity='0.5'/%3E%3Cpath d='M48 39 L50.5 32.5 C51 31.5 52 31 53 31 L59 31 C60 31 61 31.5 61.5 32.5 L64 39 Z' fill='%23eef8ff' stroke='%232578b8' stroke-width='2.1' stroke-linejoin='round'/%3E%3Cpath d='M29 54 C29 44 36 39 46 39 L66 39 C76 39 83 44 83 54 L83 80 L29 80 Z' fill='url(%23tankBlueOn)' stroke='%232578b8' stroke-width='2.3' stroke-linejoin='round'/%3E%3Cg clip-path='url(%23tankClipBlueOn)'%3E%3Cpath d='M28 61 Q 42 56 56 61 T 84 61 L84 81 L28 81 Z' fill='url(%23waterBlueOn)'/%3E%3Cpath d='M28 61 Q 42 56 56 61 T 84 61' fill='none' stroke='%23ffffff' stroke-width='1.5' opacity='0.82'/%3E%3C/g%3E%3Cpath d='M56 45 C56 45 52.2 50 52.2 52.2 a3.8 3.8 0 0 0 7.6 0 C59.8 50 56 45 56 45 Z' fill='%232682c9' opacity='0.72'/%3E%3Cline x1='35' y1='49' x2='35' y2='73' stroke='%23ffffff' stroke-width='2.2' stroke-linecap='round' opacity='0.84'/%3E%3Cpath d='M27 80 L85 80 L85 89 C85 94.5 80.5 98 75 98 L37 98 C31.5 98 27 94.5 27 89 Z' fill='url(%23baseBlueOn)' stroke='%232578b8' stroke-width='2.3' stroke-linejoin='round'/%3E%3Ccircle cx='56' cy='89' r='6.6' fill='%2310b981' opacity='0.28'/%3E%3Ccircle cx='56' cy='89' r='3.2' fill='%2310b981'/%3E%3Ccircle cx='55' cy='88' r='1' fill='%23ffffff' opacity='0.94'/%3E%3Cellipse cx='56' cy='103' rx='26' ry='2.8' fill='%23194f75' opacity='0.14'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
     }
 
-    /* 가습기 꺼짐: 동일한 탁상용 캡슐 가습기 본체 (분무 없음 · 잔잔한 수면 · 꺼진 LED) */
+    /* 가습기 꺼짐: 동일한 캡슐형 본체 (거품 없음 · 잔잔한 수면 · 꺼진 LED) */
     #humidifierCard.device-off {
       border-color: #e3b4af;
       background: linear-gradient(145deg, #fff3f2 0%, #fce5e3 58%, #f8dad7 100%);
@@ -1006,13 +1159,20 @@
     #humidifierCard.device-off h3 { color: #7d3632; }
     #humidifierCard.device-off .value { color: #571f1c; }
 
+    #humidifierCard.device-off::before {
+      content: none;
+    }
+
     #humidifierCard.device-off::after {
-      z-index: 1;
+      z-index: 2;
       top: 8px;
       right: 16px;
       width: 96px;
       height: 96px;
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='40' y='30' width='20' height='6' rx='3' fill='%23c86a62' fill-opacity='0.26'/%3E%3Crect x='24' y='35' width='52' height='53' rx='18' fill='%23ffffff' fill-opacity='0.42' stroke='%23c86a62' stroke-width='2.4' stroke-opacity='0.34'/%3E%3Cpath d='M25.5 68 L 74.5 68 L 74.5 70 C 74.5 79.5 66.8 86.8 57.5 86.8 L 42.5 86.8 C 33.2 86.8 25.5 79.5 25.5 70 Z' fill='%23c86a62' fill-opacity='0.16'/%3E%3Cline x1='26' y1='68' x2='74' y2='68' stroke='%23c86a62' stroke-width='1.5' stroke-opacity='0.28'/%3E%3Ccircle cx='50' cy='48' r='3.2' fill='none' stroke='%23c86a62' stroke-width='1.8' stroke-opacity='0.38'/%3E%3Crect x='31' y='89' width='38' height='4' rx='2' fill='%23c86a62' fill-opacity='0.2'/%3E%3C/svg%3E") center / contain no-repeat;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 112 112'%3E%3Cdefs%3E%3CclipPath id='tankClipBlueOff'%3E%3Cpath d='M30 54 C30 45 37 40 46 40 L66 40 C75 40 82 45 82 54 L82 79 L30 79 Z'/%3E%3C/clipPath%3E%3C/defs%3E%3Cpath d='M48 39 L50.5 32.5 C51 31.5 52 31 53 31 L59 31 C60 31 61 31.5 61.5 32.5 L64 39 Z' fill='%23fff6f5' stroke='%23c86a62' stroke-width='2.1' stroke-opacity='0.64' stroke-linejoin='round'/%3E%3Cpath d='M29 54 C29 44 36 39 46 39 L66 39 C76 39 83 44 83 54 L83 80 L29 80 Z' fill='%23ffffff' fill-opacity='0.48' stroke='%23c86a62' stroke-width='2.3' stroke-opacity='0.64' stroke-linejoin='round'/%3E%3Cg clip-path='url(%23tankClipBlueOff)'%3E%3Crect x='28' y='63' width='56' height='18' fill='%23c86a62' fill-opacity='0.14'/%3E%3Cline x1='28' y1='63' x2='84' y2='63' stroke='%23c86a62' stroke-width='1.4' stroke-opacity='0.36'/%3E%3C/g%3E%3Cpath d='M56 45 C56 45 52.2 50 52.2 52.2 a3.8 3.8 0 0 0 7.6 0 C59.8 50 56 45 56 45 Z' fill='%23c86a62' opacity='0.34'/%3E%3Cline x1='35' y1='49' x2='35' y2='73' stroke='%23ffffff' stroke-width='2.2' stroke-linecap='round' opacity='0.64'/%3E%3Cpath d='M27 80 L85 80 L85 89 C85 94.5 80.5 98 75 98 L37 98 C31.5 98 27 94.5 27 89 Z' fill='%23f6d9d6' fill-opacity='0.78' stroke='%23c86a62' stroke-width='2.3' stroke-opacity='0.64' stroke-linejoin='round'/%3E%3Ccircle cx='56' cy='89' r='3' fill='%23d4aba6' stroke='%23b57973' stroke-width='1' stroke-opacity='0.55'/%3E%3Cellipse cx='56' cy='103' rx='26' ry='2.8' fill='%237d3632' opacity='0.1'/%3E%3C/svg%3E");
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center;
     }
 
     /* ================= 전체 배경 키프레임 ================= */
@@ -1038,18 +1198,46 @@
       50%      { transform: scale(1.12); opacity: 1; }
     }
 
-    @keyframes hazeRiseFront {
-      0%   { transform: translate3d(0, 0, 0) scaleX(1); }
-      25%  { transform: translate3d(4px, -30px, 0) scaleX(1.03); }
-      50%  { transform: translate3d(-3px, -60px, 0) scaleX(0.98); }
-      75%  { transform: translate3d(3px, -90px, 0) scaleX(1.02); }
-      100% { transform: translate3d(0, -120px, 0) scaleX(1); }
+    @keyframes hazeRise120 {
+      from { transform: translate3d(0, 0, 0); }
+      to   { transform: translate3d(0, -120px, 0); }
     }
 
-    @keyframes hazeRiseBack {
-      0%   { transform: translate3d(0, 0, 0) scaleX(1); }
-      50%  { transform: translate3d(-6px, -70px, 0) scaleX(1.04); }
-      100% { transform: translate3d(0, -140px, 0) scaleX(1); }
+    @keyframes hazeRise140 {
+      from { transform: translate3d(0, 0, 0); }
+      to   { transform: translate3d(0, -140px, 0); }
+    }
+
+    /* 최대 0.20 (20%) 긴 호흡 교차 아지랑이 - 흰색 */
+    @keyframes hazeWhiteGradual {
+      0%   { opacity: 0.09; }
+      4%   { opacity: 0.13; }
+      12%  { opacity: 0.18; }
+      22%  { opacity: 0.20; }
+      32%  { opacity: 0.19; }
+      42%  { opacity: 0.15; }
+      52%  { opacity: 0.10; }
+      60%  { opacity: 0.05; }
+      66%  { opacity: 0; }
+      90%  { opacity: 0; }
+      95%  { opacity: 0.04; }
+      100% { opacity: 0.09; }
+    }
+
+    /* 최대 0.20 (20%) 긴 호흡 비대칭 교차 아지랑이 - 붉은색 */
+    @keyframes hazeRedGradual {
+      0%   { opacity: 0.03; }
+      4%   { opacity: 0; }
+      32%  { opacity: 0; }
+      38%  { opacity: 0.04; }
+      48%  { opacity: 0.11; }
+      58%  { opacity: 0.17; }
+      66%  { opacity: 0.20; }
+      76%  { opacity: 0.19; }
+      84%  { opacity: 0.15; }
+      90%  { opacity: 0.09; }
+      95%  { opacity: 0.06; }
+      100% { opacity: 0.03; }
     }
 
     @keyframes dryWindDrift {
@@ -1152,12 +1340,19 @@
       to   { transform: translate3d(0, 0, 0); }
     }
 
-    @keyframes humidMistRise {
-      0%   { transform: translate3d(0, 0, 0); }
-      50%  { transform: translate3d(5px, -60px, 0); }
-      100% { transform: translate3d(0, -120px, 0); }
+    @keyframes bubbleRise140 {
+      from { transform: translate3d(0, 0, 0); }
+      to   { transform: translate3d(0, -140px, 0); }
     }
 
+    @keyframes bubbleRise110 {
+      from { transform: translate3d(0, 0, 0); }
+      to   { transform: translate3d(0, -110px, 0); }
+    }
+
+    /* =========================================================
+       버튼 · 지도 · 안내 박스 · 인앱 모달
+    ========================================================= */
     button {
       padding: 12px 18px;
       border: none;
@@ -1243,6 +1438,65 @@
       cursor: pointer;
     }
 
+    /* 커스텀 알림/확인 모달 (alert/confirm 대체) */
+    .dialog-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(18, 24, 32, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .dialog-backdrop[hidden] {
+      display: none;
+    }
+
+    .dialog-box {
+      width: 100%;
+      max-width: 380px;
+      background: #ffffff;
+      border: 1px solid #d7dce1;
+      border-radius: 14px;
+      padding: 20px;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.2);
+      color: #202428;
+    }
+
+    .dialog-message {
+      margin: 0 0 18px;
+      font-size: 14px;
+      line-height: 1.6;
+      white-space: pre-line;
+    }
+
+    .dialog-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .dialog-actions button {
+      margin: 0;
+      padding: 9px 16px;
+      font-size: 14px;
+      width: auto;
+    }
+
+    .dialog-btn-secondary {
+      background: #e5e9ee;
+      color: #303840;
+    }
+
+    .dialog-btn-secondary:hover {
+      background: #d5dce3;
+    }
+
+    /* =========================================================
+       모바일 반응형 (600px 이하)
+    ========================================================= */
     @media (max-width: 600px) {
       body {
         padding: 12px;
@@ -1283,6 +1537,10 @@
         padding: 15px;
       }
 
+      .sensor-state {
+        font-size: 11px;
+      }
+
       .value,
       .device-card .value {
         font-size: 26px;
@@ -1313,7 +1571,7 @@
       #windowCard.device-off::after {
         width: 94px;
         height: 74px;
-        right: 12px;
+        right: 10px;
       }
 
       #fanCard.device-on::after,
@@ -1326,7 +1584,7 @@
       #humidifierCard.device-off::after {
         width: 78px;
         height: 78px;
-        right: 12px;
+        right: 10px;
       }
 
       button {
@@ -1380,27 +1638,51 @@
     <h1>SMART HOME</h1>
     <div class="subtitle">스마트홈 환경 모니터링 시스템</div>
 
+    <!-- 센서 섹션 -->
     <div class="dashboard-section">
       <h2 class="section-heading">센서</h2>
       <div class="grid">
         <div class="temperature-humidity">
+          <!-- 온도 카드 -->
           <div class="card" id="tempCard">
-            <h3>온도</h3>
+            <!-- 더움 상태 전용 20% 교차 아지랑이 레이어 -->
+            <span class="temp-haze" aria-hidden="true">
+              <span class="haze-white"></span>
+              <span class="haze-red"></span>
+            </span>
+            <div class="sensor-heading">
+              <h3>온도</h3>
+              <span class="sensor-state" id="tempState"></span>
+            </div>
             <div class="value"><span id="temperature">--</span><span class="unit"> °C</span></div>
           </div>
+
+          <!-- 습도 카드 -->
           <div class="card" id="humidityCard">
-            <h3>습도</h3>
+            <div class="sensor-heading">
+              <h3>습도</h3>
+              <span class="sensor-state" id="humidityState"></span>
+            </div>
             <div class="value"><span id="humidity">--</span><span class="unit"> %</span></div>
           </div>
         </div>
+
+        <!-- 빗물 감지 카드 -->
         <div class="card" id="rainCard">
           <h3>빗물 감지</h3>
           <div class="value" id="rainStatus"><span id="rain">--</span></div>
         </div>
+
+        <!-- 미세먼지 카드 -->
         <div class="card" id="pm25Card">
-          <h3>미세먼지</h3>
+          <div class="sensor-heading">
+            <h3>미세먼지</h3>
+            <span class="sensor-state" id="pm25State"></span>
+          </div>
           <div class="value"><span id="pm25">--</span><span class="unit"> ㎍/㎥</span></div>
         </div>
+
+        <!-- 내부 유해가스 카드 -->
         <div class="card">
           <h3>내부 유해가스</h3>
           <div class="value"><span id="gas">--</span></div>
@@ -1408,6 +1690,7 @@
       </div>
     </div>
 
+    <!-- 장치 섹션 -->
     <div class="dashboard-section">
       <h2 class="section-heading">장치</h2>
       <div class="section card auto-control-card auto-master-off" id="autoControlCard">
@@ -1421,43 +1704,72 @@
             <span class="auto-device-name">자동설정</span>
             <span class="auto-device-help">자동설정을 끄면 장치별 자동 기능은 일시 중지되며, 개별 설정은 유지됩니다.</span>
           </div>
-          <div class="auto-switch-wrap"><span id="autoMasterLabel" class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoMasterButton" aria-label="자동설정" aria-pressed="false" onclick="toggleAutoControl('master')" disabled></button></div>
+          <div class="auto-switch-wrap">
+            <span id="autoMasterLabel" class="auto-side-label">OFF</span>
+            <button type="button" class="auto-toggle" id="autoMasterButton" aria-label="자동설정" aria-pressed="false" onclick="toggleAutoControl('master')" disabled></button>
+          </div>
         </div>
 
         <p class="auto-control-status" id="autoControlStatus">Firebase에서 자동설정을 확인하고 있습니다.</p>
       </div>
 
       <div class="grid">
+        <!-- 창문 카드 -->
         <div class="card device-card device-unknown" id="windowCard">
           <div class="device-heading"><h3>창문</h3></div>
           <div class="value" id="window"></div>
           <div class="device-control-row">
             <button type="button" id="windowOpenButton" onclick="sendWindowCommand('open')" disabled>창문 열기</button>
             <button type="button" class="stop" id="windowCloseButton" onclick="sendWindowCommand('close')" disabled>창문 닫기</button>
-            <div class="auto-switch-wrap"><span id="autoWindowLabel" class="auto-mode-label mode-auto">자동모드</span><span class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoWindowButton" aria-label="창문 자동설정" aria-pressed="true" onclick="toggleAutoControl('window')" disabled></button><span class="auto-side-label">ON</span></div>
+            <div class="auto-switch-wrap">
+              <span id="autoWindowLabel" class="auto-mode-label mode-auto">자동모드</span>
+              <span class="auto-side-label">OFF</span>
+              <button type="button" class="auto-toggle" id="autoWindowButton" aria-label="창문 자동설정" aria-pressed="true" onclick="toggleAutoControl('window')" disabled></button>
+              <span class="auto-side-label">ON</span>
+            </div>
           </div>
         </div>
+
+        <!-- 선풍기 카드 -->
         <div class="card device-card device-unknown" id="fanCard">
           <div class="device-heading"><h3>선풍기</h3></div>
           <div class="value" id="fan"></div>
           <div class="device-control-row">
             <button type="button" id="fanOnButton" onclick="sendDeviceCommand('fan', 'on')" disabled>선풍기 켜기</button>
             <button type="button" class="stop" id="fanOffButton" onclick="sendDeviceCommand('fan', 'off')" disabled>선풍기 끄기</button>
-            <div class="auto-switch-wrap"><span id="autoFanLabel" class="auto-mode-label mode-auto">자동모드</span><span class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoFanButton" aria-label="선풍기 자동설정" aria-pressed="true" onclick="toggleAutoControl('fan')" disabled></button><span class="auto-side-label">ON</span></div>
+            <div class="auto-switch-wrap">
+              <span id="autoFanLabel" class="auto-mode-label mode-auto">자동모드</span>
+              <span class="auto-side-label">OFF</span>
+              <button type="button" class="auto-toggle" id="autoFanButton" aria-label="선풍기 자동설정" aria-pressed="true" onclick="toggleAutoControl('fan')" disabled></button>
+              <span class="auto-side-label">ON</span>
+            </div>
           </div>
         </div>
+
+        <!-- 가습기 카드 -->
         <div class="card device-card device-unknown" id="humidifierCard">
+          <!-- 가습기 켜짐 전용 2중 속도 파란 광택 거품 레이어 -->
+          <span class="humid-bubbles" aria-hidden="true">
+            <span class="bubble-layer bubble-slow"></span>
+            <span class="bubble-layer bubble-fast"></span>
+          </span>
           <div class="device-heading"><h3>가습기</h3></div>
           <div class="value" id="humidifier"></div>
           <div class="device-control-row">
             <button type="button" id="humidifierOnButton" onclick="sendDeviceCommand('humidifier', 'on')" disabled>가습기 켜기</button>
             <button type="button" class="stop" id="humidifierOffButton" onclick="sendDeviceCommand('humidifier', 'off')" disabled>가습기 끄기</button>
-            <div class="auto-switch-wrap"><span id="autoHumidifierLabel" class="auto-mode-label mode-auto">자동모드</span><span class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoHumidifierButton" aria-label="가습기 자동설정" aria-pressed="true" onclick="toggleAutoControl('humidifier')" disabled></button><span class="auto-side-label">ON</span></div>
+            <div class="auto-switch-wrap">
+              <span id="autoHumidifierLabel" class="auto-mode-label mode-auto">자동모드</span>
+              <span class="auto-side-label">OFF</span>
+              <button type="button" class="auto-toggle" id="autoHumidifierButton" aria-label="가습기 자동설정" aria-pressed="true" onclick="toggleAutoControl('humidifier')" disabled></button>
+              <span class="auto-side-label">ON</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- 사용자 위치 공유 섹션 -->
     <div class="section card location-card">
       <h2>사용자 위치 공유</h2>
 
@@ -1511,6 +1823,18 @@
 
   </div>
 
+  <!-- 인앱 알림 / 확인 대화상자 -->
+  <div class="dialog-backdrop" id="appDialog" hidden role="dialog" aria-modal="true" aria-labelledby="appDialogMessage">
+    <div class="dialog-box">
+      <p class="dialog-message" id="appDialogMessage"></p>
+      <div class="dialog-actions">
+        <button type="button" class="dialog-btn-secondary" id="appDialogCancel" hidden>취소</button>
+        <button type="button" id="appDialogConfirm">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leaflet 지도 라이브러리 -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
@@ -1555,6 +1879,32 @@
     let heartbeatTimer = null;
     let statusTimer = null;
     let isSharing = false;
+
+    // 인앱 모달 다이얼로그 (브라우저 기본 alert/confirm 대체)
+    function showDialog(message, options = {}) {
+      return new Promise(function(resolve) {
+        const backdrop = document.getElementById("appDialog");
+        const msgEl = document.getElementById("appDialogMessage");
+        const cancelBtn = document.getElementById("appDialogCancel");
+        const confirmBtn = document.getElementById("appDialogConfirm");
+
+        msgEl.textContent = message;
+        cancelBtn.hidden = !options.showCancel;
+        confirmBtn.textContent = options.confirmText || "확인";
+        confirmBtn.classList.toggle("stop", Boolean(options.danger));
+        backdrop.hidden = false;
+
+        function cleanup(result) {
+          backdrop.hidden = true;
+          confirmBtn.onclick = null;
+          cancelBtn.onclick = null;
+          resolve(result);
+        }
+
+        confirmBtn.onclick = function() { cleanup(true); };
+        cancelBtn.onclick = function() { cleanup(false); };
+      });
+    }
 
     // 새로고침해도 같은 탭에서는 같은 사용자 ID를 유지
     function createUserId() {
@@ -1786,7 +2136,10 @@
     async function confirmDeleteHouseLocation() {
       if (!houseLocation) return;
 
-      const confirmed = confirm("등록된 집 위치를 삭제할까요?\n삭제하면 지도에서도 집 위치 표시가 사라집니다.");
+      const confirmed = await showDialog(
+        "등록된 집 위치를 삭제할까요?\n삭제하면 지도에서도 집 위치 표시가 사라집니다.",
+        { showCancel: true, confirmText: "삭제", danger: true }
+      );
       if (!confirmed) return;
 
       try {
@@ -1810,9 +2163,9 @@
         document.getElementById("houseStatus").textContent = "등록된 집 위치가 없습니다.";
         document.getElementById("houseInstruction").textContent = "집 위치 등록 버튼을 누른 뒤 지도에서 집 위치를 선택하세요.";
         document.getElementById("distanceFromHome").textContent = "--";
-        alert("등록된 집 위치를 삭제했습니다.");
+        await showDialog("등록된 집 위치를 삭제했습니다.");
       } catch (error) {
-        alert(error.message);
+        await showDialog(error.message);
         console.error(error);
       }
     }
@@ -1844,7 +2197,7 @@
     // 선택한 집 위치를 Firebase에 확정 저장
     async function saveHouseLocation() {
       if (!pendingHouseLocation || !selectionMode) {
-        alert("먼저 지도에서 집 위치를 선택하세요.");
+        await showDialog("먼저 지도에서 집 위치를 선택하세요.");
         return;
       }
 
@@ -1895,10 +2248,10 @@
           );
         }
 
-        alert("집 위치 등록 성공!");
+        await showDialog("집 위치 등록 성공!");
 
       } catch (error) {
-        alert(error.message);
+        await showDialog(error.message);
         console.error(error);
       }
     }
@@ -1959,8 +2312,11 @@
       // 전체 자동설정 카드 배경 상태 갱신
       const autoCard = document.getElementById("autoControlCard");
       if (autoCard) {
-        autoCard.classList.toggle("auto-master-on", masterAutoEnabled);
-        autoCard.classList.toggle("auto-master-off", !masterAutoEnabled);
+        const nextClass = masterAutoEnabled ? "auto-master-on" : "auto-master-off";
+        if (!autoCard.classList.contains(nextClass)) {
+          autoCard.classList.remove("auto-master-on", "auto-master-off");
+          autoCard.classList.add(nextClass);
+        }
       }
 
       const controls = [
@@ -1974,7 +2330,6 @@
         const button = document.getElementById(buttonId);
         const isMaster = key === "master";
         const settingEnabled = isMaster ? masterAutoEnabled : autoControlSettings[key] === true;
-        // 개별 토글의 위치/표시는 개별 설정값을 유지하고, 전체 OFF일 때는 비활성화만 적용합니다.
         const toggleOn = settingEnabled;
         const effectiveAuto = isMaster ? settingEnabled : (masterAutoEnabled && settingEnabled);
         button.classList.toggle("is-on", toggleOn);
@@ -2009,7 +2364,6 @@
     }
 
     // Firebase에는 개별 설정(autoControl)과 실제 적용 모드(deviceModes)를 분리해 기록합니다.
-    // 전체 OFF는 개별 설정값을 바꾸지 않고 세 장치 모두에 수동 신호를 보냅니다.
     async function toggleAutoControl(target) {
       const allowedTargets = ["master", "window", "fan", "humidifier"];
       if (!allowedTargets.includes(target) || autoControlSaving) return;
@@ -2078,7 +2432,6 @@
     }
 
     // 가습기/선풍기 원격 제어 명령을 Firebase에 전송
-    // 실제 장치가 이 명령을 읽고 작동한 뒤 상태값을 Firebase에 기록해야 합니다.
     async function sendDeviceCommand(device, command) {
       const allowedDevices = ["humidifier", "fan"];
 
@@ -2108,45 +2461,68 @@
       }
     }
 
-    // 온도 수치 표시 및 3단계 카드 배경 전환 (18°C 미만 추움 / 18~26°C 쾌적 / 26°C 초과 더움)
+    // 애니메이션 끊김 방지를 위해 클래스가 실제로 바뀔 때만 교체하는 헬퍼
+    function applyExclusiveClass(element, allClasses, nextClass) {
+      if (nextClass && element.classList.contains(nextClass)) return;
+      element.classList.remove(...allClasses);
+      if (nextClass) {
+        element.classList.add(nextClass);
+      }
+    }
+
+    // 온도 수치 표시, 오른쪽 위 상태 텍스트 및 3단계 카드 배경 전환 (18°C 미만 추움 / 18~26°C 쾌적 / 26°C 초과 더움)
     function updateTemperatureDisplay(value) {
       const label = document.getElementById("temperature");
+      const stateLabel = document.getElementById("tempState");
       const card = document.getElementById("tempCard");
       const hasValue = value !== null && value !== undefined && String(value).trim() !== "";
       const num = hasValue ? Number(value) : NaN;
 
       label.textContent = hasValue ? value : "--";
-      card.classList.remove("temp-cold", "temp-comfort", "temp-hot");
 
-      if (Number.isNaN(num)) return;
+      if (Number.isNaN(num)) {
+        stateLabel.textContent = "";
+        applyExclusiveClass(card, ["temp-cold", "temp-comfort", "temp-hot"], null);
+        return;
+      }
 
       if (num < 18) {
-        card.classList.add("temp-cold");
+        stateLabel.textContent = "추움";
+        applyExclusiveClass(card, ["temp-cold", "temp-comfort", "temp-hot"], "temp-cold");
       } else if (num <= 26) {
-        card.classList.add("temp-comfort");
+        stateLabel.textContent = "쾌적";
+        applyExclusiveClass(card, ["temp-cold", "temp-comfort", "temp-hot"], "temp-comfort");
       } else {
-        card.classList.add("temp-hot");
+        stateLabel.textContent = "더움";
+        applyExclusiveClass(card, ["temp-cold", "temp-comfort", "temp-hot"], "temp-hot");
       }
     }
 
-    // 습도 수치 표시 및 3단계 카드 배경 전환 (40% 미만 건조 / 40~65% 적정 / 65% 초과 습함)
+    // 습도 수치 표시, 오른쪽 위 상태 텍스트 및 3단계 카드 배경 전환 (40% 미만 건조 / 40~65% 적정 / 65% 초과 습함)
     function updateHumidityDisplay(value) {
       const label = document.getElementById("humidity");
+      const stateLabel = document.getElementById("humidityState");
       const card = document.getElementById("humidityCard");
       const hasValue = value !== null && value !== undefined && String(value).trim() !== "";
       const num = hasValue ? Number(value) : NaN;
 
       label.textContent = hasValue ? value : "--";
-      card.classList.remove("hum-dry", "hum-comfort", "hum-humid");
 
-      if (Number.isNaN(num)) return;
+      if (Number.isNaN(num)) {
+        stateLabel.textContent = "";
+        applyExclusiveClass(card, ["hum-dry", "hum-comfort", "hum-humid"], null);
+        return;
+      }
 
       if (num < 40) {
-        card.classList.add("hum-dry");
+        stateLabel.textContent = "건조";
+        applyExclusiveClass(card, ["hum-dry", "hum-comfort", "hum-humid"], "hum-dry");
       } else if (num <= 65) {
-        card.classList.add("hum-comfort");
+        stateLabel.textContent = "적정";
+        applyExclusiveClass(card, ["hum-dry", "hum-comfort", "hum-humid"], "hum-comfort");
       } else {
-        card.classList.add("hum-humid");
+        stateLabel.textContent = "습함";
+        applyExclusiveClass(card, ["hum-dry", "hum-comfort", "hum-humid"], "hum-humid");
       }
     }
 
@@ -2162,30 +2538,38 @@
       label.textContent = isRain ? "비" : (isClear ? "맑음" : "--");
 
       const rainCard = document.getElementById("rainCard");
-      rainCard.classList.toggle("rain-detected", isRain);
-      rainCard.classList.toggle("rain-clear", isClear);
+      const nextClass = isRain ? "rain-detected" : (isClear ? "rain-clear" : null);
+      applyExclusiveClass(rainCard, ["rain-detected", "rain-clear"], nextClass);
     }
 
-    // 미세먼지(PM2.5) 수치 표시 및 4단계 카드 배경 전환 (0~15 좋음 / 16~35 보통 / 36~75 나쁨 / 76+ 매우 나쁨)
+    // 미세먼지(PM2.5) 수치 표시, 오른쪽 위 상태 텍스트 및 4단계 카드 배경 전환
     function updatePm25Display(value) {
       const label = document.getElementById("pm25");
+      const stateLabel = document.getElementById("pm25State");
       const card = document.getElementById("pm25Card");
       const hasValue = value !== null && value !== undefined && String(value).trim() !== "";
       const num = hasValue ? Number(value) : NaN;
 
       label.textContent = hasValue ? value : "--";
-      card.classList.remove("pm-good", "pm-moderate", "pm-bad", "pm-very-bad");
 
-      if (Number.isNaN(num)) return;
+      if (Number.isNaN(num)) {
+        stateLabel.textContent = "";
+        applyExclusiveClass(card, ["pm-good", "pm-moderate", "pm-bad", "pm-very-bad"], null);
+        return;
+      }
 
       if (num <= 15) {
-        card.classList.add("pm-good");
+        stateLabel.textContent = "좋음";
+        applyExclusiveClass(card, ["pm-good", "pm-moderate", "pm-bad", "pm-very-bad"], "pm-good");
       } else if (num <= 35) {
-        card.classList.add("pm-moderate");
+        stateLabel.textContent = "보통";
+        applyExclusiveClass(card, ["pm-good", "pm-moderate", "pm-bad", "pm-very-bad"], "pm-moderate");
       } else if (num <= 75) {
-        card.classList.add("pm-bad");
+        stateLabel.textContent = "나쁨";
+        applyExclusiveClass(card, ["pm-good", "pm-moderate", "pm-bad", "pm-very-bad"], "pm-bad");
       } else {
-        card.classList.add("pm-very-bad");
+        stateLabel.textContent = "매우 나쁨";
+        applyExclusiveClass(card, ["pm-good", "pm-moderate", "pm-bad", "pm-very-bad"], "pm-very-bad");
       }
     }
 
@@ -2204,20 +2588,21 @@
       const isOn = onValues.includes(normalized);
       const isOff = offValues.includes(normalized);
 
-      card.classList.remove("device-on", "device-off", "device-unknown");
+      const nextClass = (!connected || (!isOn && !isOff))
+        ? "device-unknown"
+        : (isOn ? "device-on" : "device-off");
 
-      if (!connected || (!isOn && !isOff)) {
-        card.classList.add("device-unknown");
+      applyExclusiveClass(card, ["device-on", "device-off", "device-unknown"], nextClass);
+
+      if (nextClass === "device-unknown") {
         valueElement.textContent = "";
         onButton.disabled = true;
         offButton.disabled = true;
-      } else if (isOn) {
-        card.classList.add("device-on");
+      } else if (nextClass === "device-on") {
         valueElement.textContent = device === "window" ? "열림" : "켜짐";
         onButton.disabled = true;
         offButton.disabled = false;
       } else {
-        card.classList.add("device-off");
         valueElement.textContent = device === "window" ? "닫힘" : "꺼짐";
         onButton.disabled = false;
         offButton.disabled = true;
@@ -2508,7 +2893,7 @@
     // 위치 공유 시작
     async function startLocationShare() {
       if (!navigator.geolocation) {
-        alert("이 브라우저는 위치 정보를 지원하지 않습니다.");
+        await showDialog("이 브라우저는 위치 정보를 지원하지 않습니다.");
         return;
       }
 
@@ -2703,12 +3088,11 @@
       }
     }
 
-    // 집 위치 관리는 위치 공유 여부와 관계없이 가능
+    // 초기 실행 설정
     document.getElementById("houseButton").disabled = false;
     document.getElementById("shareToggleButton").textContent = "위치 공유 시작";
     document.getElementById("shareNotice").hidden = true;
 
-    // 처음 실행: 위치 공유 여부와 관계없이 지도와 등록된 집 위치 표시
     initializeMap();
     updateAutoControlDisplay();
     document.getElementById("mapContainer").hidden = true;
@@ -2725,8 +3109,6 @@
     statusTimer = setInterval(checkShareStatus, 5000);
 
     // 새로고침/페이지 종료 시 브라우저 위치 추적만 중단
-    // Firebase 공유 잠금은 heartbeat가 멈춘 뒤 최대 SHARE_TIME 후 만료됨.
-    // sessionStorage의 사용자 ID는 같은 탭의 새로고침 후에도 유지됨.
     window.addEventListener("beforeunload", function() {
       if (watchId !== null) {
         navigator.geolocation.clearWatch(watchId);
