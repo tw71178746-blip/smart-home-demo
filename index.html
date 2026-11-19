@@ -108,7 +108,7 @@
     }
 
     .device-card {
-      transition: background-color 0.2s ease;
+      transition: background 0.35s ease, border-color 0.35s ease;
     }
 
     .device-card.device-on {
@@ -317,15 +317,20 @@
       color: #303840;
       font-size: 13px;
       line-height: 1.5;
+      transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
     }
 
     /* =========================================================
-       센서 동적 배경 공통 레이어 (온도 · 습도 · 빗물 · 미세먼지)
+       동적 배경 공통 레이어 (센서 4종 + 자동설정 + 장치 3종)
     ========================================================= */
     #tempCard,
     #humidityCard,
     #rainCard,
-    #pm25Card {
+    #pm25Card,
+    #autoControlCard,
+    #windowCard,
+    #fanCard,
+    #humidifierCard {
       position: relative;
       overflow: hidden;
       isolation: isolate;
@@ -335,7 +340,11 @@
     #tempCard > *,
     #humidityCard > *,
     #rainCard > *,
-    #pm25Card > * {
+    #pm25Card > *,
+    #autoControlCard > *,
+    #windowCard > *,
+    #fanCard > *,
+    #humidifierCard > * {
       position: relative;
       z-index: 3;
     }
@@ -347,7 +356,15 @@
     #rainCard::before,
     #rainCard::after,
     #pm25Card::before,
-    #pm25Card::after {
+    #pm25Card::after,
+    #autoControlCard::before,
+    #autoControlCard::after,
+    #windowCard::before,
+    #windowCard::after,
+    #fanCard::before,
+    #fanCard::after,
+    #humidifierCard::before,
+    #humidifierCard::after {
       content: "";
       position: absolute;
       pointer-events: none;
@@ -762,7 +779,242 @@
       animation: pmDustDriftFast 8.5s linear infinite;
     }
 
-    /* ================= 센서 배경 키프레임 ================= */
+    /* ================= 전체 자동설정 카드 (#autoControlCard) ================= */
+
+    /* 전체 자동 ON: 에메랄드-민트 + 회전 톱니/회로 링 + 펄스 파동 */
+    #autoControlCard.auto-master-on {
+      border-color: #8fd4b2;
+      background:
+        radial-gradient(circle at 92% 16%, rgba(255, 255, 255, 0.78) 0%, transparent 48%),
+        linear-gradient(135deg, #eafaf2 0%, #d5f4e4 56%, #eefcf5 100%);
+    }
+
+    #autoControlCard.auto-master-on h2,
+    #autoControlCard.auto-master-on .auto-device-name {
+      color: #164f36;
+    }
+
+    #autoControlCard.auto-master-on .auto-control-description,
+    #autoControlCard.auto-master-on .auto-device-help {
+      color: #2d664c;
+    }
+
+    #autoControlCard.auto-master-on .auto-master-row {
+      border-top-color: rgba(34, 155, 89, 0.22);
+    }
+
+    #autoControlCard.auto-master-on .auto-control-status {
+      background: rgba(255, 255, 255, 0.72);
+      border-color: #a9dec2;
+      color: #184e36;
+    }
+
+    #autoControlCard.auto-master-on::before {
+      z-index: 1;
+      top: -28px;
+      right: -24px;
+      width: 176px;
+      height: 176px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, rgba(34, 155, 89, 0.22) 0%, rgba(34, 155, 89, 0.08) 46%, transparent 70%);
+      animation: autoPulseRing 3.8s ease-in-out infinite;
+    }
+
+    #autoControlCard.auto-master-on::after {
+      z-index: 2;
+      top: -18px;
+      right: -14px;
+      width: 156px;
+      height: 156px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 140'%3E%3Ccircle cx='70' cy='70' r='58' fill='none' stroke='%23229b59' stroke-width='2' stroke-dasharray='7 7' opacity='0.26'/%3E%3Ccircle cx='70' cy='70' r='44' fill='none' stroke='%23229b59' stroke-width='1.4' stroke-dasharray='14 8' opacity='0.22'/%3E%3Cg transform='translate(70 70)' fill='%23229b59' opacity='0.2'%3E%3Crect x='-5' y='-36' width='10' height='12' rx='2.5'/%3E%3Crect x='-5' y='24' width='10' height='12' rx='2.5'/%3E%3Crect x='-36' y='-5' width='12' height='10' rx='2.5'/%3E%3Crect x='24' y='-5' width='12' height='10' rx='2.5'/%3E%3Crect x='-5' y='-36' width='10' height='12' rx='2.5' transform='rotate(45)'/%3E%3Crect x='-5' y='24' width='10' height='12' rx='2.5' transform='rotate(45)'/%3E%3Crect x='-36' y='-5' width='12' height='10' rx='2.5' transform='rotate(45)'/%3E%3Crect x='24' y='-5' width='12' height='10' rx='2.5' transform='rotate(45)'/%3E%3Ccircle cx='0' cy='0' r='27'/%3E%3C/g%3E%3Ccircle cx='70' cy='70' r='13' fill='%23eafaf2' opacity='0.92'/%3E%3Ccircle cx='70' cy='70' r='5' fill='%23229b59' opacity='0.34'/%3E%3C/svg%3E") center / contain no-repeat;
+      animation: autoGearSpin 22s linear infinite;
+    }
+
+    /* 전체 자동 OFF: 슬레이트-그레이 정지 톱니 + 사선 대기 패턴 */
+    #autoControlCard.auto-master-off {
+      border-color: #cfd6dd;
+      background: linear-gradient(145deg, #f4f6f8 0%, #e9edf1 60%, #f2f4f7 100%);
+    }
+
+    #autoControlCard.auto-master-off::before {
+      z-index: 1;
+      inset: 0;
+      background-image: repeating-linear-gradient(
+        -45deg,
+        rgba(120, 134, 148, 0.055) 0 10px,
+        transparent 10px 22px
+      );
+    }
+
+    #autoControlCard.auto-master-off::after {
+      z-index: 2;
+      top: -18px;
+      right: -14px;
+      width: 156px;
+      height: 156px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 140'%3E%3Ccircle cx='70' cy='70' r='56' fill='none' stroke='%237b8794' stroke-width='1.8' stroke-dasharray='6 8' opacity='0.22'/%3E%3Cg transform='translate(70 70)' fill='%237b8794' opacity='0.16'%3E%3Crect x='-5' y='-36' width='10' height='12' rx='2.5'/%3E%3Crect x='-5' y='24' width='10' height='12' rx='2.5'/%3E%3Crect x='-36' y='-5' width='12' height='10' rx='2.5'/%3E%3Crect x='24' y='-5' width='12' height='10' rx='2.5'/%3E%3Crect x='-5' y='-36' width='10' height='12' rx='2.5' transform='rotate(45)'/%3E%3Crect x='-5' y='24' width='10' height='12' rx='2.5' transform='rotate(45)'/%3E%3Crect x='-36' y='-5' width='12' height='10' rx='2.5' transform='rotate(45)'/%3E%3Crect x='24' y='-5' width='12' height='10' rx='2.5' transform='rotate(45)'/%3E%3Ccircle cx='0' cy='0' r='27'/%3E%3C/g%3E%3Ccircle cx='70' cy='70' r='13' fill='%23edf0f3' opacity='0.94'/%3E%3C/svg%3E") center / contain no-repeat;
+    }
+
+    /* ================= 창문 카드 (#windowCard) ================= */
+
+    /* 창문 열림: 자연광 햇살 + 흐르는 바람결 */
+    #windowCard.device-on {
+      border-color: #96d1ac;
+      background:
+        radial-gradient(circle at 88% 12%, rgba(255, 245, 198, 0.82) 0%, rgba(255, 245, 200, 0.28) 34%, transparent 64%),
+        linear-gradient(135deg, #e7f8ee 0%, #d4f1e4 52%, #e8f8ff 100%);
+    }
+
+    #windowCard.device-on h3 { color: #1d573b; }
+    #windowCard.device-on .value { color: #103b26; }
+
+    #windowCard.device-on::before {
+      z-index: 1;
+      top: 0;
+      left: 0;
+      width: calc(100% + 240px);
+      height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='140' viewBox='0 0 240 140'%3E%3Cg fill='none' stroke='%23ffffff' stroke-linecap='round'%3E%3Cpath d='M0 38 Q 60 22 120 38 T 240 38' stroke-width='2.6' opacity='0.72'/%3E%3Cpath d='M0 74 Q 60 58 120 74 T 240 74' stroke-width='2.1' opacity='0.54'/%3E%3Cpath d='M0 108 Q 60 94 120 108 T 240 108' stroke-width='1.6' opacity='0.42'/%3E%3C/g%3E%3C/svg%3E");
+      background-repeat: repeat-x;
+      background-size: 240px 100%;
+      animation: windowBreezeFlow 10s linear infinite;
+    }
+
+    #windowCard.device-on::after {
+      z-index: 2;
+      top: 0;
+      right: 0;
+      width: 170px;
+      height: 100%;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 170 150' preserveAspectRatio='xMaxYMin slice'%3E%3Cpolygon points='170,0 112,0 38,150 96,150' fill='%23fff6cc' opacity='0.34'/%3E%3Cpolygon points='170,18 140,0 92,150 134,150' fill='%23ffffff' opacity='0.32'/%3E%3Cg stroke='%232e8a5c' stroke-width='2' fill='none' opacity='0.22'%3E%3Crect x='98' y='12' width='54' height='62' rx='4'/%3E%3Cline x1='125' y1='12' x2='125' y2='74'/%3E%3Cpath d='M98 12 L82 22 L82 68 L98 74'/%3E%3C/g%3E%3C/svg%3E") right top / cover no-repeat;
+    }
+
+    /* 창문 닫힘: 연로즈 닫힌 격자 창틀 */
+    #windowCard.device-off {
+      border-color: #e3b4af;
+      background: linear-gradient(145deg, #fff3f2 0%, #fce5e3 58%, #f8dad7 100%);
+    }
+
+    #windowCard.device-off h3 { color: #7d3632; }
+    #windowCard.device-off .value { color: #571f1c; }
+
+    #windowCard.device-off::after {
+      z-index: 1;
+      top: 10px;
+      right: 16px;
+      width: 96px;
+      height: 96px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='10' y='10' width='80' height='80' rx='6' fill='%23ffffff' fill-opacity='0.36' stroke='%23c86a62' stroke-width='3' stroke-opacity='0.28'/%3E%3Cline x1='50' y1='10' x2='50' y2='90' stroke='%23c86a62' stroke-width='2.6' stroke-opacity='0.28'/%3E%3Cline x1='10' y1='50' x2='90' y2='50' stroke='%23c86a62' stroke-width='2.6' stroke-opacity='0.28'/%3E%3Cline x1='20' y1='34' x2='36' y2='18' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round' opacity='0.65'/%3E%3Cline x1='62' y1='78' x2='80' y2='60' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round' opacity='0.58'/%3E%3C/svg%3E") center / contain no-repeat;
+    }
+
+    /* ================= 선풍기 카드 (#fanCard) ================= */
+
+    /* 선풍기 켜짐: 회전 3엽 프로펠러 + 빠른 바람결 */
+    #fanCard.device-on {
+      border-color: #8fd2aa;
+      background:
+        radial-gradient(circle at 86% 36%, rgba(255, 255, 255, 0.76) 0%, transparent 50%),
+        linear-gradient(135deg, #e7f8ef 0%, #d1f0e2 56%, #e4f7f2 100%);
+    }
+
+    #fanCard.device-on h3 { color: #1b593c; }
+    #fanCard.device-on .value { color: #0f3d28; }
+
+    #fanCard.device-on::before {
+      z-index: 1;
+      top: 0;
+      left: 0;
+      width: calc(100% + 220px);
+      height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='140' viewBox='0 0 220 140'%3E%3Cg fill='none' stroke='%23ffffff' stroke-linecap='round'%3E%3Cpath d='M12 34 L 94 34' stroke-width='2.4' opacity='0.7'/%3E%3Cpath d='M124 56 L 208 56' stroke-width='2.0' opacity='0.55'/%3E%3Cpath d='M28 84 L 132 84' stroke-width='2.2' opacity='0.6'/%3E%3Cpath d='M90 110 L 188 110' stroke-width='1.8' opacity='0.46'/%3E%3C/g%3E%3C/svg%3E");
+      background-repeat: repeat-x;
+      background-size: 220px 100%;
+      animation: fanWindFlow 3.2s linear infinite;
+    }
+
+    #fanCard.device-on::after {
+      z-index: 2;
+      top: 10px;
+      right: 16px;
+      width: 92px;
+      height: 92px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='44' fill='none' stroke='%23229b59' stroke-width='1.8' stroke-dasharray='8 6' opacity='0.26'/%3E%3Cg fill='%23229b59' opacity='0.26'%3E%3Cpath d='M50 50 C 44 28, 32 10, 50 8 C 68 10, 58 30, 50 50 Z'/%3E%3Cpath d='M50 50 C 44 28, 32 10, 50 8 C 68 10, 58 30, 50 50 Z' transform='rotate(120 50 50)'/%3E%3Cpath d='M50 50 C 44 28, 32 10, 50 8 C 68 10, 58 30, 50 50 Z' transform='rotate(240 50 50)'/%3E%3C/g%3E%3Ccircle cx='50' cy='50' r='9' fill='%23ffffff' stroke='%23229b59' stroke-width='2.4' stroke-opacity='0.42'/%3E%3C/svg%3E") center / contain no-repeat;
+      transform-origin: center;
+      animation: fanBladeSpin 1.4s linear infinite;
+    }
+
+    /* 선풍기 꺼짐: 정지된 3엽 프로펠러 실루엣 */
+    #fanCard.device-off {
+      border-color: #e3b4af;
+      background: linear-gradient(145deg, #fff3f2 0%, #fce5e3 58%, #f8dad7 100%);
+    }
+
+    #fanCard.device-off h3 { color: #7d3632; }
+    #fanCard.device-off .value { color: #571f1c; }
+
+    #fanCard.device-off::after {
+      z-index: 1;
+      top: 10px;
+      right: 16px;
+      width: 92px;
+      height: 92px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='44' fill='none' stroke='%23c86a62' stroke-width='1.8' opacity='0.22'/%3E%3Cg fill='%23c86a62' opacity='0.2'%3E%3Cpath d='M50 50 C 44 28, 32 10, 50 8 C 68 10, 58 30, 50 50 Z'/%3E%3Cpath d='M50 50 C 44 28, 32 10, 50 8 C 68 10, 58 30, 50 50 Z' transform='rotate(120 50 50)'/%3E%3Cpath d='M50 50 C 44 28, 32 10, 50 8 C 68 10, 58 30, 50 50 Z' transform='rotate(240 50 50)'/%3E%3C/g%3E%3Ccircle cx='50' cy='50' r='9' fill='%23fff3f2' stroke='%23c86a62' stroke-width='2.2' stroke-opacity='0.34'/%3E%3C/svg%3E") center / contain no-repeat;
+    }
+
+    /* ================= 가습기 카드 (#humidifierCard) ================= */
+
+    /* 가습기 켜짐: 피어오르는 미스트 안개 띠 + 상승 수분 입자 */
+    #humidifierCard.device-on {
+      border-color: #8ed1be;
+      background:
+        radial-gradient(circle at 84% 78%, rgba(255, 255, 255, 0.78) 0%, transparent 52%),
+        linear-gradient(140deg, #e5f8f2 0%, #cceee6 55%, #dff6f3 100%);
+    }
+
+    #humidifierCard.device-on h3 { color: #17594d; }
+    #humidifierCard.device-on .value { color: #0d3d35; }
+
+    #humidifierCard.device-on::before {
+      z-index: 1;
+      inset: -16px -12px -120px -12px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='120' viewBox='0 0 160 120'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M36 120 C 26 96, 46 72, 36 48 C 26 24, 46 10, 36 0' stroke='%23ffffff' stroke-width='8' opacity='0.52'/%3E%3Cpath d='M92 120 C 104 94, 80 70, 92 44 C 104 20, 80 10, 92 0' stroke='%23ffffff' stroke-width='10' opacity='0.44'/%3E%3Cpath d='M138 120 C 128 96, 148 74, 138 48 C 128 24, 148 10, 138 0' stroke='%234db8a3' stroke-width='6.5' opacity='0.18'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 160px 120px;
+      background-repeat: repeat;
+      filter: blur(2.4px);
+      -webkit-mask-image: linear-gradient(to top, transparent 2%, rgba(0, 0, 0, 0.88) 30%, rgba(0, 0, 0, 0.65) 75%, transparent 100%);
+      mask-image: linear-gradient(to top, transparent 2%, rgba(0, 0, 0, 0.88) 30%, rgba(0, 0, 0, 0.65) 75%, transparent 100%);
+      animation: humidMistRise 4.8s linear infinite;
+    }
+
+    #humidifierCard.device-on::after {
+      z-index: 2;
+      inset: -16px 0 -100px 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='100' viewBox='0 0 120 100'%3E%3Cg fill='%23ffffff'%3E%3Ccircle cx='22' cy='24' r='3.6' opacity='0.78'/%3E%3Ccircle cx='58' cy='16' r='2.4' opacity='0.68'/%3E%3Ccircle cx='96' cy='34' r='4.2' opacity='0.76'/%3E%3Ccircle cx='40' cy='62' r='3.0' opacity='0.72'/%3E%3Ccircle cx='82' cy='72' r='2.6' opacity='0.66'/%3E%3Ccircle cx='108' cy='86' r='3.2' opacity='0.7'/%3E%3C/g%3E%3Cg fill='%232c9e88' opacity='0.28'%3E%3Cpath d='M68 42 C68 42 64.5 47.5 64.5 50 a3.5 3.5 0 0 0 7 0 C71.5 47.5 68 42 68 42 Z'/%3E%3Cpath d='M18 76 C18 76 15.5 80 15.5 82 a2.5 2.5 0 0 0 5 0 C20.5 80 18 76 18 76 Z'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 120px 100px;
+      background-repeat: repeat;
+      animation: humidVaporDrift 5.4s linear infinite;
+    }
+
+    /* 가습기 꺼짐: 정지된 물방울·노즐 실루엣 */
+    #humidifierCard.device-off {
+      border-color: #e3b4af;
+      background: linear-gradient(145deg, #fff3f2 0%, #fce5e3 58%, #f8dad7 100%);
+    }
+
+    #humidifierCard.device-off h3 { color: #7d3632; }
+    #humidifierCard.device-off .value { color: #571f1c; }
+
+    #humidifierCard.device-off::after {
+      z-index: 1;
+      top: 12px;
+      right: 18px;
+      width: 88px;
+      height: 88px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 14 C50 14 32 38 32 50 a18 18 0 0 0 36 0 C68 38 50 14 50 14 Z' fill='%23c86a62' fill-opacity='0.18' stroke='%23c86a62' stroke-width='2.4' stroke-opacity='0.28'/%3E%3Cpath d='M42 48 a8 8 0 0 0 8 8' fill='none' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round' opacity='0.65'/%3E%3Crect x='26' y='76' width='48' height='12' rx='6' fill='%23c86a62' fill-opacity='0.22'/%3E%3Cline x1='38' y1='76' x2='62' y2='76' stroke='%23c86a62' stroke-width='3' stroke-linecap='round' stroke-opacity='0.3'/%3E%3C/svg%3E") center / contain no-repeat;
+    }
+
+    /* ================= 전체 배경 키프레임 ================= */
     @keyframes snowFallFront {
       0%   { transform: translate3d(0, 0, 0); }
       50%  { transform: translate3d(8px, 55px, 0); }
@@ -872,6 +1124,43 @@
     @keyframes pmDustDriftFast {
       from { transform: translate3d(0, 0, 0); }
       to   { transform: translate3d(110px, 110px, 0); }
+    }
+
+    @keyframes autoGearSpin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    @keyframes autoPulseRing {
+      0%, 100% { transform: scale(0.92); opacity: 0.65; }
+      50%      { transform: scale(1.1); opacity: 1; }
+    }
+
+    @keyframes windowBreezeFlow {
+      from { transform: translate3d(-240px, 0, 0); }
+      to   { transform: translate3d(0, 0, 0); }
+    }
+
+    @keyframes fanBladeSpin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    @keyframes fanWindFlow {
+      from { transform: translate3d(-220px, 0, 0); }
+      to   { transform: translate3d(0, 0, 0); }
+    }
+
+    @keyframes humidMistRise {
+      0%   { transform: translate3d(0, 0, 0); }
+      50%  { transform: translate3d(5px, -60px, 0); }
+      100% { transform: translate3d(0, -120px, 0); }
+    }
+
+    @keyframes humidVaporDrift {
+      0%   { transform: translate3d(0, 0, 0); }
+      50%  { transform: translate3d(-4px, -50px, 0); }
+      100% { transform: translate3d(0, -100px, 0); }
     }
 
     button {
@@ -1019,6 +1308,20 @@
         height: 62px;
       }
 
+      #autoControlCard.auto-master-on::after,
+      #autoControlCard.auto-master-off::after {
+        width: 124px;
+        height: 124px;
+      }
+
+      #windowCard.device-off::after,
+      #fanCard.device-on::after,
+      #fanCard.device-off::after,
+      #humidifierCard.device-off::after {
+        width: 74px;
+        height: 74px;
+      }
+
       button {
         width: 100%;
         margin: 5px 0;
@@ -1100,7 +1403,7 @@
 
     <div class="dashboard-section">
       <h2 class="section-heading">장치</h2>
-      <div class="section card auto-control-card">
+      <div class="section card auto-control-card auto-master-off" id="autoControlCard">
         <h2>자동설정</h2>
         <p class="auto-control-description">
           자동설정을 라즈베리파이에 전달합니다. 실제 환경 판단과 장치 작동은 라즈베리파이에서 수행하며, 수동 제어는 항상 사용할 수 있습니다.
@@ -1646,6 +1949,13 @@
         };
       }
 
+      // 전체 자동설정 카드 배경 상태 갱신
+      const autoCard = document.getElementById("autoControlCard");
+      if (autoCard) {
+        autoCard.classList.toggle("auto-master-on", masterAutoEnabled);
+        autoCard.classList.toggle("auto-master-off", !masterAutoEnabled);
+      }
+
       const controls = [
         ["master", "autoMasterButton", "autoMasterLabel"],
         ["window", "autoWindowButton", "autoWindowLabel"],
@@ -1872,7 +2182,7 @@
       }
     }
 
-    // 장치 상태에 따라 카드 색상 및 제어 버튼 갱신
+    // 장치 상태에 따라 카드 배경·애니메이션 및 제어 버튼 갱신
     function updateDeviceDisplay(device, value, connected = true) {
       const card = document.getElementById(device + "Card");
       const valueElement = document.getElementById(device === "window" ? "window" : device);
