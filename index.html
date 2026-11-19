@@ -462,58 +462,97 @@
     .card h3 { color: #343b43; }
     .value, .device-card .value { color: #202428; }
 
-    /* 빗물 감지 카드: 기존 문구와 글자는 유지하고 배경 분위기만 상태에 따라 변경 */
+    /* 빗물 감지 카드: 글자와 문구는 그대로 두고 CSS 배경 효과만 상태에 따라 변경 */
     #rainCard {
       position: relative;
       overflow: hidden;
       isolation: isolate;
-      transition: background 0.35s ease;
+      transition: background-color 0.45s ease, background-image 0.45s ease;
     }
 
     #rainCard > * {
       position: relative;
-      z-index: 2;
+      z-index: 3;
     }
 
-    /* 비가 올 때: 카드 전체에 고르게 퍼지는 부드러운 먹구름 */
-    #rainCard.rain-detected {
-      background-color: #aeb9c8;
-      background-image:
-        radial-gradient(ellipse at 18% 22%, rgba(238, 242, 247, 0.48) 0%, rgba(238, 242, 247, 0.12) 28%, transparent 48%),
-        radial-gradient(ellipse at 54% 5%, rgba(244, 246, 249, 0.42) 0%, rgba(244, 246, 249, 0.10) 30%, transparent 52%),
-        radial-gradient(ellipse at 88% 28%, rgba(232, 237, 244, 0.46) 0%, rgba(232, 237, 244, 0.10) 27%, transparent 48%),
-        radial-gradient(ellipse at 40% 100%, rgba(105, 120, 140, 0.24) 0%, transparent 58%),
-        linear-gradient(135deg, #c2cbd7 0%, #aeb9c8 52%, #9eacbd 100%);
-    }
-
-    /* 맑을 때: 은은한 연노랑 하늘 */
-    #rainCard.rain-clear {
-      background-color: #fff2c5;
-      background-image:
-        radial-gradient(ellipse at 45% 100%, rgba(255, 255, 255, 0.34) 0%, transparent 48%),
-        linear-gradient(120deg, #fff7d9 0%, #fff0bd 58%, #ffedb0 100%);
-    }
-
-    /* 오른쪽 위에 채워진 태양과 부드러운 햇살 */
-    #rainCard.rain-clear::after {
+    /* 공통 장식 레이어: 카드 내부에만 표시 */
+    #rainCard::before {
       content: "";
       position: absolute;
       z-index: 1;
+      inset: -12%;
+      pointer-events: none;
+      transition: opacity 0.45s ease;
+    }
+
+    /* 비 감지: 카드 전체를 덮는 고른 먹구름. 여러 겹의 흐린 구름 덩어리 */
+    #rainCard.rain-detected {
+      background-color: #aeb8c5;
+      background-image:
+        radial-gradient(ellipse at 12% 18%, rgba(225, 231, 239, 0.62) 0%, rgba(225, 231, 239, 0.18) 25%, transparent 48%),
+        radial-gradient(ellipse at 38% 4%, rgba(197, 207, 220, 0.72) 0%, rgba(197, 207, 220, 0.22) 30%, transparent 54%),
+        radial-gradient(ellipse at 70% 15%, rgba(222, 228, 236, 0.58) 0%, rgba(222, 228, 236, 0.16) 28%, transparent 52%),
+        radial-gradient(ellipse at 96% 38%, rgba(184, 195, 210, 0.68) 0%, rgba(184, 195, 210, 0.18) 30%, transparent 53%),
+        radial-gradient(ellipse at 18% 78%, rgba(139, 153, 172, 0.40) 0%, transparent 48%),
+        radial-gradient(ellipse at 54% 92%, rgba(125, 140, 160, 0.42) 0%, transparent 50%),
+        radial-gradient(ellipse at 88% 82%, rgba(151, 164, 182, 0.44) 0%, transparent 48%),
+        linear-gradient(135deg, #c3ccd7 0%, #aeb9c7 48%, #9daaba 100%);
+    }
+
+    #rainCard.rain-detected::before {
+      opacity: 0.78;
+      background:
+        radial-gradient(ellipse at 8% 42%, rgba(92, 107, 127, 0.38) 0 13%, transparent 35%),
+        radial-gradient(ellipse at 31% 34%, rgba(103, 117, 137, 0.32) 0 16%, transparent 38%),
+        radial-gradient(ellipse at 57% 40%, rgba(91, 106, 127, 0.34) 0 17%, transparent 40%),
+        radial-gradient(ellipse at 82% 35%, rgba(102, 116, 136, 0.34) 0 16%, transparent 38%),
+        radial-gradient(ellipse at 48% 72%, rgba(226, 231, 238, 0.30) 0 18%, transparent 42%);
+      filter: blur(13px);
+      transform: scale(1.06);
+    }
+
+    /* 맑음: 연노랑 하늘과 아래쪽에 은은하게 퍼지는 흰 구름 */
+    #rainCard.rain-clear {
+      background-color: #fff2c5;
+      background-image:
+        radial-gradient(ellipse at 48% 110%, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.34) 27%, transparent 54%),
+        radial-gradient(ellipse at 8% 92%, rgba(255, 255, 255, 0.48) 0%, transparent 38%),
+        linear-gradient(115deg, #fff8df 0%, #fff2c9 52%, #ffedb8 100%);
+    }
+
+    #rainCard.rain-clear::before {
+      opacity: 0.82;
+      background:
+        radial-gradient(ellipse at 18% 88%, rgba(255, 255, 255, 0.82) 0 8%, transparent 25%),
+        radial-gradient(ellipse at 28% 82%, rgba(255, 255, 255, 0.78) 0 11%, transparent 29%),
+        radial-gradient(ellipse at 42% 92%, rgba(255, 255, 255, 0.72) 0 12%, transparent 31%),
+        radial-gradient(ellipse at 70% 84%, rgba(255, 255, 255, 0.62) 0 8%, transparent 24%),
+        radial-gradient(ellipse at 83% 77%, rgba(255, 255, 255, 0.54) 0 7%, transparent 22%);
+      filter: blur(8px);
+    }
+
+    /* 오른쪽 위 태양: 둥근 노란 중심, 햇살, 은은한 빛 번짐 */
+    #rainCard.rain-clear::after {
+      content: "";
+      position: absolute;
+      z-index: 2;
       top: 18px;
       right: 20px;
-      width: 76px;
-      height: 76px;
+      width: 78px;
+      height: 78px;
       border-radius: 50%;
+      pointer-events: none;
       background:
-        radial-gradient(circle, #ffd45c 0 34%, transparent 36%),
+        radial-gradient(circle, #ffd85e 0 34%, rgba(255, 211, 82, 0.96) 35% 42%, transparent 44%),
         repeating-conic-gradient(
           from 0deg,
-          transparent 0deg 11deg,
-          rgba(255, 194, 55, 0.76) 11deg 15deg,
-          transparent 15deg 30deg
+          transparent 0deg 10deg,
+          rgba(255, 190, 53, 0.78) 10deg 13deg,
+          transparent 13deg 30deg
         );
-      pointer-events: none;
+      filter: drop-shadow(0 0 13px rgba(255, 205, 82, 0.42));
     }
+
     .unit, .device-connection, .auto-device-help,
     .status, .auto-control-description { color: #59636e; }
 
