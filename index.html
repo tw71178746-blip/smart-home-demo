@@ -485,30 +485,33 @@
       transition: opacity 0.45s ease;
     }
 
-    /* 비 감지: 카드 전체를 덮는 고른 먹구름. 여러 겹의 흐린 구름 덩어리 */
+    /* 비 감지: 연한 회색 하늘이 아주 조금 비치고, 몽글한 진회색 구름이 겹친 배경 */
     #rainCard.rain-detected {
-      background-color: #aeb8c5;
+      background-color: #cbd0d4;
       background-image:
-        radial-gradient(ellipse at 12% 18%, rgba(225, 231, 239, 0.62) 0%, rgba(225, 231, 239, 0.18) 25%, transparent 48%),
-        radial-gradient(ellipse at 38% 4%, rgba(197, 207, 220, 0.72) 0%, rgba(197, 207, 220, 0.22) 30%, transparent 54%),
-        radial-gradient(ellipse at 70% 15%, rgba(222, 228, 236, 0.58) 0%, rgba(222, 228, 236, 0.16) 28%, transparent 52%),
-        radial-gradient(ellipse at 96% 38%, rgba(184, 195, 210, 0.68) 0%, rgba(184, 195, 210, 0.18) 30%, transparent 53%),
-        radial-gradient(ellipse at 18% 78%, rgba(139, 153, 172, 0.40) 0%, transparent 48%),
-        radial-gradient(ellipse at 54% 92%, rgba(125, 140, 160, 0.42) 0%, transparent 50%),
-        radial-gradient(ellipse at 88% 82%, rgba(151, 164, 182, 0.44) 0%, transparent 48%),
-        linear-gradient(135deg, #c3ccd7 0%, #aeb9c7 48%, #9daaba 100%);
+        radial-gradient(ellipse at 7% 12%, rgba(226, 230, 233, 0.62) 0%, rgba(226, 230, 233, 0.28) 12%, transparent 27%),
+        radial-gradient(ellipse at 92% 84%, rgba(222, 227, 231, 0.48) 0%, rgba(222, 227, 231, 0.18) 10%, transparent 24%),
+        linear-gradient(145deg, #c5cbd0 0%, #b9c0c6 48%, #cbd0d4 100%);
     }
 
     #rainCard.rain-detected::before {
-      opacity: 0.78;
+      opacity: 0.96;
       background:
-        radial-gradient(ellipse at 8% 42%, rgba(92, 107, 127, 0.38) 0 13%, transparent 35%),
-        radial-gradient(ellipse at 31% 34%, rgba(103, 117, 137, 0.32) 0 16%, transparent 38%),
-        radial-gradient(ellipse at 57% 40%, rgba(91, 106, 127, 0.34) 0 17%, transparent 40%),
-        radial-gradient(ellipse at 82% 35%, rgba(102, 116, 136, 0.34) 0 16%, transparent 38%),
-        radial-gradient(ellipse at 48% 72%, rgba(226, 231, 238, 0.30) 0 18%, transparent 42%);
-      filter: blur(13px);
-      transform: scale(1.06);
+        radial-gradient(ellipse at 5% 45%, rgba(91, 99, 108, 0.78) 0 12%, transparent 29%),
+        radial-gradient(ellipse at 17% 28%, rgba(83, 91, 100, 0.88) 0 15%, transparent 33%),
+        radial-gradient(ellipse at 29% 43%, rgba(101, 109, 117, 0.84) 0 17%, transparent 35%),
+        radial-gradient(ellipse at 42% 25%, rgba(79, 87, 96, 0.86) 0 17%, transparent 35%),
+        radial-gradient(ellipse at 55% 43%, rgba(91, 99, 108, 0.88) 0 18%, transparent 37%),
+        radial-gradient(ellipse at 69% 27%, rgba(78, 86, 95, 0.84) 0 16%, transparent 34%),
+        radial-gradient(ellipse at 82% 43%, rgba(91, 99, 108, 0.86) 0 17%, transparent 35%),
+        radial-gradient(ellipse at 96% 27%, rgba(82, 90, 99, 0.78) 0 13%, transparent 29%),
+        radial-gradient(ellipse at 12% 75%, rgba(105, 113, 121, 0.70) 0 15%, transparent 32%),
+        radial-gradient(ellipse at 35% 77%, rgba(91, 99, 108, 0.76) 0 17%, transparent 34%),
+        radial-gradient(ellipse at 61% 76%, rgba(101, 109, 117, 0.72) 0 16%, transparent 33%),
+        radial-gradient(ellipse at 87% 75%, rgba(88, 96, 105, 0.74) 0 16%, transparent 33%),
+        radial-gradient(ellipse at 50% 55%, rgba(70, 78, 87, 0.30) 0 24%, transparent 52%);
+      filter: blur(11px);
+      transform: scale(1.08);
     }
 
     /* 맑음: 연노랑 하늘과 아래쪽에 은은하게 퍼지는 흰 구름 */
