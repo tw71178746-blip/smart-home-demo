@@ -301,7 +301,11 @@
       line-height: 1.5;
     }
 
-    /* 빗물 감지 카드: 상태에 따라 하늘·구름·태양·빗줄기 배경 전환 */
+    /* =========================================================
+       센서 동적 배경 공통 레이어 (온도 · 습도 · 빗물 감지)
+    ========================================================= */
+    #tempCard,
+    #humidityCard,
     #rainCard {
       position: relative;
       overflow: hidden;
@@ -309,11 +313,17 @@
       transition: background 0.45s ease, border-color 0.45s ease, color 0.35s ease;
     }
 
+    #tempCard > *,
+    #humidityCard > *,
     #rainCard > * {
       position: relative;
       z-index: 3;
     }
 
+    #tempCard::before,
+    #tempCard::after,
+    #humidityCard::before,
+    #humidityCard::after,
     #rainCard::before,
     #rainCard::after {
       content: "";
@@ -321,7 +331,265 @@
       pointer-events: none;
     }
 
-    /* ================= 맑음 (rain-clear) ================= */
+    /* ================= 온도 카드 (#tempCard) ================= */
+
+    /* 온도 - 추움 (18°C 미만): 서리 블루 + 2겹 잦은 눈송이 */
+    #tempCard.temp-cold {
+      border-color: #9ec8ea;
+      background:
+        radial-gradient(circle at 88% 18%, rgba(255, 255, 255, 0.72) 0%, transparent 48%),
+        linear-gradient(145deg, #d7ecff 0%, #c1e0fb 55%, #e5f3ff 100%);
+    }
+
+    #tempCard.temp-cold h3 {
+      color: #1f4f7a;
+    }
+
+    #tempCard.temp-cold .value {
+      color: #0e3254;
+    }
+
+    #tempCard.temp-cold .unit {
+      color: #2f608c;
+    }
+
+    /* 추움 - 앞쪽 눈결정 + 눈입자 레이어 */
+    #tempCard.temp-cold::before {
+      z-index: 2;
+      inset: -110px -20px -20px -20px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='110' height='110' viewBox='0 0 110 110'%3E%3Cg stroke='%23ffffff' stroke-width='1.5' stroke-linecap='round' opacity='0.9'%3E%3Cg transform='translate(22 22)'%3E%3Cline x1='0' y1='-7' x2='0' y2='7'/%3E%3Cline x1='-6' y1='-3.5' x2='6' y2='3.5'/%3E%3Cline x1='-6' y1='3.5' x2='6' y2='-3.5'/%3E%3C/g%3E%3Cg transform='translate(82 54)'%3E%3Cline x1='0' y1='-6' x2='0' y2='6'/%3E%3Cline x1='-5.2' y1='-3' x2='5.2' y2='3'/%3E%3Cline x1='-5.2' y1='3' x2='5.2' y2='-3'/%3E%3C/g%3E%3Cg transform='translate(44 88)'%3E%3Cline x1='0' y1='-5.5' x2='0' y2='5.5'/%3E%3Cline x1='-4.8' y1='-2.8' x2='4.8' y2='2.8'/%3E%3Cline x1='-4.8' y1='2.8' x2='4.8' y2='-2.8'/%3E%3C/g%3E%3C/g%3E%3Cg fill='%23ffffff'%3E%3Ccircle cx='58' cy='16' r='2.6' opacity='0.88'/%3E%3Ccircle cx='96' cy='24' r='2.2' opacity='0.82'/%3E%3Ccircle cx='14' cy='58' r='2.4' opacity='0.85'/%3E%3Ccircle cx='50' cy='52' r='2.0' opacity='0.78'/%3E%3Ccircle cx='94' cy='92' r='2.5' opacity='0.86'/%3E%3Ccircle cx='72' cy='82' r='1.9' opacity='0.75'/%3E%3Ccircle cx='20' cy='98' r='2.1' opacity='0.8'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 110px 110px;
+      background-repeat: repeat;
+      animation: snowFallFront 4.8s linear infinite;
+    }
+
+    /* 추움 - 뒤쪽 은은한 눈송이 레이어 */
+    #tempCard.temp-cold::after {
+      z-index: 1;
+      inset: -96px -20px -20px -20px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cg fill='%23ffffff'%3E%3Ccircle cx='12' cy='14' r='2.2' opacity='0.65'/%3E%3Ccircle cx='40' cy='28' r='1.8' opacity='0.58'/%3E%3Ccircle cx='74' cy='12' r='2.4' opacity='0.62'/%3E%3Ccircle cx='86' cy='46' r='1.7' opacity='0.55'/%3E%3Ccircle cx='28' cy='62' r='2.3' opacity='0.64'/%3E%3Ccircle cx='58' cy='56' r='1.9' opacity='0.56'/%3E%3Ccircle cx='16' cy='84' r='1.8' opacity='0.6'/%3E%3Ccircle cx='68' cy='86' r='2.2' opacity='0.62'/%3E%3Ccircle cx='46' cy='90' r='1.6' opacity='0.52'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 96px 96px;
+      background-repeat: repeat;
+      animation: snowFallBack 7.2s linear infinite;
+    }
+
+    /* 온도 - 쾌적 (18~26°C): 상쾌한 민트 + 산들바람 */
+    #tempCard.temp-comfort {
+      border-color: #a6dbc0;
+      background:
+        radial-gradient(circle at 86% 20%, rgba(255, 255, 255, 0.72) 0%, transparent 50%),
+        linear-gradient(135deg, #e7faef 0%, #d3f3e2 55%, #edfbf4 100%);
+    }
+
+    #tempCard.temp-comfort h3 {
+      color: #216143;
+    }
+
+    #tempCard.temp-comfort .value {
+      color: #13442d;
+    }
+
+    #tempCard.temp-comfort .unit {
+      color: #2e7251;
+    }
+
+    #tempCard.temp-comfort::before {
+      z-index: 1;
+      top: 0;
+      left: 0;
+      width: calc(100% + 240px);
+      height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='120' viewBox='0 0 240 120'%3E%3Cg fill='none' stroke='%23ffffff' stroke-linecap='round'%3E%3Cpath d='M0 44 Q 60 28 120 44 T 240 44' stroke-width='2.6' opacity='0.7'/%3E%3Cpath d='M0 74 Q 60 58 120 74 T 240 74' stroke-width='2.0' opacity='0.52'/%3E%3Cpath d='M0 98 Q 60 86 120 98 T 240 98' stroke-width='1.6' opacity='0.4'/%3E%3C/g%3E%3C/svg%3E");
+      background-repeat: repeat-x;
+      background-size: 240px 100%;
+      animation: breezeFlow 14s linear infinite;
+    }
+
+    #tempCard.temp-comfort::after {
+      z-index: 2;
+      right: -18px;
+      bottom: -22px;
+      width: 96px;
+      height: 96px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(126, 224, 174, 0.34) 0%, transparent 70%);
+      animation: softPulse 6s ease-in-out infinite;
+    }
+
+    /* 온도 - 더움 (26°C 초과): 따뜻한 코랄 앰버 + 일렁이는 2겹 아지랑이 */
+    #tempCard.temp-hot {
+      border-color: #f0ab7e;
+      background:
+        radial-gradient(ellipse at 50% 108%, rgba(255, 118, 52, 0.36) 0%, rgba(255, 152, 76, 0.16) 44%, transparent 72%),
+        radial-gradient(circle at 86% 18%, rgba(255, 240, 200, 0.72) 0%, transparent 45%),
+        linear-gradient(155deg, #fff1de 0%, #ffd9b4 54%, #ffc394 100%);
+    }
+
+    #tempCard.temp-hot h3 {
+      color: #823516;
+    }
+
+    #tempCard.temp-hot .value {
+      color: #5c1f09;
+    }
+
+    #tempCard.temp-hot .unit {
+      color: #8f3f1d;
+    }
+
+    /* 더움 - 앞쪽 아지랑이 레이어 (5줄기, 부드러운 블러 + 상하 페이드) */
+    #tempCard.temp-hot::before {
+      z-index: 2;
+      inset: -20px -24px -120px -24px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='120' viewBox='0 0 140 120'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M16 120 C 9 100, 23 80, 16 60 C 9 40, 23 20, 16 0' stroke='%23fff8ec' stroke-width='3.2' opacity='0.58'/%3E%3Cpath d='M44 120 C 52 100, 36 80, 44 60 C 52 40, 36 20, 44 0' stroke='%23ff7b3b' stroke-width='2.8' opacity='0.34'/%3E%3Cpath d='M74 120 C 66 100, 82 80, 74 60 C 66 40, 82 20, 74 0' stroke='%23fff4df' stroke-width='3.4' opacity='0.55'/%3E%3Cpath d='M104 120 C 112 100, 96 80, 104 60 C 112 40, 96 20, 104 0' stroke='%23ff6c2b' stroke-width='2.6' opacity='0.32'/%3E%3Cpath d='M128 120 C 122 100, 134 80, 128 60 C 122 40, 134 20, 128 0' stroke='%23fff7e8' stroke-width='2.8' opacity='0.48'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 140px 120px;
+      background-repeat: repeat;
+      filter: blur(0.9px);
+      -webkit-mask-image: linear-gradient(to top, transparent 4%, rgba(0, 0, 0, 0.92) 28%, rgba(0, 0, 0, 0.68) 76%, transparent 98%);
+      mask-image: linear-gradient(to top, transparent 4%, rgba(0, 0, 0, 0.92) 28%, rgba(0, 0, 0, 0.68) 76%, transparent 98%);
+      animation: hazeRiseFront 3.8s linear infinite;
+    }
+
+    /* 더움 - 뒤쪽 신기루 열기 레이어 (넓고 몽글하게 일렁임) */
+    #tempCard.temp-hot::after {
+      z-index: 1;
+      inset: -20px -24px -140px -24px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='140' viewBox='0 0 160 140'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M28 140 C 16 116, 40 94, 28 70 C 16 46, 40 24, 28 0' stroke='%23ff8c42' stroke-width='6.5' opacity='0.28'/%3E%3Cpath d='M72 140 C 86 116, 58 94, 72 70 C 86 46, 58 24, 72 0' stroke='%23fff2d6' stroke-width='7' opacity='0.44'/%3E%3Cpath d='M116 140 C 102 116, 130 94, 116 70 C 102 46, 130 24, 116 0' stroke='%23ff7333' stroke-width='6' opacity='0.26'/%3E%3Cpath d='M148 140 C 158 116, 138 94, 148 70 C 158 46, 138 24, 148 0' stroke='%23ffebd0' stroke-width='5.5' opacity='0.38'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 160px 140px;
+      background-repeat: repeat;
+      filter: blur(2.6px);
+      -webkit-mask-image: linear-gradient(to top, transparent 2%, rgba(0, 0, 0, 0.85) 32%, rgba(0, 0, 0, 0.5) 80%, transparent 100%);
+      mask-image: linear-gradient(to top, transparent 2%, rgba(0, 0, 0, 0.85) 32%, rgba(0, 0, 0, 0.5) 80%, transparent 100%);
+      animation: hazeRiseBack 5.6s linear infinite;
+    }
+
+    /* ================= 습도 카드 (#humidityCard) ================= */
+
+    /* 습도 - 건조 (40% 미만): 모래 베이지 + 모래언덕·건조 바람결 */
+    #humidityCard.hum-dry {
+      border-color: #e4c898;
+      background: linear-gradient(145deg, #fdf5e4 0%, #f6e4c1 58%, #faeed7 100%);
+    }
+
+    #humidityCard.hum-dry h3 {
+      color: #7c5625;
+    }
+
+    #humidityCard.hum-dry .value {
+      color: #563912;
+    }
+
+    #humidityCard.hum-dry .unit {
+      color: #856130;
+    }
+
+    #humidityCard.hum-dry::before {
+      z-index: 1;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 260 110' preserveAspectRatio='none'%3E%3Cpath d='M0 86 Q 70 62 145 84 T 260 76 L 260 110 L 0 110 Z' fill='%23dfba7c' opacity='0.34'/%3E%3Cpath d='M0 96 Q 90 78 180 96 T 260 90 L 260 110 L 0 110 Z' fill='%23d1a45c' opacity='0.28'/%3E%3C/svg%3E") bottom center / 100% 72% no-repeat;
+    }
+
+    #humidityCard.hum-dry::after {
+      z-index: 2;
+      top: 0;
+      left: 0;
+      width: calc(100% + 220px);
+      height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='100' viewBox='0 0 220 100'%3E%3Cg fill='none' stroke='%23c49245' stroke-linecap='round'%3E%3Cpath d='M12 28 Q 48 22 82 28' stroke-width='1.5' opacity='0.32'/%3E%3Cpath d='M118 46 Q 160 39 204 46' stroke-width='1.6' opacity='0.3'/%3E%3Cpath d='M42 66 Q 84 60 124 66' stroke-width='1.4' opacity='0.26'/%3E%3C/g%3E%3Cg fill='%23c49245' opacity='0.3'%3E%3Ccircle cx='96' cy='26' r='1.5'/%3E%3Ccircle cx='164' cy='62' r='1.4'/%3E%3Ccircle cx='28' cy='52' r='1.3'/%3E%3C/g%3E%3C/svg%3E");
+      background-repeat: repeat-x;
+      background-size: 220px 100%;
+      animation: dryWindDrift 11s linear infinite;
+    }
+
+    /* 습도 - 적정 (40~65%): 2안 아침 이슬 & 살랑이는 잎사귀 */
+    #humidityCard.hum-comfort {
+      border-color: #9edbd2;
+      background:
+        radial-gradient(circle at 86% 18%, rgba(255, 255, 255, 0.78) 0%, transparent 48%),
+        linear-gradient(140deg, #e1f8f4 0%, #c9f1ea 55%, #e8fbf8 100%);
+    }
+
+    #humidityCard.hum-comfort h3 {
+      color: #195d57;
+    }
+
+    #humidityCard.hum-comfort .value {
+      color: #0e3f3b;
+    }
+
+    #humidityCard.hum-comfort .unit {
+      color: #276e67;
+    }
+
+    /* 적정 - 우측 하단 바람에 살랑이는 잎사귀 */
+    #humidityCard.hum-comfort::before {
+      z-index: 1;
+      right: -10px;
+      bottom: -12px;
+      width: 150px;
+      height: 112px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 120'%3E%3Cpath d='M156 116 C 148 56, 108 26, 40 24 C 54 78, 92 112, 156 116 Z' fill='%233eb59b' opacity='0.24'/%3E%3Cpath d='M154 114 C 122 86, 86 60, 48 32' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' opacity='0.65'/%3E%3Cpath d='M116 86 C 110 68, 100 54, 86 44' fill='none' stroke='%23ffffff' stroke-width='1.3' stroke-linecap='round' opacity='0.48'/%3E%3Cpath d='M94 68 C 78 66, 66 60, 56 50' fill='none' stroke='%23ffffff' stroke-width='1.2' stroke-linecap='round' opacity='0.42'/%3E%3Cpath d='M156 118 C 124 94, 82 90, 26 106 C 64 122, 114 124, 156 118 Z' fill='%232c9e88' opacity='0.18'/%3E%3C/svg%3E") right bottom / contain no-repeat;
+      transform-origin: 92% 94%;
+      animation: leafSway 6.2s ease-in-out infinite;
+    }
+
+    /* 적정 - 떠오르며 반짝이는 아침 이슬 방울 4개 */
+    #humidityCard.hum-comfort::after {
+      z-index: 2;
+      right: 8px;
+      bottom: 6px;
+      width: 116px;
+      height: 98px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 100'%3E%3Cg%3E%3Ccircle cx='88' cy='34' r='11' fill='%23ffffff' fill-opacity='0.52' stroke='%23ffffff' stroke-opacity='0.85' stroke-width='1.3'/%3E%3Ccircle cx='84' cy='30' r='3.2' fill='%23ffffff' opacity='0.95'/%3E%3Ccircle cx='60' cy='58' r='8.5' fill='%23ffffff' fill-opacity='0.48' stroke='%23ffffff' stroke-opacity='0.82' stroke-width='1.2'/%3E%3Ccircle cx='57' cy='55' r='2.4' fill='%23ffffff' opacity='0.95'/%3E%3Ccircle cx='96' cy='68' r='6.5' fill='%23ffffff' fill-opacity='0.44' stroke='%23ffffff' stroke-opacity='0.78' stroke-width='1.1'/%3E%3Ccircle cx='94' cy='66' r='1.9' fill='%23ffffff' opacity='0.92'/%3E%3Ccircle cx='34' cy='76' r='5.2' fill='%23ffffff' fill-opacity='0.44' stroke='%23ffffff' stroke-opacity='0.76' stroke-width='1'/%3E%3Ccircle cx='32' cy='74' r='1.5' fill='%23ffffff' opacity='0.9'/%3E%3Cpath d='M74 18 L76 23 L81 25 L76 27 L74 32 L72 27 L67 25 L72 23 Z' fill='%23ffffff' opacity='0.78'/%3E%3Cpath d='M44 40 L45.3 43.2 L48.5 44.5 L45.3 45.8 L44 49 L42.7 45.8 L39.5 44.5 L42.7 43.2 Z' fill='%23ffffff' opacity='0.65'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+      filter: drop-shadow(0 2px 6px rgba(32, 148, 134, 0.22));
+      animation: dewFloatShimmer 4.6s ease-in-out infinite;
+    }
+
+    /* 습도 - 습함 (65% 초과): 짙은 안개 블루 + 안개층·물방울 + 흰 글자 */
+    #humidityCard.hum-humid {
+      border-color: #4a6b8a;
+      background: linear-gradient(155deg, #2b445e 0%, #3d5f80 56%, #52789a 100%);
+    }
+
+    #humidityCard.hum-humid h3 {
+      color: rgba(232, 244, 255, 0.9);
+    }
+
+    #humidityCard.hum-humid .value {
+      color: #ffffff;
+      text-shadow: 0 2px 8px rgba(14, 26, 40, 0.35);
+    }
+
+    #humidityCard.hum-humid .unit {
+      color: rgba(220, 238, 255, 0.88);
+    }
+
+    #humidityCard.hum-humid::before {
+      z-index: 1;
+      top: 0;
+      left: 0;
+      width: calc(100% + 280px);
+      height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='280' height='120' viewBox='0 0 280 120'%3E%3Cg fill='%23cfe7ff' opacity='0.22'%3E%3Cellipse cx='65' cy='92' rx='74' ry='22'/%3E%3Cellipse cx='195' cy='96' rx='82' ry='24'/%3E%3C/g%3E%3Cg fill='%23ffffff' opacity='0.14'%3E%3Cellipse cx='130' cy='76' rx='78' ry='18'/%3E%3Cellipse cx='255' cy='80' rx='64' ry='16'/%3E%3C/g%3E%3C/svg%3E");
+      background-repeat: repeat-x;
+      background-position: 0 bottom;
+      background-size: 280px 100%;
+      filter: blur(4px);
+      animation: mistDrift 18s linear infinite;
+    }
+
+    #humidityCard.hum-humid::after {
+      z-index: 2;
+      inset: -110px 0 0 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='110' height='110' viewBox='0 0 110 110'%3E%3Cg fill='%23dff1ff'%3E%3Cpath d='M22 14 C22 14 18 20 18 23 a4 4 0 0 0 8 0 C26 20 22 14 22 14 Z' opacity='0.52'/%3E%3Cpath d='M78 36 C78 36 74.5 41.5 74.5 44 a3.5 3.5 0 0 0 7 0 C81.5 41.5 78 36 78 36 Z' opacity='0.44'/%3E%3Cpath d='M48 72 C48 72 45 77 45 79.5 a3 3 0 0 0 6 0 C51 77 48 72 48 72 Z' opacity='0.48'/%3E%3Cpath d='M94 84 C94 84 91.5 88 91.5 90 a2.5 2.5 0 0 0 5 0 C96.5 88 94 84 94 84 Z' opacity='0.4'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 110px 110px;
+      background-repeat: repeat;
+      animation: dropletSlide 6.8s linear infinite;
+    }
+
+    /* ================= 빗물 감지 카드 (#rainCard) ================= */
+
+    /* 맑음 (rain-clear) */
     #rainCard.rain-clear {
       border-color: #9ecdf0;
       background: linear-gradient(135deg, #d7f0ff 0%, #bde3ff 55%, #eaf7ff 100%);
@@ -361,7 +629,7 @@
       animation: sunSpin 26s linear infinite;
     }
 
-    /* ================= 비 감지 (rain-detected) ================= */
+    /* 비 감지 (rain-detected) */
     #rainCard.rain-detected {
       border-color: #4b6178;
       background-color: #3c4f63;
@@ -400,6 +668,68 @@
       background-size: 96px 96px;
       background-repeat: repeat;
       animation: rainFallBack 1.15s linear infinite;
+    }
+
+    /* ================= 센서 배경 키프레임 ================= */
+    @keyframes snowFallFront {
+      0%   { transform: translate3d(0, 0, 0); }
+      50%  { transform: translate3d(8px, 55px, 0); }
+      100% { transform: translate3d(0, 110px, 0); }
+    }
+
+    @keyframes snowFallBack {
+      0%   { transform: translate3d(0, 0, 0); }
+      50%  { transform: translate3d(-7px, 48px, 0); }
+      100% { transform: translate3d(0, 96px, 0); }
+    }
+
+    @keyframes breezeFlow {
+      from { transform: translate3d(-240px, 0, 0); }
+      to   { transform: translate3d(0, 0, 0); }
+    }
+
+    @keyframes softPulse {
+      0%, 100% { transform: scale(1); opacity: 0.72; }
+      50%      { transform: scale(1.12); opacity: 1; }
+    }
+
+    @keyframes hazeRiseFront {
+      0%   { transform: translate3d(0, 0, 0) scaleX(1); }
+      25%  { transform: translate3d(4px, -30px, 0) scaleX(1.03); }
+      50%  { transform: translate3d(-3px, -60px, 0) scaleX(0.98); }
+      75%  { transform: translate3d(3px, -90px, 0) scaleX(1.02); }
+      100% { transform: translate3d(0, -120px, 0) scaleX(1); }
+    }
+
+    @keyframes hazeRiseBack {
+      0%   { transform: translate3d(0, 0, 0) scaleX(1); }
+      50%  { transform: translate3d(-6px, -70px, 0) scaleX(1.04); }
+      100% { transform: translate3d(0, -140px, 0) scaleX(1); }
+    }
+
+    @keyframes dryWindDrift {
+      from { transform: translate3d(-220px, 0, 0); }
+      to   { transform: translate3d(0, 0, 0); }
+    }
+
+    @keyframes leafSway {
+      0%, 100% { transform: rotate(0deg); }
+      50%      { transform: rotate(-3.5deg); }
+    }
+
+    @keyframes dewFloatShimmer {
+      0%, 100% { transform: translate3d(0, 0, 0) scale(1); opacity: 0.86; }
+      50%      { transform: translate3d(-2px, -4px, 0) scale(1.04); opacity: 1; }
+    }
+
+    @keyframes mistDrift {
+      from { transform: translate3d(0, 0, 0); }
+      to   { transform: translate3d(-280px, 0, 0); }
+    }
+
+    @keyframes dropletSlide {
+      from { transform: translateY(0); }
+      to   { transform: translateY(110px); }
     }
 
     @keyframes cloudDrift {
@@ -552,6 +882,21 @@
         font-size: 26px;
       }
 
+      #humidityCard.hum-comfort::before {
+        width: 118px;
+        height: 88px;
+      }
+
+      #humidityCard.hum-comfort::after {
+        width: 92px;
+        height: 78px;
+      }
+
+      #rainCard.rain-clear::after {
+        width: 62px;
+        height: 62px;
+      }
+
       button {
         width: 100%;
         margin: 5px 0;
@@ -607,11 +952,11 @@
       <h2 class="section-heading">센서</h2>
       <div class="grid">
         <div class="temperature-humidity">
-          <div class="card">
+          <div class="card" id="tempCard">
             <h3>온도</h3>
             <div class="value"><span id="temperature">--</span><span class="unit"> °C</span></div>
           </div>
-          <div class="card">
+          <div class="card" id="humidityCard">
             <h3>습도</h3>
             <div class="value"><span id="humidity">--</span><span class="unit"> %</span></div>
           </div>
@@ -1274,6 +1619,48 @@
       }
     }
 
+    // 온도 수치 표시 및 3단계 카드 배경 전환 (18°C 미만 추움 / 18~26°C 쾌적 / 26°C 초과 더움)
+    function updateTemperatureDisplay(value) {
+      const label = document.getElementById("temperature");
+      const card = document.getElementById("tempCard");
+      const hasValue = value !== null && value !== undefined && String(value).trim() !== "";
+      const num = hasValue ? Number(value) : NaN;
+
+      label.textContent = hasValue ? value : "--";
+      card.classList.remove("temp-cold", "temp-comfort", "temp-hot");
+
+      if (Number.isNaN(num)) return;
+
+      if (num < 18) {
+        card.classList.add("temp-cold");
+      } else if (num <= 26) {
+        card.classList.add("temp-comfort");
+      } else {
+        card.classList.add("temp-hot");
+      }
+    }
+
+    // 습도 수치 표시 및 3단계 카드 배경 전환 (40% 미만 건조 / 40~65% 적정 / 65% 초과 습함)
+    function updateHumidityDisplay(value) {
+      const label = document.getElementById("humidity");
+      const card = document.getElementById("humidityCard");
+      const hasValue = value !== null && value !== undefined && String(value).trim() !== "";
+      const num = hasValue ? Number(value) : NaN;
+
+      label.textContent = hasValue ? value : "--";
+      card.classList.remove("hum-dry", "hum-comfort", "hum-humid");
+
+      if (Number.isNaN(num)) return;
+
+      if (num < 40) {
+        card.classList.add("hum-dry");
+      } else if (num <= 65) {
+        card.classList.add("hum-comfort");
+      } else {
+        card.classList.add("hum-humid");
+      }
+    }
+
     // 빗물 감지 상태 표시 및 카드 배경 전환
     function updateRainDisplay(value) {
       const label = document.getElementById("rain");
@@ -1370,17 +1757,17 @@
         }
 
         if (!data) {
+          updateTemperatureDisplay(null);
+          updateHumidityDisplay(null);
+          updateRainDisplay(null);
           updateDeviceDisplay("humidifier", null, false);
           updateDeviceDisplay("fan", null, false);
           updateDeviceDisplay("window", null, false);
           return;
         }
 
-        document.getElementById("temperature").textContent =
-          data.temperature ?? "--";
-
-        document.getElementById("humidity").textContent =
-          data.humidity ?? "--";
+        updateTemperatureDisplay(data.temperature);
+        updateHumidityDisplay(data.humidity);
 
         // 미세먼지는 새 키 pm25를 우선 사용하고, 기존 dust 키도 호환합니다.
         document.getElementById("pm25").textContent =
