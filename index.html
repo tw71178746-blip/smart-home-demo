@@ -461,6 +461,49 @@
 
     .card h3 { color: #343b43; }
     .value, .device-card .value { color: #202428; }
+
+    /* 빗물 감지 카드: 상태에 따라 배경만 은은하게 변경 */
+    #rainCard {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      transition: background-color 0.25s ease;
+    }
+
+    #rainCard > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    #rainCard.rain-detected {
+      background-color: rgba(112, 126, 143, 0.28);
+    }
+
+    #rainCard.rain-clear {
+      background-color: rgba(255, 224, 130, 0.30);
+    }
+
+    #rainCard.rain-clear::after {
+      content: "";
+      position: absolute;
+      z-index: 0;
+      top: 16px;
+      right: 18px;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, #ffd45c 0 34%, transparent 36%),
+        repeating-conic-gradient(
+          from 0deg,
+          transparent 0deg 12deg,
+          rgba(255, 194, 55, 0.72) 12deg 16deg,
+          transparent 16deg 30deg
+        );
+      -webkit-mask: radial-gradient(circle, transparent 0 39%, #000 43% 59%, transparent 63%);
+      mask: radial-gradient(circle, transparent 0 39%, #000 43% 59%, transparent 63%);
+      pointer-events: none;
+    }
     .unit, .device-connection, .auto-device-help,
     .status, .auto-control-description { color: #59636e; }
 
@@ -487,32 +530,6 @@
       font-size: 12px;
       font-weight: 700;
       letter-spacing: 0.2px;
-    }
-
-    /* 장치별 자동/수동 모드 표시 */
-    .auto-mode-label {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 3px 7px;
-      border-radius: 6px;
-      border: 1px solid transparent;
-      font-size: 11px;
-      font-weight: 800;
-      line-height: 1.2;
-      letter-spacing: 0.2px;
-      white-space: nowrap;
-      transition: color 0.2s ease, background-color 0.2s ease;
-    }
-    .auto-mode-label.mode-auto {
-      color: #168044;
-      background: #e5f1e8;
-      border-color: #b9d4c0;
-    }
-    .auto-mode-label.mode-manual {
-      color: #d13d3d;
-      background: #fff0ef;
-      border-color: #e3b4af;
     }
 
     .auto-toggle.is-off:not(:disabled) {
@@ -587,7 +604,7 @@
             <div class="value"><span id="humidity">--</span><span class="unit"> %</span></div>
           </div>
         </div>
-        <div class="card">
+        <div class="card" id="rainCard">
           <h3>빗물 감지</h3>
           <div class="value" id="rainStatus"><span id="rain">--</span></div>
         </div>
@@ -602,8 +619,6 @@
       </div>
     </div>
 
-    <div class="dashboard-section">
-      <h2 class="section-heading">장치</h2>
     <div class="section card auto-control-card">
       <h2>자동설정</h2>
       <p class="auto-control-description">
@@ -615,12 +630,14 @@
           <span class="auto-device-name">자동설정</span>
           <span class="auto-device-help">자동설정을 끄면 장치별 자동 기능은 일시 중지되며, 개별 설정은 유지됩니다.</span>
         </div>
-        <div class="auto-switch-wrap"><span id="autoMasterLabel" class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoMasterButton" aria-label="자동설정" aria-pressed="false" onclick="toggleAutoControl('master')" disabled></button></div>
+        <div class="auto-switch-wrap"><span id="autoMasterLabel">OFF</span><button type="button" class="auto-toggle" id="autoMasterButton" aria-label="자동설정" aria-pressed="false" onclick="toggleAutoControl('master')" disabled></button></div>
       </div>
 
       <p class="auto-control-status" id="autoControlStatus">Firebase에서 자동설정을 확인하고 있습니다.</p>
     </div>
 
+    <div class="dashboard-section">
+      <h2 class="section-heading">장치</h2>
       <div class="grid">
         <div class="card device-card device-unknown" id="windowCard">
           <div class="device-heading"><h3>창문</h3></div>
@@ -628,8 +645,9 @@
           <div class="device-control-row">
             <button type="button" id="windowOpenButton" onclick="sendWindowCommand('open')" disabled>창문 열기</button>
             <button type="button" class="stop" id="windowCloseButton" onclick="sendWindowCommand('close')" disabled>창문 닫기</button>
-            <div class="auto-switch-wrap"><span id="autoWindowLabel" class="auto-mode-label mode-auto">자동모드</span><span class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoWindowButton" aria-label="창문 자동설정" aria-pressed="true" onclick="toggleAutoControl('window')" disabled></button><span class="auto-side-label">ON</span></div>
+            <div class="auto-switch-wrap"><span class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoWindowButton" aria-label="창문 자동설정" aria-pressed="true" onclick="toggleAutoControl('window')" disabled></button><span class="auto-side-label">ON</span></div>
           </div>
+          <p class="status device-status"><span class="device-connection" id="windowConnection">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</span></p>
         </div>
         <div class="card device-card device-unknown" id="fanCard">
           <div class="device-heading"><h3>선풍기</h3></div>
@@ -637,8 +655,9 @@
           <div class="device-control-row">
             <button type="button" id="fanOnButton" onclick="sendDeviceCommand('fan', 'on')" disabled>선풍기 켜기</button>
             <button type="button" class="stop" id="fanOffButton" onclick="sendDeviceCommand('fan', 'off')" disabled>선풍기 끄기</button>
-            <div class="auto-switch-wrap"><span id="autoFanLabel" class="auto-mode-label mode-auto">자동모드</span><span class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoFanButton" aria-label="선풍기 자동설정" aria-pressed="true" onclick="toggleAutoControl('fan')" disabled></button><span class="auto-side-label">ON</span></div>
+            <div class="auto-switch-wrap"><span class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoFanButton" aria-label="선풍기 자동설정" aria-pressed="true" onclick="toggleAutoControl('fan')" disabled></button><span class="auto-side-label">ON</span></div>
           </div>
+          <p class="status device-status"><span class="device-connection" id="fanConnection">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</span></p>
         </div>
         <div class="card device-card device-unknown" id="humidifierCard">
           <div class="device-heading"><h3>가습기</h3></div>
@@ -646,8 +665,9 @@
           <div class="device-control-row">
             <button type="button" id="humidifierOnButton" onclick="sendDeviceCommand('humidifier', 'on')" disabled>가습기 켜기</button>
             <button type="button" class="stop" id="humidifierOffButton" onclick="sendDeviceCommand('humidifier', 'off')" disabled>가습기 끄기</button>
-            <div class="auto-switch-wrap"><span id="autoHumidifierLabel" class="auto-mode-label mode-auto">자동모드</span><span class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoHumidifierButton" aria-label="가습기 자동설정" aria-pressed="true" onclick="toggleAutoControl('humidifier')" disabled></button><span class="auto-side-label">ON</span></div>
+            <div class="auto-switch-wrap"><span class="auto-side-label">OFF</span><button type="button" class="auto-toggle" id="autoHumidifierButton" aria-label="가습기 자동설정" aria-pressed="true" onclick="toggleAutoControl('humidifier')" disabled></button><span class="auto-side-label">ON</span></div>
           </div>
+          <p class="status device-status"><span class="device-connection" id="humidifierConnection">연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.</span></p>
         </div>
       </div>
     </div>
@@ -713,20 +733,19 @@
       "https://smart-home-demo-52a8a-default-rtdb.asia-southeast1.firebasedatabase.app";
 
     const LOCATION_URL = FIREBASE_URL + "/locationShare.json";
+    const WINDOW_COMMAND_URL = FIREBASE_URL + "/windowCommand.json";
     const DEVICE_COMMAND_URL = FIREBASE_URL + "/deviceCommands";
-    const WINDOW_COMMAND_URL = DEVICE_COMMAND_URL + "/window.json";
     const AUTO_CONTROL_URL = FIREBASE_URL + "/autoControl.json";
 
-    // Firebase에는 장치별 자동 설정만 저장합니다. 전체 자동/수동은
-    // 각 장치에 전달되는 deviceModes 신호로 적용하며 master 항목은 사용하지 않습니다.
+    // 전체 자동제어는 기본 OFF, 장치별 설정은 기본 ON으로 저장합니다.
+    // 전체 자동제어가 OFF이면 장치별 설정값은 유지된 채 자동 작동만 멈춥니다.
     let autoControlSettings = {
+      master: false,
       window: true,
       fan: true,
       humidifier: true
     };
-    let masterAutoEnabled = false;
-    let autoControlInitialized = false;
-    let legacyMasterCleanupDone = false;
+
     let autoControlSaving = false;
 
     // 위치 공유 설정
@@ -1112,132 +1131,87 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
   return R * c;
 }
 
-    // 장치별 설정과 실제 적용 모드를 화면에 반영합니다.
-    // master 값은 Firebase에 저장하지 않고, 세 장치의 모드 신호로 전체 상태를 판단합니다.
-    function updateAutoControlDisplay(settings, deviceModes) {
+    // Firebase의 자동설정 값을 화면의 슬라이드 스위치에 표시합니다.
+    function updateAutoControlDisplay(settings) {
       if (settings && typeof settings === "object") {
         autoControlSettings = {
+          master: settings.master === true,
           window: settings.window !== false,
           fan: settings.fan !== false,
           humidifier: settings.humidifier !== false
         };
       }
 
-      if (!autoControlInitialized && deviceModes && typeof deviceModes === "object") {
-        masterAutoEnabled = ["window", "fan", "humidifier"].some(
-          key => deviceModes[key] && deviceModes[key].mode === "auto"
-        );
-        autoControlInitialized = true;
-      }
-
       const controls = [
         ["master", "autoMasterButton", "autoMasterLabel"],
-        ["window", "autoWindowButton", "autoWindowLabel"],
-        ["fan", "autoFanButton", "autoFanLabel"],
-        ["humidifier", "autoHumidifierButton", "autoHumidifierLabel"]
+        ["window", "autoWindowButton", null],
+        ["fan", "autoFanButton", null],
+        ["humidifier", "autoHumidifierButton", null]
       ];
 
       controls.forEach(([key, buttonId, labelId]) => {
         const button = document.getElementById(buttonId);
-        const isMaster = key === "master";
-        const settingEnabled = isMaster ? masterAutoEnabled : autoControlSettings[key] === true;
-        // 개별 토글의 위치/표시는 Firebase의 개별 설정값을 그대로 반영합니다.
-        // 전체 OFF 상태에서도 설정값은 보존하고, 토글만 비활성화합니다.
-        const toggleOn = settingEnabled;
-        const effectiveAuto = isMaster ? settingEnabled : (masterAutoEnabled && settingEnabled);
-        button.classList.toggle("is-on", toggleOn);
-        button.classList.toggle("is-off", !toggleOn);
-        button.setAttribute("aria-pressed", String(toggleOn));
-        button.disabled = autoControlSaving || (!isMaster && !masterAutoEnabled);
-
-        if (labelId) {
-          const modeLabel = document.getElementById(labelId);
-          if (isMaster) {
-            modeLabel.textContent = effectiveAuto ? "ON" : "OFF";
-          } else {
-            // 글자는 실제 적용 모드 기준: 전체 OFF면 개별 설정이 ON이어도 수동모드.
-            modeLabel.textContent = effectiveAuto ? "자동모드" : "수동모드";
-            modeLabel.classList.toggle("mode-auto", effectiveAuto);
-            modeLabel.classList.toggle("mode-manual", !effectiveAuto);
-          }
-        }
+        const enabled = autoControlSettings[key] === true;
+        button.classList.toggle("is-on", enabled);
+        button.classList.toggle("is-off", !enabled);
+        button.setAttribute("aria-pressed", String(enabled));
+        button.disabled = autoControlSaving || (key !== "master" && !autoControlSettings.master);
+        if (labelId) document.getElementById(labelId).textContent = enabled ? "ON" : "OFF";
       });
 
       const status = document.getElementById("autoControlStatus");
-      if (!masterAutoEnabled) {
-        status.textContent = "전체 자동 OFF · 창문·선풍기·가습기에 수동 신호를 전송했습니다. 장치별 자동 설정은 유지됩니다.";
+      if (!autoControlSettings.master) {
+        status.textContent = "자동설정 OFF · 장치별 설정은 유지되며 자동 작동은 중지됩니다. 수동 제어는 가능합니다.";
       } else {
         const activeDevices = [];
         if (autoControlSettings.window) activeDevices.push("창문");
         if (autoControlSettings.fan) activeDevices.push("선풍기");
         if (autoControlSettings.humidifier) activeDevices.push("가습기");
         status.textContent = activeDevices.length
-          ? "전체 자동 ON · 자동 작동 대상: " + activeDevices.join(", ")
-          : "전체 자동 ON · 장치별 설정이 모두 수동입니다.";
+          ? "자동설정 ON · 자동 작동 대상: " + activeDevices.join(", ")
+          : "자동설정 ON · 장치별 자동 기능이 모두 OFF입니다.";
       }
     }
 
-    // Firebase에는 개별 설정(autoControl)과 실제 적용 모드(deviceModes)를 분리해 기록합니다.
-    // 전체 OFF는 개별 설정값을 바꾸지 않고 세 장치 모두에 수동 신호를 보냅니다.
+    // 웹사이트는 자동제어 설정 신호만 Firebase에 기록합니다.
+    // 센서 판단과 실제 장치 작동은 라즈베리파이에서 처리합니다.
     async function toggleAutoControl(target) {
       const allowedTargets = ["master", "window", "fan", "humidifier"];
       if (!allowedTargets.includes(target) || autoControlSaving) return;
-      if (target !== "master" && !masterAutoEnabled) return;
 
       const previousSettings = { ...autoControlSettings };
-      const previousMasterState = masterAutoEnabled;
-
-      if (target === "master") {
-        masterAutoEnabled = !masterAutoEnabled;
-      } else {
-        autoControlSettings[target] = !autoControlSettings[target];
-      }
-
+      autoControlSettings[target] = !autoControlSettings[target];
       autoControlSaving = true;
       updateAutoControlDisplay();
-      document.getElementById("autoControlStatus").textContent = "자동/수동 신호를 Firebase에 전송하고 있습니다...";
-
-      const timestamp = Date.now();
-      const updates = {};
-      const devices = target === "master" ? ["window", "fan", "humidifier"] : [target];
-
-      if (target !== "master") {
-        updates["autoControl/" + target] = autoControlSettings[target];
-      }
-
-      devices.forEach(device => {
-        const mode = masterAutoEnabled && autoControlSettings[device] ? "auto" : "manual";
-        updates["deviceModes/" + device] = {
-          mode: mode,
-          updatedAt: timestamp,
-          updatedBy: "web"
-        };
-      });
+      document.getElementById("autoControlStatus").textContent = "자동설정을 Firebase에 전송하고 있습니다...";
 
       try {
-        const response = await fetch(FIREBASE_URL + "/.json", {
+        const response = await fetch(AUTO_CONTROL_URL, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(updates)
+          body: JSON.stringify({
+            ...autoControlSettings,
+            updatedAt: Date.now(),
+            updatedBy: "web"
+          })
         });
 
         if (!response.ok) {
-          throw new Error("자동/수동 신호 전송 실패: " + response.status);
+          throw new Error("자동설정 전송 실패: " + response.status);
         }
 
         autoControlSaving = false;
         updateAutoControlDisplay();
         const targetNames = {
-          master: masterAutoEnabled ? "전체 자동 ON" : "전체 자동 OFF (세 장치 수동 신호)",
-          window: "창문 자동 설정",
-          fan: "선풍기 자동 설정",
-          humidifier: "가습기 자동 설정"
+          master: "자동설정",
+          window: "창문 자동설정",
+          fan: "선풍기 자동설정",
+          humidifier: "가습기 자동설정"
         };
         document.getElementById("autoControlStatus").textContent =
-          targetNames[target] + " 신호를 Firebase에 전송했습니다.";
+          targetNames[target] + " 설정을 Firebase에 전송했습니다. 라즈베리파이가 설정을 확인하면 적용됩니다.";
       } catch (error) {
         autoControlSettings = previousSettings;
-        masterAutoEnabled = previousMasterState;
         autoControlSaving = false;
         updateAutoControlDisplay();
         document.getElementById("autoControlStatus").textContent =
@@ -1287,11 +1261,16 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
         ["false", "clear", "sunny", "맑음", "미감지", "dry", "no rain"].includes(normalized);
 
       label.textContent = isRain ? "비" : (isClear ? "맑음" : "--");
+
+      const rainCard = document.getElementById("rainCard");
+      rainCard.classList.toggle("rain-detected", isRain);
+      rainCard.classList.toggle("rain-clear", isClear);
     }
 
     function updateDeviceDisplay(device, value, connected = true) {
       const card = document.getElementById(device + "Card");
       const valueElement = document.getElementById(device === "window" ? "window" : device);
+      const connectionElement = document.getElementById(device + "Connection");
       const onButton = document.getElementById(device === "window" ? "windowOpenButton" : device + "OnButton");
       const offButton = document.getElementById(device === "window" ? "windowCloseButton" : device + "OffButton");
       const normalized = value === null || value === undefined
@@ -1308,22 +1287,26 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
       if (!connected || (!isOn && !isOff)) {
         card.classList.add("device-unknown");
         valueElement.textContent = "";
+        connectionElement.textContent = "연결되지 않은 상태이며, 장치 상태를 확인하고 있습니다.";
         onButton.disabled = true;
         offButton.disabled = true;
       } else if (isOn) {
         card.classList.add("device-on");
         valueElement.textContent = device === "window" ? "열림" : "켜짐";
+        connectionElement.textContent = "연결됨";
         onButton.disabled = true;
         offButton.disabled = false;
       } else {
         card.classList.add("device-off");
         valueElement.textContent = device === "window" ? "닫힘" : "꺼짐";
+        connectionElement.textContent = "연결됨";
         onButton.disabled = false;
         offButton.disabled = true;
       }
     }
 
-    // 창문 원격 제어 명령을 deviceCommands/window 경로에 전송
+    // 창문 원격 제어 명령을 Firebase에 전송
+    // ESP32/라즈베리파이 쪽에서는 windowCommand 값을 읽어 모터를 제어해야 합니다.
     async function sendWindowCommand(command) {
       if (command !== "open" && command !== "close") return;
       const requestedButton = document.getElementById(command === "open" ? "windowOpenButton" : "windowCloseButton");
@@ -1360,18 +1343,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
         }
 
         const data = await response.json();
-        updateAutoControlDisplay(
-          data && data.autoControl ? data.autoControl : null,
-          data && data.deviceModes ? data.deviceModes : null
-        );
-
-        // 이전 버전에서 사용하던 Firebase autoControl/master 항목을 한 번 삭제합니다.
-        if (!legacyMasterCleanupDone && data && data.autoControl &&
-            Object.prototype.hasOwnProperty.call(data.autoControl, "master")) {
-          legacyMasterCleanupDone = true;
-          fetch(FIREBASE_URL + "/autoControl/master.json", { method: "DELETE" })
-            .catch(error => console.warn("기존 master 항목 삭제 실패:", error));
-        }
+        updateAutoControlDisplay(data && data.autoControl ? data.autoControl : null);
 
         if (!data) {
           updateDeviceDisplay("humidifier", null, false);
