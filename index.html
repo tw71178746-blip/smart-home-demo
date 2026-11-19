@@ -18,8 +18,8 @@
     body {
       margin: 0;
       padding: 24px;
-      background: #dce8d8;
-      color: #203326;
+      background: #f4f5f6;
+      color: #202428;
       font-family: Arial, sans-serif;
     }
 
@@ -31,10 +31,15 @@
     h1 {
       margin-bottom: 6px;
       letter-spacing: 2px;
+      color: #202428;
+    }
+
+    h2, .section-heading {
+      color: #202428;
     }
 
     .subtitle {
-      color: #d4dfd2;
+      color: #5f6871;
       margin-bottom: 30px;
     }
 
@@ -47,7 +52,6 @@
     .section-heading {
       margin: 0 0 14px;
       font-size: 20px;
-      color: #294532;
     }
 
     .dashboard-section {
@@ -70,40 +74,33 @@
       padding: 18px;
     }
 
+    .card,
+    .auto-control-card,
     .location-card {
-      margin-top: 24px;
-      background: #526f58;
-      border-color: #9ca99b;
-    }
-
-    .location-card .notice {
-      background: #385440;
-      border: 1px solid #9ca99b;
-    }
-
-    #mapContainer {
-      background: #3b5741;
-      border-radius: 12px;
-      padding: 8px;
-    }
-
-    .card {
-      background: #526f58;
+      background: #ffffff;
       padding: 22px;
       border-radius: 14px;
-      border: 1px solid #9ca99b;
-      color: #f1f5ed;
+      border: 1px solid #d7dce1;
+      color: #252a30;
+      box-shadow: 0 2px 8px rgba(25, 35, 45, 0.05);
+    }
+
+    .location-card,
+    .auto-control-card {
+      margin-top: 24px;
     }
 
     .card h3 {
-      color: #ffffff;
+      color: #343b43;
       font-size: 15px;
       margin-top: 0;
     }
 
-    .value {
+    .value,
+    .device-card .value {
       font-size: 30px;
       font-weight: bold;
+      color: #202428;
     }
 
     .device-card {
@@ -111,18 +108,18 @@
     }
 
     .device-card.device-on {
-      background: #426b49;
-      border-color: #a4c99a;
+      background: #edf7ef;
+      border-color: #a8d3b1;
     }
 
     .device-card.device-off {
-      background: #76534f;
-      border-color: #d89b91;
+      background: #fff0ef;
+      border-color: #e3b4af;
     }
 
     .device-card.device-unknown {
-      background: #3b5741;
-      border-color: #a5b1a2;
+      background: #eef0f2;
+      border-color: #cbd1d7;
     }
 
     .device-heading {
@@ -145,33 +142,31 @@
       text-align: left;
     }
 
-    .device-connection {
-      color: #d4dfd2;
-      font-size: 12px;
-    }
-
     .device-card .value {
-      color: #ffffff;
       margin-bottom: 10px;
     }
 
     .unit {
       font-size: 16px;
-      color: #d4dfd2;
+    }
+
+    .unit,
+    .device-connection,
+    .auto-device-help,
+    .status,
+    .auto-control-description {
+      color: #59636e;
+    }
+
+    .device-connection {
+      font-size: 12px;
     }
 
     .section {
       margin-top: 28px;
     }
 
-    .auto-control-card {
-      margin-top: 24px;
-      background: #526f58;
-      border-color: #9ca99b;
-    }
-
     .auto-control-description {
-      color: #e1eadf;
       line-height: 1.5;
       margin: 0 0 16px;
       font-size: 14px;
@@ -184,7 +179,7 @@
       justify-content: space-between;
       gap: 12px;
       padding: 12px 0;
-      border-top: 1px solid rgba(241, 245, 237, 0.22);
+      border-top: 1px solid #e1e5e9;
     }
 
     .auto-master-row {
@@ -194,11 +189,11 @@
 
     .auto-device-name {
       font-weight: bold;
+      color: #252a30;
     }
 
     .auto-device-help {
       display: block;
-      color: #d4dfd2;
       font-size: 12px;
       margin-top: 4px;
       line-height: 1.4;
@@ -209,9 +204,16 @@
       align-items: center;
       gap: 8px;
       flex-shrink: 0;
-      color: #f1f5ed;
+      color: #303840;
       font-size: 13px;
       font-weight: bold;
+    }
+
+    .auto-side-label {
+      color: #46515c;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
     }
 
     .auto-toggle {
@@ -223,7 +225,7 @@
       margin: 0;
       border: 1px solid #9ca99b;
       border-radius: 999px;
-      background: #76534f;
+      background: #dc4545;
       transition: background-color 0.2s ease, opacity 0.2s ease;
       flex-shrink: 0;
     }
@@ -240,20 +242,40 @@
       transition: transform 0.2s ease;
     }
 
-    .auto-toggle.is-on {
-      background: #22a05a;
-      border-color: #8bd5a6;
-    }
-
     .auto-toggle.is-on::after {
       transform: translateX(24px);
     }
 
-    .auto-toggle:disabled {
-      background: #777f79;
-      border-color: #aeb5af;
-      opacity: 0.65;
+    .auto-toggle.is-off:not(:disabled),
+    .auto-toggle.is-off:not(:disabled):hover,
+    .auto-toggle.is-off:not(:disabled):focus,
+    .auto-toggle.is-off:not(:disabled):active {
+      background: #dc4545;
+      border-color: #c93434;
+    }
+
+    .auto-toggle.is-on:not(:disabled),
+    .auto-toggle.is-on:not(:disabled):hover,
+    .auto-toggle.is-on:not(:disabled):focus,
+    .auto-toggle.is-on:not(:disabled):active {
+      background: #229b59;
+      border-color: #188348;
+    }
+
+    /* 전체 자동설정 OFF 또는 저장 중인 개별 토글은 hover/focus에도 회색 고정 */
+    button.auto-toggle:disabled,
+    button.auto-toggle:disabled:hover,
+    button.auto-toggle:disabled:focus,
+    button.auto-toggle:disabled:active {
+      background: #c5cbd1;
+      border-color: #aeb6be;
+      opacity: 1;
       cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    button.auto-toggle:disabled::after {
+      background: #f7f8f9;
     }
 
     .device-control-row {
@@ -272,11 +294,132 @@
       margin: 14px 0 0;
       padding: 10px 12px;
       border-radius: 8px;
-      background: #385440;
-      border: 1px solid #9ca99b;
-      color: #f1f5ed;
+      background: #f0f2f4;
+      border: 1px solid #d5dbe1;
+      color: #303840;
       font-size: 13px;
       line-height: 1.5;
+    }
+
+    /* 빗물 감지 카드: 상태에 따라 하늘·구름·태양·빗줄기 배경 전환 */
+    #rainCard {
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+      transition: background 0.45s ease, border-color 0.45s ease, color 0.35s ease;
+    }
+
+    #rainCard > * {
+      position: relative;
+      z-index: 3;
+    }
+
+    #rainCard::before,
+    #rainCard::after {
+      content: "";
+      position: absolute;
+      pointer-events: none;
+    }
+
+    /* ================= 맑음 (rain-clear) ================= */
+    #rainCard.rain-clear {
+      border-color: #9ecdf0;
+      background: linear-gradient(135deg, #d7f0ff 0%, #bde3ff 55%, #eaf7ff 100%);
+    }
+
+    #rainCard.rain-clear h3 {
+      color: #2b547e;
+    }
+
+    #rainCard.rain-clear .value {
+      color: #123456;
+    }
+
+    /* 맑음 - 부드럽게 흘러가는 흰 구름 */
+    #rainCard.rain-clear::before {
+      z-index: 1;
+      top: 0;
+      left: 0;
+      width: calc(100% + 320px);
+      height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='120' viewBox='0 0 320 120'%3E%3Cg fill='%23ffffff' opacity='0.78'%3E%3Ccircle cx='48' cy='102' r='26'/%3E%3Ccircle cx='78' cy='90' r='32'/%3E%3Ccircle cx='114' cy='98' r='28'/%3E%3Ccircle cx='144' cy='108' r='22'/%3E%3Crect x='22' y='102' width='144' height='24'/%3E%3C/g%3E%3Cg fill='%23ffffff' opacity='0.52'%3E%3Ccircle cx='215' cy='106' r='22'/%3E%3Ccircle cx='242' cy='94' r='28'/%3E%3Ccircle cx='274' cy='102' r='24'/%3E%3Ccircle cx='298' cy='110' r='18'/%3E%3Crect x='193' y='106' width='123' height='20'/%3E%3C/g%3E%3C/svg%3E");
+      background-repeat: repeat-x;
+      background-position: 0 bottom;
+      background-size: 320px 100px;
+      animation: cloudDrift 28s linear infinite;
+    }
+
+    /* 맑음 - 오른쪽 위 빛나는 태양 */
+    #rainCard.rain-clear::after {
+      z-index: 2;
+      top: 10px;
+      right: 16px;
+      width: 76px;
+      height: 76px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='44' fill='%23ffd95e' opacity='0.24'/%3E%3Ccircle cx='50' cy='50' r='31' fill='%23ffcf40' opacity='0.36'/%3E%3Cg stroke='%23ffba26' stroke-width='4.2' stroke-linecap='round' opacity='0.9'%3E%3Cline x1='50' y1='8' x2='50' y2='18'/%3E%3Cline x1='50' y1='82' x2='50' y2='92'/%3E%3Cline x1='8' y1='50' x2='18' y2='50'/%3E%3Cline x1='82' y1='50' x2='92' y2='50'/%3E%3Cline x1='20.3' y1='20.3' x2='27.4' y2='27.4'/%3E%3Cline x1='79.7' y1='20.3' x2='72.6' y2='27.4'/%3E%3Cline x1='20.3' y1='79.7' x2='27.4' y2='72.6'/%3E%3Cline x1='79.7' y1='79.7' x2='72.6' y2='72.6'/%3E%3C/g%3E%3Ccircle cx='50' cy='50' r='21' fill='%23ffc933'/%3E%3Ccircle cx='46' cy='46' r='16' fill='%23ffe680' opacity='0.88'/%3E%3C/svg%3E") center / contain no-repeat;
+      filter: drop-shadow(0 0 12px rgba(255, 200, 55, 0.55));
+      animation: sunSpin 26s linear infinite;
+    }
+
+    /* ================= 비 감지 (rain-detected) ================= */
+    #rainCard.rain-detected {
+      border-color: #4b6178;
+      background-color: #3c4f63;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 120' preserveAspectRatio='xMidYMin slice'%3E%3Cg fill='%231e2a38' opacity='0.52'%3E%3Ccircle cx='38' cy='16' r='44'/%3E%3Ccircle cx='106' cy='10' r='52'/%3E%3Ccircle cx='182' cy='20' r='46'/%3E%3Ccircle cx='258' cy='8' r='56'/%3E%3Ccircle cx='336' cy='18' r='48'/%3E%3Ccircle cx='392' cy='12' r='42'/%3E%3C/g%3E%3Cg fill='%238aa1b8' opacity='0.24'%3E%3Ccircle cx='70' cy='6' r='36'/%3E%3Ccircle cx='150' cy='14' r='40'/%3E%3Ccircle cx='228' cy='4' r='42'/%3E%3Ccircle cx='306' cy='14' r='38'/%3E%3Ccircle cx='368' cy='8' r='34'/%3E%3C/g%3E%3C/svg%3E"),
+        linear-gradient(155deg, #2d3d4e 0%, #42576d 55%, #5a7087 100%);
+      background-repeat: no-repeat, no-repeat;
+      background-position: top center, center;
+      background-size: 100% auto, cover;
+    }
+
+    #rainCard.rain-detected h3 {
+      color: rgba(236, 244, 252, 0.9);
+    }
+
+    #rainCard.rain-detected .value {
+      color: #ffffff;
+      text-shadow: 0 2px 8px rgba(15, 25, 38, 0.35);
+    }
+
+    /* 비 감지 - 앞쪽 빗줄기 레이어 (빠름) */
+    #rainCard.rain-detected::before {
+      z-index: 2;
+      inset: -220px -100px -100px -100px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg stroke='%23d8eeff' stroke-linecap='round'%3E%3Cline x1='18' y1='8' x2='18' y2='26' stroke-width='1.7' opacity='0.68'/%3E%3Cline x1='54' y1='42' x2='54' y2='62' stroke-width='1.5' opacity='0.55'/%3E%3Cline x1='92' y1='16' x2='92' y2='34' stroke-width='1.8' opacity='0.72'/%3E%3Cline x1='34' y1='78' x2='34' y2='96' stroke-width='1.5' opacity='0.58'/%3E%3Cline x1='76' y1='82' x2='76' y2='102' stroke-width='1.7' opacity='0.65'/%3E%3Cline x1='110' y1='54' x2='110' y2='70' stroke-width='1.4' opacity='0.5'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 120px 120px;
+      background-repeat: repeat;
+      animation: rainFallFront 0.78s linear infinite;
+    }
+
+    /* 비 감지 - 뒤쪽 빗줄기 레이어 (약간 느리고 은은함) */
+    #rainCard.rain-detected::after {
+      z-index: 1;
+      inset: -220px -100px -100px -100px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cg stroke='%23b9dcff' stroke-linecap='round'%3E%3Cline x1='14' y1='22' x2='14' y2='35' stroke-width='1.2' opacity='0.42'/%3E%3Cline x1='46' y1='6' x2='46' y2='20' stroke-width='1.1' opacity='0.36'/%3E%3Cline x1='78' y1='34' x2='78' y2='48' stroke-width='1.2' opacity='0.44'/%3E%3Cline x1='30' y1='64' x2='30' y2='78' stroke-width='1.1' opacity='0.38'/%3E%3Cline x1='66' y1='72' x2='66' y2='86' stroke-width='1.2' opacity='0.4'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: 96px 96px;
+      background-repeat: repeat;
+      animation: rainFallBack 1.15s linear infinite;
+    }
+
+    @keyframes cloudDrift {
+      from { transform: translate3d(0, 0, 0); }
+      to   { transform: translate3d(-320px, 0, 0); }
+    }
+
+    @keyframes sunSpin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+    }
+
+    @keyframes rainFallFront {
+      from { transform: rotate(12deg) translateY(0); }
+      to   { transform: rotate(12deg) translateY(120px); }
+    }
+
+    @keyframes rainFallBack {
+      from { transform: rotate(12deg) translateY(0); }
+      to   { transform: rotate(12deg) translateY(96px); }
     }
 
     button {
@@ -304,20 +447,6 @@
       background: #2563eb;
     }
 
-    button.stop:disabled {
-      background: #dc2626;
-      opacity: 0.55;
-      cursor: not-allowed;
-    }
-
-    button.stop:disabled:hover {
-      background: #dc2626;
-    }
-
-    #mapContainer[hidden] {
-      display: none;
-    }
-
     .stop {
       background: #dc2626;
     }
@@ -326,10 +455,26 @@
       background: #b91c1c;
     }
 
+    button.stop:disabled,
+    button.stop:disabled:hover {
+      background: #dc2626;
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
     .status {
-      color: #d4dfd2;
       margin: 12px 0;
       line-height: 1.6;
+    }
+
+    #mapContainer {
+      background: #e9edf0;
+      border-radius: 12px;
+      padding: 8px;
+    }
+
+    #mapContainer[hidden] {
+      display: none;
     }
 
     #map {
@@ -337,18 +482,19 @@
       height: 350px;
       border-radius: 12px;
       margin-top: 15px;
-      background: #385440;
-      border: 1px solid #9ca99b;
+      background: #e9edf0;
+      border: 1px solid #cbd2d9;
     }
 
-    .notice {
+    .notice,
+    .location-card .notice {
       padding: 14px;
-      background: #385440;
-      border: 1px solid #9ca99b;
+      background: #f0f2f4;
+      border: 1px solid #d5dbe1;
       border-radius: 8px;
       margin-top: 12px;
       line-height: 1.5;
-      color: #f1f5ed;
+      color: #303840;
     }
 
     .cancel-marker {
@@ -401,7 +547,8 @@
         padding: 15px;
       }
 
-      .value {
+      .value,
+      .device-card .value {
         font-size: 26px;
       }
 
@@ -419,6 +566,14 @@
         width: 54px;
         min-width: 54px;
         margin: 0;
+      }
+
+      .auto-side-label {
+        font-size: 11px;
+      }
+
+      .auto-switch-wrap {
+        gap: 6px;
       }
 
       .device-control-row {
@@ -439,201 +594,6 @@
         height: 260px;
       }
     }
-
-
-    /* 밝은 무채색 테마: 모든 주요 글자와 상태 안내의 대비를 확보합니다. */
-    body {
-      background: #f4f5f6;
-      color: #202428;
-    }
-
-    h1, h2, .section-heading { color: #202428; }
-    .subtitle { color: #5f6871; }
-
-    .card,
-    .auto-control-card,
-    .location-card {
-      background: #ffffff;
-      color: #252a30;
-      border-color: #d7dce1;
-      box-shadow: 0 2px 8px rgba(25, 35, 45, 0.05);
-    }
-
-    .card h3 { color: #343b43; }
-    .value, .device-card .value { color: #202428; }
-
-    /* 빗물 감지 카드: 글자와 문구는 그대로 두고 CSS 배경 효과만 상태에 따라 변경 */
-    #rainCard {
-      position: relative;
-      overflow: hidden;
-      isolation: isolate;
-      transition: background-color 0.45s ease, background-image 0.45s ease;
-    }
-
-    #rainCard > * {
-      position: relative;
-      z-index: 3;
-    }
-
-    /* 공통 장식 레이어: 카드 내부에만 표시 */
-    #rainCard::before {
-      content: "";
-      position: absolute;
-      z-index: 1;
-      inset: -12%;
-      pointer-events: none;
-      transition: opacity 0.45s ease;
-    }
-
-    /* 비 감지: 연한 회색 하늘이 아주 조금 비치고, 몽글한 진회색 구름이 겹친 배경 */
-    #rainCard.rain-detected {
-      background-color: #cbd0d4;
-      background-image:
-        radial-gradient(ellipse at 7% 12%, rgba(226, 230, 233, 0.62) 0%, rgba(226, 230, 233, 0.28) 12%, transparent 27%),
-        radial-gradient(ellipse at 92% 84%, rgba(222, 227, 231, 0.48) 0%, rgba(222, 227, 231, 0.18) 10%, transparent 24%),
-        linear-gradient(145deg, #c5cbd0 0%, #b9c0c6 48%, #cbd0d4 100%);
-    }
-
-    #rainCard.rain-detected::before {
-      opacity: 0.96;
-      background:
-        radial-gradient(ellipse at 5% 45%, rgba(91, 99, 108, 0.78) 0 12%, transparent 29%),
-        radial-gradient(ellipse at 17% 28%, rgba(83, 91, 100, 0.88) 0 15%, transparent 33%),
-        radial-gradient(ellipse at 29% 43%, rgba(101, 109, 117, 0.84) 0 17%, transparent 35%),
-        radial-gradient(ellipse at 42% 25%, rgba(79, 87, 96, 0.86) 0 17%, transparent 35%),
-        radial-gradient(ellipse at 55% 43%, rgba(91, 99, 108, 0.88) 0 18%, transparent 37%),
-        radial-gradient(ellipse at 69% 27%, rgba(78, 86, 95, 0.84) 0 16%, transparent 34%),
-        radial-gradient(ellipse at 82% 43%, rgba(91, 99, 108, 0.86) 0 17%, transparent 35%),
-        radial-gradient(ellipse at 96% 27%, rgba(82, 90, 99, 0.78) 0 13%, transparent 29%),
-        radial-gradient(ellipse at 12% 75%, rgba(105, 113, 121, 0.70) 0 15%, transparent 32%),
-        radial-gradient(ellipse at 35% 77%, rgba(91, 99, 108, 0.76) 0 17%, transparent 34%),
-        radial-gradient(ellipse at 61% 76%, rgba(101, 109, 117, 0.72) 0 16%, transparent 33%),
-        radial-gradient(ellipse at 87% 75%, rgba(88, 96, 105, 0.74) 0 16%, transparent 33%),
-        radial-gradient(ellipse at 50% 55%, rgba(70, 78, 87, 0.30) 0 24%, transparent 52%);
-      filter: blur(11px);
-      transform: scale(1.08);
-    }
-
-    /* 맑음: 연노랑 하늘과 아래쪽에 은은하게 퍼지는 흰 구름 */
-    #rainCard.rain-clear {
-      background-color: #fff2c5;
-      background-image:
-        radial-gradient(ellipse at 48% 110%, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.34) 27%, transparent 54%),
-        radial-gradient(ellipse at 8% 92%, rgba(255, 255, 255, 0.48) 0%, transparent 38%),
-        linear-gradient(115deg, #fff8df 0%, #fff2c9 52%, #ffedb8 100%);
-    }
-
-    #rainCard.rain-clear::before {
-      opacity: 0.82;
-      background:
-        radial-gradient(ellipse at 18% 88%, rgba(255, 255, 255, 0.82) 0 8%, transparent 25%),
-        radial-gradient(ellipse at 28% 82%, rgba(255, 255, 255, 0.78) 0 11%, transparent 29%),
-        radial-gradient(ellipse at 42% 92%, rgba(255, 255, 255, 0.72) 0 12%, transparent 31%),
-        radial-gradient(ellipse at 70% 84%, rgba(255, 255, 255, 0.62) 0 8%, transparent 24%),
-        radial-gradient(ellipse at 83% 77%, rgba(255, 255, 255, 0.54) 0 7%, transparent 22%);
-      filter: blur(8px);
-    }
-
-    /* 오른쪽 위 태양: 둥근 노란 중심, 햇살, 은은한 빛 번짐 */
-    #rainCard.rain-clear::after {
-      content: "";
-      position: absolute;
-      z-index: 2;
-      top: 18px;
-      right: 20px;
-      width: 78px;
-      height: 78px;
-      border-radius: 50%;
-      pointer-events: none;
-      background:
-        radial-gradient(circle, #ffd85e 0 34%, rgba(255, 211, 82, 0.96) 35% 42%, transparent 44%),
-        repeating-conic-gradient(
-          from 0deg,
-          transparent 0deg 10deg,
-          rgba(255, 190, 53, 0.78) 10deg 13deg,
-          transparent 13deg 30deg
-        );
-      filter: drop-shadow(0 0 13px rgba(255, 205, 82, 0.42));
-    }
-
-    .unit, .device-connection, .auto-device-help,
-    .status, .auto-control-description { color: #59636e; }
-
-    .device-card.device-on {
-      background: #edf7ef;
-      border-color: #a8d3b1;
-    }
-    .device-card.device-off {
-      background: #fff0ef;
-      border-color: #e3b4af;
-    }
-    .device-card.device-unknown {
-      background: #eef0f2;
-      border-color: #cbd1d7;
-    }
-
-    .auto-master-row, .auto-device-row {
-      border-top-color: #e1e5e9;
-    }
-    .auto-device-name { color: #252a30; }
-    .auto-switch-wrap { color: #303840; }
-    .auto-side-label {
-      color: #46515c;
-      font-size: 12px;
-      font-weight: 700;
-      letter-spacing: 0.2px;
-    }
-
-    .auto-toggle.is-off:not(:disabled) {
-      background: #dc4545;
-      border-color: #c93434;
-    }
-    .auto-toggle.is-off:not(:disabled):hover,
-    .auto-toggle.is-off:not(:disabled):focus,
-    .auto-toggle.is-off:not(:disabled):active {
-      background: #dc4545;
-      border-color: #c93434;
-    }
-    .auto-toggle.is-on:not(:disabled),
-    .auto-toggle.is-on:not(:disabled):hover,
-    .auto-toggle.is-on:not(:disabled):focus,
-    .auto-toggle.is-on:not(:disabled):active {
-      background: #229b59;
-      border-color: #188348;
-    }
-
-    /* 전체 자동설정 OFF 또는 저장 중인 개별 토글은 hover/focus에도 회색 고정 */
-    button.auto-toggle:disabled,
-    button.auto-toggle:disabled:hover,
-    button.auto-toggle:disabled:focus,
-    button.auto-toggle:disabled:active {
-      background: #c5cbd1;
-      border-color: #aeb6be;
-      opacity: 1;
-      cursor: not-allowed;
-      box-shadow: none;
-    }
-    button.auto-toggle:disabled::after { background: #f7f8f9; }
-
-    .auto-control-status,
-    .notice,
-    .location-card .notice {
-      background: #f0f2f4;
-      border-color: #d5dbe1;
-      color: #303840;
-    }
-    #mapContainer {
-      background: #e9edf0;
-    }
-    #map {
-      background: #e9edf0;
-      border-color: #cbd2d9;
-    }
-    @media (max-width: 600px) {
-      .auto-side-label { font-size: 11px; }
-      .auto-switch-wrap { gap: 6px; }
-    }
-
   </style>
 </head>
 
@@ -788,6 +748,7 @@
     const WINDOW_COMMAND_URL = FIREBASE_URL + "/windowCommand.json";
     const DEVICE_COMMAND_URL = FIREBASE_URL + "/deviceCommands";
     const AUTO_CONTROL_URL = FIREBASE_URL + "/autoControl.json";
+    const HOUSE_URL = FIREBASE_URL + "/houseLocation.json";
 
     // 전체 자동제어는 기본 OFF, 장치별 설정은 기본 ON으로 저장합니다.
     // 전체 자동제어가 OFF이면 장치별 설정값은 유지된 채 자동 작동만 멈춥니다.
@@ -815,8 +776,6 @@
     let pendingHouseLocation = null;
     let lastPosition = null;
     let selectionMode = false;
-
-    const HOUSE_URL = FIREBASE_URL + "/houseLocation.json";
 
     let heartbeatTimer = null;
     let statusTimer = null;
@@ -896,12 +855,15 @@
       });
     }
 
-    // 지도 표시
-    function showMap() {
+    // 지도 표시 및 크기 재계산 후 콜백 실행
+    function showMap(onReady) {
       initializeMap();
 
       setTimeout(function() {
         map.invalidateSize();
+        if (typeof onReady === "function") {
+          onReady();
+        }
       }, 200);
     }
 
@@ -914,12 +876,13 @@
       button.textContent = willShow ? "▲ 지도 접기" : "▼ 지도 보기";
 
       if (willShow) {
-        showMap();
-        if (lastPosition) {
-          map.setView([lastPosition.latitude, lastPosition.longitude], 16);
-        } else if (houseLocation) {
-          map.setView([houseLocation.latitude, houseLocation.longitude], 15);
-        }
+        showMap(function() {
+          if (lastPosition) {
+            map.setView([lastPosition.latitude, lastPosition.longitude], 16);
+          } else if (houseLocation) {
+            map.setView([houseLocation.latitude, houseLocation.longitude], 15);
+          }
+        });
       }
     }
 
@@ -935,7 +898,9 @@
       }
 
       map.setView(position, 16);
-    }    // Firebase에 저장된 집 위치 가져오기
+    }
+
+    // Firebase에 저장된 집 위치 가져오기
     async function loadHouseLocation() {
       try {
         const response = await fetch(HOUSE_URL);
@@ -952,7 +917,7 @@
           houseLocation.longitude !== undefined
         ) {
           showHouseMarker();
-          if (!lastPosition) {
+          if (!lastPosition && !document.getElementById("mapContainer").hidden) {
             map.setView([
               houseLocation.latitude,
               houseLocation.longitude
@@ -1004,7 +969,13 @@
       if (document.getElementById("mapContainer").hidden) {
         document.getElementById("mapContainer").hidden = false;
         document.getElementById("mapToggleButton").textContent = "▲ 지도 접기";
-        showMap();
+        showMap(function() {
+          if (houseLocation) {
+            map.setView([houseLocation.latitude, houseLocation.longitude], 15);
+          } else if (lastPosition) {
+            map.setView([lastPosition.latitude, lastPosition.longitude], 16);
+          }
+        });
       }
 
       if (!selectionMode) {
@@ -1158,30 +1129,30 @@
     }
 
     // 두 좌표 사이의 직선거리 계산
-function calculateDistance(lat1, lon1, lat2, lon2) {
-  const R = 6371;
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371;
 
-  const toRad = function(value) {
-    return value * Math.PI / 180;
-  };
+      const toRad = function(value) {
+        return value * Math.PI / 180;
+      };
 
-  const dLat = toRad(lat2 - lat1);
-  const dLon = toRad(lon2 - lon1);
+      const dLat = toRad(lat2 - lat1);
+      const dLon = toRad(lon2 - lon1);
 
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(toRad(lat1)) *
-    Math.cos(toRad(lat2)) *
-    Math.sin(dLon / 2) *
-    Math.sin(dLon / 2);
+      const a =
+        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+        Math.cos(toRad(lat1)) *
+        Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
 
-  const c = 2 * Math.atan2(
-    Math.sqrt(a),
-    Math.sqrt(1 - a)
-  );
+      const c = 2 * Math.atan2(
+        Math.sqrt(a),
+        Math.sqrt(1 - a)
+      );
 
-  return R * c;
-}
+      return R * c;
+    }
 
     // Firebase의 자동설정 값을 화면의 슬라이드 스위치에 표시합니다.
     function updateAutoControlDisplay(settings) {
@@ -1303,7 +1274,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
       }
     }
 
-    // 장치 상태와 연결 여부에 따라 카드 색상 및 제어 버튼 갱신
+    // 빗물 감지 상태 표시 및 카드 배경 전환
     function updateRainDisplay(value) {
       const label = document.getElementById("rain");
       const normalized = String(value).trim().toLowerCase();
@@ -1319,6 +1290,7 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
       rainCard.classList.toggle("rain-clear", isClear);
     }
 
+    // 장치 상태와 연결 여부에 따라 카드 색상 및 제어 버튼 갱신
     function updateDeviceDisplay(device, value, connected = true) {
       const card = document.getElementById(device + "Card");
       const valueElement = document.getElementById(device === "window" ? "window" : device);
@@ -1364,8 +1336,6 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
       const requestedButton = document.getElementById(command === "open" ? "windowOpenButton" : "windowCloseButton");
       if (!requestedButton || requestedButton.disabled) return;
 
-      const label = command === "open" ? "열기" : "닫기";
-
       try {
         const response = await fetch(WINDOW_COMMAND_URL, {
           method: "PUT",
@@ -1395,7 +1365,9 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
         }
 
         const data = await response.json();
-        updateAutoControlDisplay(data && data.autoControl ? data.autoControl : null);
+        if (!autoControlSaving) {
+          updateAutoControlDisplay(data && data.autoControl ? data.autoControl : null);
+        }
 
         if (!data) {
           updateDeviceDisplay("humidifier", null, false);
@@ -1552,74 +1524,72 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     }
 
     // 실시간 위치 Firebase 전송
-    // 실시간 위치 Firebase 전송
-async function sendLocation(latitude, longitude) {
-  if (!isSharing) return;
+    async function sendLocation(latitude, longitude) {
+      if (!isSharing) return;
 
-  let distance = null;
+      let distance = null;
 
-  if (houseLocation) {
-    distance = calculateDistance(
-      latitude,
-      longitude,
-      houseLocation.latitude,
-      houseLocation.longitude
-    );
+      if (houseLocation) {
+        distance = calculateDistance(
+          latitude,
+          longitude,
+          houseLocation.latitude,
+          houseLocation.longitude
+        );
 
-    document.getElementById("distanceFromHome").textContent =
-      distance.toFixed(2);
-  } else {
-    document.getElementById("distanceFromHome").textContent = "--";
-  }
+        document.getElementById("distanceFromHome").textContent =
+          distance.toFixed(2);
+      } else {
+        document.getElementById("distanceFromHome").textContent = "--";
+      }
 
-  const response = await fetch(LOCATION_URL, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      latitude: latitude,
-      longitude: longitude,
-      distanceFromHome: distance === null
-        ? null
-        : Number(distance.toFixed(2)),
-      distanceUnit: "km",
-      lastUpdate: Date.now(),
-      expiresAt: Date.now() + SHARE_TIME
-    })
-  });
+      const response = await fetch(LOCATION_URL, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          latitude: latitude,
+          longitude: longitude,
+          distanceFromHome: distance === null
+            ? null
+            : Number(distance.toFixed(2)),
+          distanceUnit: "km",
+          lastUpdate: Date.now(),
+          expiresAt: Date.now() + SHARE_TIME
+        })
+      });
 
-  if (!response.ok) {
-    throw new Error("위치 전송 실패");
-  }
-}
+      if (!response.ok) {
+        throw new Error("위치 전송 실패");
+      }
+    }
 
     // 위치 정보를 화면에 표시
-    // 위치 정보를 화면에 표시
-function displayLocation(position) {
-  const latitude = position.coords.latitude;
-  const longitude = position.coords.longitude;
+    function displayLocation(position) {
+      const latitude = position.coords.latitude;
+      const longitude = position.coords.longitude;
 
-  lastPosition = {
-    latitude: latitude,
-    longitude: longitude
-  };
+      lastPosition = {
+        latitude: latitude,
+        longitude: longitude
+      };
 
-  document.getElementById("latitude").textContent =
-    latitude.toFixed(6);
+      document.getElementById("latitude").textContent =
+        latitude.toFixed(6);
 
-  document.getElementById("longitude").textContent =
-    longitude.toFixed(6);
+      document.getElementById("longitude").textContent =
+        longitude.toFixed(6);
 
-  updateMap(latitude, longitude);
+      updateMap(latitude, longitude);
 
-  sendLocation(latitude, longitude).catch(error => {
-    document.getElementById("locationStatus").textContent =
-      error.message;
+      sendLocation(latitude, longitude).catch(error => {
+        document.getElementById("locationStatus").textContent =
+          error.message;
 
-    console.error(error);
-  });
-}
+        console.error(error);
+      });
+    }
 
     // 하나의 버튼으로 위치 공유 시작/종료 전환
     async function toggleLocationShare() {
@@ -1637,8 +1607,10 @@ function displayLocation(position) {
         return;
       }
 
-      if (isSharing) return;
+      const shareToggleButton = document.getElementById("shareToggleButton");
+      if (isSharing || shareToggleButton.disabled) return;
 
+      shareToggleButton.disabled = true;
       document.getElementById("locationStatus").textContent =
         "위치 공유 확인 중...";
 
@@ -1653,17 +1625,17 @@ function displayLocation(position) {
           document.getElementById("locationStatus").textContent =
             "다른 사용자가 위치를 공유 중입니다. 현재 위치 공유를 시작할 수 없습니다.";
 
+          shareToggleButton.disabled = false;
           return;
         }
 
         isSharing = true;
         showMap();
         await loadHouseLocation();
-        const shareToggleButton = document.getElementById("shareToggleButton");
+
         shareToggleButton.textContent = "위치 공유 종료";
         shareToggleButton.classList.add("stop");
         shareToggleButton.disabled = false;
-        document.getElementById("shareNotice").hidden = false;
         document.getElementById("houseButton").disabled = false;
         document.getElementById("clearHouseButton").disabled = !houseLocation;
 
@@ -1681,7 +1653,7 @@ function displayLocation(position) {
             document.getElementById("locationStatus").textContent =
               "위치 확인 실패: " + error.message;
 
-            await stopLocationShare();
+            await stopLocationShare(true);
           },
 
           {
@@ -1719,13 +1691,14 @@ function displayLocation(position) {
       } catch (error) {
         document.getElementById("locationStatus").textContent =
           "위치 공유 실패: " + error.message;
+        shareToggleButton.disabled = false;
 
         console.error(error);
       }
     }
 
     // 위치 공유 종료
-    async function stopLocationShare() {
+    async function stopLocationShare(keepStatusMessage = false) {
       if (watchId !== null) {
         navigator.geolocation.clearWatch(watchId);
         watchId = null;
@@ -1747,6 +1720,8 @@ function displayLocation(position) {
         pendingHouseMarker = null;
       }
 
+      document.getElementById("latitude").textContent = "--";
+      document.getElementById("longitude").textContent = "--";
       document.getElementById("distanceFromHome").textContent = "--";
       document.getElementById("houseButton").textContent =
         houseLocation ? "집 위치 변경" : "집 위치 등록";
@@ -1761,7 +1736,7 @@ function displayLocation(position) {
         locationMarker = null;
       }
 
-      if (houseLocation && map) {
+      if (houseLocation && map && !document.getElementById("mapContainer").hidden) {
         map.setView([houseLocation.latitude, houseLocation.longitude], 15);
       }
 
@@ -1770,8 +1745,10 @@ function displayLocation(position) {
       shareToggleButton.classList.remove("stop");
       shareToggleButton.disabled = false;
 
-      document.getElementById("locationStatus").textContent =
-        "위치 공유가 종료되었습니다.";
+      if (!keepStatusMessage) {
+        document.getElementById("locationStatus").textContent =
+          "위치 공유가 종료되었습니다.";
+      }
 
       document.getElementById("shareNotice").textContent = "";
       document.getElementById("shareNotice").hidden = true;
@@ -1816,7 +1793,9 @@ function displayLocation(position) {
         console.error("공유 종료 처리 오류:", error);
       }
 
-      checkShareStatus();
+      if (!keepStatusMessage) {
+        checkShareStatus();
+      }
     }
 
     // 집 위치 관리는 위치 공유 여부와 관계없이 가능
