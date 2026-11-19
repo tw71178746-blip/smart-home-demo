@@ -858,12 +858,12 @@
 
     /* ================= 창문 카드 (#windowCard) ================= */
 
-    /* 창문 열림: 자연광 햇살 + 흐르는 바람결 */
+    /* 창문 열림: 바깥 날씨 없이 깔끔한 연초록 환기 배경 + 양쪽 활짝 열린 여닫이 창문 + 환기 바람결 */
     #windowCard.device-on {
       border-color: #96d1ac;
       background:
-        radial-gradient(circle at 88% 12%, rgba(255, 245, 198, 0.82) 0%, rgba(255, 245, 200, 0.28) 34%, transparent 64%),
-        linear-gradient(135deg, #e7f8ee 0%, #d4f1e4 52%, #e8f8ff 100%);
+        radial-gradient(circle at 86% 24%, rgba(255, 255, 255, 0.66) 0%, transparent 54%),
+        linear-gradient(135deg, #e7f8ee 0%, #d5f2e1 55%, #ebfaf2 100%);
     }
 
     #windowCard.device-on h3 { color: #1d573b; }
@@ -881,16 +881,17 @@
       animation: windowBreezeFlow 10s linear infinite;
     }
 
+    /* 양쪽으로 활짝 열린 여닫이 창문 + 중앙 환기 바람 화살표 */
     #windowCard.device-on::after {
       z-index: 2;
-      top: 0;
-      right: 0;
-      width: 170px;
-      height: 100%;
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 170 150' preserveAspectRatio='xMaxYMin slice'%3E%3Cpolygon points='170,0 112,0 38,150 96,150' fill='%23fff6cc' opacity='0.34'/%3E%3Cpolygon points='170,18 140,0 92,150 134,150' fill='%23ffffff' opacity='0.32'/%3E%3Cg stroke='%232e8a5c' stroke-width='2' fill='none' opacity='0.22'%3E%3Crect x='98' y='12' width='54' height='62' rx='4'/%3E%3Cline x1='125' y1='12' x2='125' y2='74'/%3E%3Cpath d='M98 12 L82 22 L82 68 L98 74'/%3E%3C/g%3E%3C/svg%3E") right top / cover no-repeat;
+      top: 10px;
+      right: 16px;
+      width: 116px;
+      height: 92px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 100'%3E%3Crect x='24' y='10' width='82' height='74' rx='4' fill='%23ffffff' fill-opacity='0.34' stroke='%23228b52' stroke-width='2.6' stroke-opacity='0.38'/%3E%3Cpolygon points='24,10 6,2 6,78 24,84' fill='%23ffffff' fill-opacity='0.55' stroke='%23228b52' stroke-width='2.4' stroke-linejoin='round' stroke-opacity='0.44'/%3E%3Cline x1='15' y1='6' x2='15' y2='81' stroke='%23228b52' stroke-width='1.3' stroke-opacity='0.28'/%3E%3Cline x1='6' y1='40' x2='24' y2='47' stroke='%23228b52' stroke-width='1.3' stroke-opacity='0.28'/%3E%3Cpolygon points='106,10 124,2 124,78 106,84' fill='%23ffffff' fill-opacity='0.55' stroke='%23228b52' stroke-width='2.4' stroke-linejoin='round' stroke-opacity='0.44'/%3E%3Cline x1='115' y1='6' x2='115' y2='81' stroke='%23228b52' stroke-width='1.3' stroke-opacity='0.28'/%3E%3Cline x1='106' y1='47' x2='124' y2='40' stroke='%23228b52' stroke-width='1.3' stroke-opacity='0.28'/%3E%3Crect x='16' y='84' width='98' height='6' rx='3' fill='%23228b52' fill-opacity='0.28'/%3E%3Cg fill='none' stroke='%231c854d' stroke-linecap='round' stroke-linejoin='round' opacity='0.44'%3E%3Cpath d='M38 38 Q 54 29 70 38 T 94 34' stroke-width='2.5'/%3E%3Cpath d='M88 30 L 95 34 L 90 40' stroke-width='2.2'/%3E%3Cpath d='M36 58 Q 52 50 68 58 T 90 54' stroke-width='2.2' opacity='0.78'/%3E%3Cpath d='M85 50 L 91 54 L 86 59' stroke-width='2.0' opacity='0.78'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
     }
 
-    /* 창문 닫힘: 연로즈 닫힌 격자 창틀 */
+    /* 창문 닫힘: 열림과 동일한 크기·위치의 닫힌 양문 격자 창틀 */
     #windowCard.device-off {
       border-color: #e3b4af;
       background: linear-gradient(145deg, #fff3f2 0%, #fce5e3 58%, #f8dad7 100%);
@@ -903,9 +904,9 @@
       z-index: 1;
       top: 10px;
       right: 16px;
-      width: 96px;
-      height: 96px;
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='10' y='10' width='80' height='80' rx='6' fill='%23ffffff' fill-opacity='0.36' stroke='%23c86a62' stroke-width='3' stroke-opacity='0.28'/%3E%3Cline x1='50' y1='10' x2='50' y2='90' stroke='%23c86a62' stroke-width='2.6' stroke-opacity='0.28'/%3E%3Cline x1='10' y1='50' x2='90' y2='50' stroke='%23c86a62' stroke-width='2.6' stroke-opacity='0.28'/%3E%3Cline x1='20' y1='34' x2='36' y2='18' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round' opacity='0.65'/%3E%3Cline x1='62' y1='78' x2='80' y2='60' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round' opacity='0.58'/%3E%3C/svg%3E") center / contain no-repeat;
+      width: 116px;
+      height: 92px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 130 100'%3E%3Crect x='24' y='10' width='82' height='74' rx='4' fill='%23ffffff' fill-opacity='0.42' stroke='%23c86a62' stroke-width='2.6' stroke-opacity='0.34'/%3E%3Cline x1='65' y1='10' x2='65' y2='84' stroke='%23c86a62' stroke-width='2.4' stroke-opacity='0.34'/%3E%3Cline x1='24' y1='47' x2='106' y2='47' stroke='%23c86a62' stroke-width='2.0' stroke-opacity='0.26'/%3E%3Crect x='58' y='41' width='3' height='12' rx='1.5' fill='%23c86a62' fill-opacity='0.42'/%3E%3Crect x='69' y='41' width='3' height='12' rx='1.5' fill='%23c86a62' fill-opacity='0.42'/%3E%3Cline x1='32' y1='34' x2='46' y2='20' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round' opacity='0.72'/%3E%3Cline x1='74' y1='72' x2='90' y2='56' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round' opacity='0.64'/%3E%3Crect x='16' y='84' width='98' height='6' rx='3' fill='%23c86a62' fill-opacity='0.26'/%3E%3C/svg%3E") center / contain no-repeat;
     }
 
     /* ================= 선풍기 카드 (#fanCard) ================= */
@@ -964,11 +965,11 @@
 
     /* ================= 가습기 카드 (#humidifierCard) ================= */
 
-    /* 가습기 켜짐: 피어오르는 미스트 안개 띠 + 상승 수분 입자 */
+    /* 가습기 켜짐: 피어오르는 미스트 + 탁상용 캡슐 가습기 본체 (분무 3줄기 · 물결 수면 · 초록 LED) */
     #humidifierCard.device-on {
       border-color: #8ed1be;
       background:
-        radial-gradient(circle at 84% 78%, rgba(255, 255, 255, 0.78) 0%, transparent 52%),
+        radial-gradient(circle at 86% 68%, rgba(255, 255, 255, 0.72) 0%, transparent 52%),
         linear-gradient(140deg, #e5f8f2 0%, #cceee6 55%, #dff6f3 100%);
     }
 
@@ -978,10 +979,10 @@
     #humidifierCard.device-on::before {
       z-index: 1;
       inset: -16px -12px -120px -12px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='120' viewBox='0 0 160 120'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M36 120 C 26 96, 46 72, 36 48 C 26 24, 46 10, 36 0' stroke='%23ffffff' stroke-width='8' opacity='0.52'/%3E%3Cpath d='M92 120 C 104 94, 80 70, 92 44 C 104 20, 80 10, 92 0' stroke='%23ffffff' stroke-width='10' opacity='0.44'/%3E%3Cpath d='M138 120 C 128 96, 148 74, 138 48 C 128 24, 148 10, 138 0' stroke='%234db8a3' stroke-width='6.5' opacity='0.18'/%3E%3C/g%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='120' viewBox='0 0 160 120'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M36 120 C 26 96, 46 72, 36 48 C 26 24, 46 10, 36 0' stroke='%23ffffff' stroke-width='7' opacity='0.52'/%3E%3Cpath d='M92 120 C 104 94, 80 70, 92 44 C 104 20, 80 10, 92 0' stroke='%23ffffff' stroke-width='9' opacity='0.44'/%3E%3Cpath d='M138 120 C 128 96, 148 74, 138 48 C 128 24, 148 10, 138 0' stroke='%234db8a3' stroke-width='6' opacity='0.18'/%3E%3C/g%3E%3Cg fill='%23ffffff'%3E%3Ccircle cx='56' cy='28' r='2.6' opacity='0.72'/%3E%3Ccircle cx='116' cy='62' r='3.0' opacity='0.68'/%3E%3Ccircle cx='24' cy='78' r='2.4' opacity='0.64'/%3E%3C/g%3E%3C/svg%3E");
       background-size: 160px 120px;
       background-repeat: repeat;
-      filter: blur(2.4px);
+      filter: blur(1.4px);
       -webkit-mask-image: linear-gradient(to top, transparent 2%, rgba(0, 0, 0, 0.88) 30%, rgba(0, 0, 0, 0.65) 75%, transparent 100%);
       mask-image: linear-gradient(to top, transparent 2%, rgba(0, 0, 0, 0.88) 30%, rgba(0, 0, 0, 0.65) 75%, transparent 100%);
       animation: humidMistRise 4.8s linear infinite;
@@ -989,14 +990,14 @@
 
     #humidifierCard.device-on::after {
       z-index: 2;
-      inset: -16px 0 -100px 0;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='100' viewBox='0 0 120 100'%3E%3Cg fill='%23ffffff'%3E%3Ccircle cx='22' cy='24' r='3.6' opacity='0.78'/%3E%3Ccircle cx='58' cy='16' r='2.4' opacity='0.68'/%3E%3Ccircle cx='96' cy='34' r='4.2' opacity='0.76'/%3E%3Ccircle cx='40' cy='62' r='3.0' opacity='0.72'/%3E%3Ccircle cx='82' cy='72' r='2.6' opacity='0.66'/%3E%3Ccircle cx='108' cy='86' r='3.2' opacity='0.7'/%3E%3C/g%3E%3Cg fill='%232c9e88' opacity='0.28'%3E%3Cpath d='M68 42 C68 42 64.5 47.5 64.5 50 a3.5 3.5 0 0 0 7 0 C71.5 47.5 68 42 68 42 Z'/%3E%3Cpath d='M18 76 C18 76 15.5 80 15.5 82 a2.5 2.5 0 0 0 5 0 C20.5 80 18 76 18 76 Z'/%3E%3C/g%3E%3C/svg%3E");
-      background-size: 120px 100px;
-      background-repeat: repeat;
-      animation: humidVaporDrift 5.4s linear infinite;
+      top: 8px;
+      right: 16px;
+      width: 96px;
+      height: 96px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M50 28 C 46 21, 54 14, 50 7' stroke='%2322947b' stroke-width='2.4' opacity='0.48'/%3E%3Cpath d='M41 29 C 36 22, 40 15, 35 10' stroke='%23ffffff' stroke-width='2.6' opacity='0.88'/%3E%3Cpath d='M59 29 C 64 22, 60 15, 65 10' stroke='%23ffffff' stroke-width='2.6' opacity='0.88'/%3E%3C/g%3E%3Ccircle cx='44' cy='16' r='2.2' fill='%23ffffff' opacity='0.85'/%3E%3Ccircle cx='57' cy='13' r='1.8' fill='%23ffffff' opacity='0.8'/%3E%3Crect x='40' y='30' width='20' height='6' rx='3' fill='%23248c77' fill-opacity='0.34'/%3E%3Crect x='24' y='35' width='52' height='53' rx='18' fill='%23ffffff' fill-opacity='0.52' stroke='%23248c77' stroke-width='2.4' stroke-opacity='0.42'/%3E%3Cpath d='M25.5 62 Q 38 56 50 62 T 74.5 62 L 74.5 70 C 74.5 79.5 66.8 86.8 57.5 86.8 L 42.5 86.8 C 33.2 86.8 25.5 79.5 25.5 70 Z' fill='%233eb59b' fill-opacity='0.28'/%3E%3Cpath d='M26 62 Q 38 56 50 62 T 74 62' fill='none' stroke='%23248c77' stroke-width='1.5' stroke-opacity='0.34'/%3E%3Ccircle cx='50' cy='48' r='6.5' fill='%23229b59' fill-opacity='0.22'/%3E%3Ccircle cx='50' cy='48' r='3.3' fill='%231f9d5c' fill-opacity='0.78'/%3E%3Crect x='31' y='89' width='38' height='4' rx='2' fill='%23248c77' fill-opacity='0.24'/%3E%3C/svg%3E") center / contain no-repeat;
     }
 
-    /* 가습기 꺼짐: 정지된 물방울·노즐 실루엣 */
+    /* 가습기 꺼짐: 동일한 탁상용 캡슐 가습기 본체 (분무 없음 · 잔잔한 수면 · 꺼진 LED) */
     #humidifierCard.device-off {
       border-color: #e3b4af;
       background: linear-gradient(145deg, #fff3f2 0%, #fce5e3 58%, #f8dad7 100%);
@@ -1007,11 +1008,11 @@
 
     #humidifierCard.device-off::after {
       z-index: 1;
-      top: 12px;
-      right: 18px;
-      width: 88px;
-      height: 88px;
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 14 C50 14 32 38 32 50 a18 18 0 0 0 36 0 C68 38 50 14 50 14 Z' fill='%23c86a62' fill-opacity='0.18' stroke='%23c86a62' stroke-width='2.4' stroke-opacity='0.28'/%3E%3Cpath d='M42 48 a8 8 0 0 0 8 8' fill='none' stroke='%23ffffff' stroke-width='2.4' stroke-linecap='round' opacity='0.65'/%3E%3Crect x='26' y='76' width='48' height='12' rx='6' fill='%23c86a62' fill-opacity='0.22'/%3E%3Cline x1='38' y1='76' x2='62' y2='76' stroke='%23c86a62' stroke-width='3' stroke-linecap='round' stroke-opacity='0.3'/%3E%3C/svg%3E") center / contain no-repeat;
+      top: 8px;
+      right: 16px;
+      width: 96px;
+      height: 96px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='40' y='30' width='20' height='6' rx='3' fill='%23c86a62' fill-opacity='0.26'/%3E%3Crect x='24' y='35' width='52' height='53' rx='18' fill='%23ffffff' fill-opacity='0.42' stroke='%23c86a62' stroke-width='2.4' stroke-opacity='0.34'/%3E%3Cpath d='M25.5 68 L 74.5 68 L 74.5 70 C 74.5 79.5 66.8 86.8 57.5 86.8 L 42.5 86.8 C 33.2 86.8 25.5 79.5 25.5 70 Z' fill='%23c86a62' fill-opacity='0.16'/%3E%3Cline x1='26' y1='68' x2='74' y2='68' stroke='%23c86a62' stroke-width='1.5' stroke-opacity='0.28'/%3E%3Ccircle cx='50' cy='48' r='3.2' fill='none' stroke='%23c86a62' stroke-width='1.8' stroke-opacity='0.38'/%3E%3Crect x='31' y='89' width='38' height='4' rx='2' fill='%23c86a62' fill-opacity='0.2'/%3E%3C/svg%3E") center / contain no-repeat;
     }
 
     /* ================= 전체 배경 키프레임 ================= */
@@ -1155,12 +1156,6 @@
       0%   { transform: translate3d(0, 0, 0); }
       50%  { transform: translate3d(5px, -60px, 0); }
       100% { transform: translate3d(0, -120px, 0); }
-    }
-
-    @keyframes humidVaporDrift {
-      0%   { transform: translate3d(0, 0, 0); }
-      50%  { transform: translate3d(-4px, -50px, 0); }
-      100% { transform: translate3d(0, -100px, 0); }
     }
 
     button {
@@ -1314,12 +1309,24 @@
         height: 124px;
       }
 
-      #windowCard.device-off::after,
+      #windowCard.device-on::after,
+      #windowCard.device-off::after {
+        width: 94px;
+        height: 74px;
+        right: 12px;
+      }
+
       #fanCard.device-on::after,
-      #fanCard.device-off::after,
-      #humidifierCard.device-off::after {
+      #fanCard.device-off::after {
         width: 74px;
         height: 74px;
+      }
+
+      #humidifierCard.device-on::after,
+      #humidifierCard.device-off::after {
+        width: 78px;
+        height: 78px;
+        right: 12px;
       }
 
       button {
