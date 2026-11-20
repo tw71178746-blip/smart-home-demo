@@ -33,7 +33,7 @@
     }
 
     h1 {
-      margin-bottom: 6px;
+      margin: 0 0 6px;
       letter-spacing: 2px;
       color: #202428;
     }
@@ -101,11 +101,11 @@
     .card h3 {
       color: #343b43;
       font-size: 15px;
-      margin-top: 0;
+      margin: 0 0 12px;
     }
 
-    /* 센서 카드 상단 헤더 (제목 + 오른쪽 위 작은 상태 표시) */
-    .sensor-heading {
+    /* 센서 카드 상단 헤더 (제목 + 오른쪽 위 작은 상태 텍스트) */
+    .sensor-card-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -113,19 +113,18 @@
       margin-bottom: 12px;
     }
 
-    .sensor-heading h3 {
+    .sensor-card-header h3 {
       margin: 0;
     }
 
     .sensor-state {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
-      letter-spacing: -0.2px;
       line-height: 1.2;
+      letter-spacing: 0.1px;
       white-space: nowrap;
-      opacity: 0.88;
+      opacity: 0.92;
       color: #59636e;
-      transition: color 0.3s ease;
     }
 
     .sensor-state:empty {
@@ -189,9 +188,6 @@
       margin-top: 28px;
     }
 
-    /* =========================================================
-       자동설정 및 토글 스위치 UI
-    ========================================================= */
     .auto-control-description {
       line-height: 1.5;
       margin: 0 0 16px;
@@ -242,7 +238,7 @@
       letter-spacing: 0.2px;
     }
 
-    /* 장치별 자동/수동 모드 표시 배지 */
+    /* 장치별 자동/수동 모드 표시 */
     .auto-mode-label {
       display: inline-flex;
       align-items: center;
@@ -357,14 +353,174 @@
     }
 
     /* =========================================================
-       동적 배경 공통 레이어 (센서 4종 + 자동설정 + 장치 3종)
+       창문 3개 통합 그룹 카드 (1안)
+    ========================================================= */
+    .dashboard-section .window-group-card {
+      margin-bottom: 14px;
+      padding: 18px;
+    }
+
+    .window-group-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .window-group-title-wrap {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .window-group-title-wrap h3 {
+      margin: 0;
+      font-size: 16px;
+      color: #202428;
+    }
+
+    .window-group-summary {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid #cbd1d7;
+      background: #eef0f2;
+      color: #59636e;
+      white-space: nowrap;
+      transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+    }
+
+    .window-group-summary.summary-open {
+      background: #e5f4ea;
+      border-color: #b7dfc4;
+      color: #166534;
+    }
+
+    .window-group-summary.summary-closed {
+      background: #ffefee;
+      border-color: #e8beb9;
+      color: #b91c1c;
+    }
+
+    .window-group-summary.summary-mixed {
+      background: #fef6e4;
+      border-color: #f2d18d;
+      color: #92400e;
+    }
+
+    .window-group-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .window-group-actions button {
+      margin: 0;
+      padding: 8px 13px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 8px;
+    }
+
+    .window-sub-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .window-sub-card {
+      min-width: 0;
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid #cbd1d7;
+      background: #eef0f2;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      transition: background 0.45s ease, border-color 0.45s ease, color 0.35s ease;
+    }
+
+    .window-sub-card.device-unknown {
+      background: #eef0f2;
+      border-color: #cbd1d7;
+    }
+
+    .window-sub-card h4 {
+      margin: 0 0 4px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #343b43;
+    }
+
+    .window-sub-card .value {
+      font-size: 24px;
+      font-weight: bold;
+      line-height: 1.2;
+      min-height: 29px;
+      margin: 0;
+      color: #202428;
+    }
+
+    .window-sub-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .window-btn-pair {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .window-btn-pair button {
+      margin: 0;
+      padding: 7px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: 7px;
+    }
+
+    .window-sub-controls .auto-switch-wrap {
+      margin-left: auto;
+      gap: 5px;
+    }
+
+    .auto-toggle.auto-toggle-sm {
+      width: 42px;
+      min-width: 42px;
+      height: 24px;
+    }
+
+    .auto-toggle.auto-toggle-sm::after {
+      top: 2px;
+      left: 2px;
+      width: 18px;
+      height: 18px;
+    }
+
+    .auto-toggle.auto-toggle-sm.is-on::after {
+      transform: translateX(18px);
+    }
+
+    /* =========================================================
+       동적 배경 공통 레이어 (센서 4종 + 자동설정 + 장치)
     ========================================================= */
     #tempCard,
     #humidityCard,
     #rainCard,
     #pm25Card,
     #autoControlCard,
-    #windowCard,
+    .window-sub-card,
     #fanCard,
     #humidifierCard {
       position: relative;
@@ -378,7 +534,7 @@
     #rainCard > *,
     #pm25Card > *,
     #autoControlCard > *,
-    #windowCard > *,
+    .window-sub-card > *,
     #fanCard > *,
     #humidifierCard > :not(.humid-bubbles) {
       position: relative;
@@ -395,8 +551,8 @@
     #pm25Card::after,
     #autoControlCard::before,
     #autoControlCard::after,
-    #windowCard::before,
-    #windowCard::after,
+    .window-sub-card::before,
+    .window-sub-card::after,
     #fanCard::before,
     #fanCard::after,
     #humidifierCard::before,
@@ -408,7 +564,7 @@
 
     /* ================= 온도 카드 (#tempCard) ================= */
 
-    /* 온도 아지랑이 래퍼는 더움 상태일 때만 활성화 */
+    /* 온도 더움 전용 교차 아지랑이 래퍼 (평상시 숨김) */
     .temp-haze {
       display: none;
       position: absolute;
@@ -442,6 +598,24 @@
       pointer-events: none;
       background-repeat: repeat;
       will-change: transform, opacity;
+    }
+
+    .temp-haze .haze-white {
+      inset: 0 0 -120px 0;
+      background-size: 140px 120px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='120' viewBox='0 0 140 120'%3E%3Cg fill='none'%3E%3Cpath d='M18 0 C18 22, 10 38, 10 60 C10 82, 18 98, 18 120' stroke='%23fffaf0' stroke-width='11' opacity='0.28'/%3E%3Cpath d='M18 0 C18 22, 10 38, 10 60 C10 82, 18 98, 18 120' stroke='%23fffaf0' stroke-width='3.8' opacity='0.78'/%3E%3Cpath d='M64 0 C64 22, 72 38, 72 60 C72 82, 64 98, 64 120' stroke='%23fffaf0' stroke-width='12' opacity='0.26'/%3E%3Cpath d='M64 0 C64 22, 72 38, 72 60 C72 82, 64 98, 64 120' stroke='%23fffaf0' stroke-width='4' opacity='0.74'/%3E%3Cpath d='M112 0 C112 22, 104 38, 104 60 C104 82, 112 98, 112 120' stroke='%23fffaf0' stroke-width='10' opacity='0.25'/%3E%3Cpath d='M112 0 C112 22, 104 38, 104 60 C104 82, 112 98, 112 120' stroke='%23fffaf0' stroke-width='3.6' opacity='0.70'/%3E%3C/g%3E%3C/svg%3E");
+      animation:
+        hazeRise120 4.4s linear infinite,
+        hazeWhiteGradual 14s linear infinite;
+    }
+
+    .temp-haze .haze-red {
+      inset: 0 0 -140px 0;
+      background-size: 140px 140px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='none'%3E%3Cpath d='M40 0 C40 26, 48 44, 48 70 C48 96, 40 114, 40 140' stroke='%23ff6b35' stroke-width='11' opacity='0.28'/%3E%3Cpath d='M40 0 C40 26, 48 44, 48 70 C48 96, 40 114, 40 140' stroke='%23ff5a26' stroke-width='3.6' opacity='0.74'/%3E%3Cpath d='M88 0 C88 26, 80 44, 80 70 C80 96, 88 114, 88 140' stroke='%23ff6b35' stroke-width='12' opacity='0.26'/%3E%3Cpath d='M88 0 C88 26, 80 44, 80 70 C80 96, 88 114, 88 140' stroke='%23ff5a26' stroke-width='3.8' opacity='0.70'/%3E%3Cpath d='M130 0 C130 26, 137 44, 137 70 C137 96, 130 114, 130 140' stroke='%23ff6b35' stroke-width='10' opacity='0.25'/%3E%3Cpath d='M130 0 C130 26, 137 44, 137 70 C137 96, 130 114, 130 140' stroke='%23ff5a26' stroke-width='3.4' opacity='0.66'/%3E%3C/g%3E%3C/svg%3E");
+      animation:
+        hazeRise140 5.2s linear infinite,
+        hazeRedGradual 14s linear infinite;
     }
 
     /* 온도 - 추움 (18°C 미만): 서리 블루 + 2겹 잦은 눈송이 */
@@ -511,7 +685,7 @@
       animation: softPulse 6s ease-in-out infinite;
     }
 
-    /* 온도 - 더움 (26°C 초과): 우측 상단 햇빛 채도 + 최대 20% 긴 호흡 교차 아지랑이 */
+    /* 온도 - 더움 (26°C 초과): 오른쪽 위 햇빛 내리쬐는 채도 배경 + 최대 20% 교차 아지랑이 */
     #tempCard.temp-hot {
       border-color: #eea06b;
       background:
@@ -529,33 +703,13 @@
       content: none;
     }
 
-    /* 더움 - 오른쪽 위에서 대각선으로 쏟아지는 햇살 줄기 오버레이 */
+    /* 오른쪽 위 대각선 햇살 줄기 오버레이 */
     #tempCard.temp-hot::after {
       z-index: 2;
       inset: 0;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 140' preserveAspectRatio='none'%3E%3Cdefs%3E%3ClinearGradient id='rayMain' x1='96%25' y1='0%25' x2='24%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23fffef2' stop-opacity='0.64'/%3E%3Cstop offset='42%25' stop-color='%23ffeaa8' stop-opacity='0.26'/%3E%3Cstop offset='100%25' stop-color='%23ffd080' stop-opacity='0'/%3E%3C/linearGradient%3E%3ClinearGradient id='raySub' x1='98%25' y1='0%25' x2='44%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' stop-opacity='0.52'/%3E%3Cstop offset='50%25' stop-color='%23ffe396' stop-opacity='0.18'/%3E%3Cstop offset='100%25' stop-color='%23ffc875' stop-opacity='0'/%3E%3C/linearGradient%3E%3CradialGradient id='sunCore' cx='95%25' cy='4%25' r='34%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' stop-opacity='0.78'/%3E%3Cstop offset='45%25' stop-color='%23ffefba' stop-opacity='0.34'/%3E%3Cstop offset='100%25' stop-color='%23ffe090' stop-opacity='0'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cpolygon points='320,0 218,0 74,140 162,140' fill='url(%23rayMain)'/%3E%3Cpolygon points='320,0 278,0 186,140 250,140' fill='url(%23raySub)'/%3E%3Cpolygon points='320,14 320,66 264,140 302,140' fill='url(%23raySub)' opacity='0.72'/%3E%3Crect width='320' height='140' fill='url(%23sunCore)'/%3E%3C/svg%3E");
       background-size: 100% 100%;
       background-repeat: no-repeat;
-    }
-
-    /* 더움 - 흰색 아지랑이 (무이음새 상승 + 최대 불투명도 20%) */
-    #tempCard.temp-hot .haze-white {
-      inset: 0 0 -120px 0;
-      background-size: 140px 120px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='120' viewBox='0 0 140 120'%3E%3Cg fill='none'%3E%3Cpath d='M18 0 C18 22, 10 38, 10 60 C10 82, 18 98, 18 120' stroke='%23fffaf0' stroke-width='11' opacity='0.28'/%3E%3Cpath d='M18 0 C18 22, 10 38, 10 60 C10 82, 18 98, 18 120' stroke='%23fffaf0' stroke-width='3.8' opacity='0.78'/%3E%3Cpath d='M64 0 C64 22, 72 38, 72 60 C72 82, 64 98, 64 120' stroke='%23fffaf0' stroke-width='12' opacity='0.26'/%3E%3Cpath d='M64 0 C64 22, 72 38, 72 60 C72 82, 64 98, 64 120' stroke='%23fffaf0' stroke-width='4' opacity='0.74'/%3E%3Cpath d='M112 0 C112 22, 104 38, 104 60 C104 82, 112 98, 112 120' stroke='%23fffaf0' stroke-width='10' opacity='0.25'/%3E%3Cpath d='M112 0 C112 22, 104 38, 104 60 C104 82, 112 98, 112 120' stroke='%23fffaf0' stroke-width='3.6' opacity='0.70'/%3E%3C/g%3E%3C/svg%3E");
-      animation:
-        hazeRise120 4.4s linear infinite,
-        hazeWhiteGradual 14s linear infinite;
-    }
-
-    /* 더움 - 붉은색 아지랑이 (무이음새 상승 + 최대 불투명도 20% 비대칭 교차) */
-    #tempCard.temp-hot .haze-red {
-      inset: 0 0 -140px 0;
-      background-size: 140px 140px;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='none'%3E%3Cpath d='M40 0 C40 26, 48 44, 48 70 C48 96, 40 114, 40 140' stroke='%23ff6b35' stroke-width='11' opacity='0.28'/%3E%3Cpath d='M40 0 C40 26, 48 44, 48 70 C48 96, 40 114, 40 140' stroke='%23ff5a26' stroke-width='3.6' opacity='0.74'/%3E%3Cpath d='M88 0 C88 26, 80 44, 80 70 C80 96, 88 114, 88 140' stroke='%23ff6b35' stroke-width='12' opacity='0.26'/%3E%3Cpath d='M88 0 C88 26, 80 44, 80 70 C80 96, 88 114, 88 140' stroke='%23ff5a26' stroke-width='3.8' opacity='0.70'/%3E%3Cpath d='M130 0 C130 26, 137 44, 137 70 C137 96, 130 114, 130 140' stroke='%23ff6b35' stroke-width='10' opacity='0.25'/%3E%3Cpath d='M130 0 C130 26, 137 44, 137 70 C137 96, 130 114, 130 140' stroke='%23ff5a26' stroke-width='3.4' opacity='0.66'/%3E%3C/g%3E%3C/svg%3E");
-      animation:
-        hazeRise140 5.2s linear infinite,
-        hazeRedGradual 14s linear infinite;
     }
 
     /* ================= 습도 카드 (#humidityCard) ================= */
@@ -843,7 +997,7 @@
     }
 
     #pm25Card.pm-very-bad h3,
-    #pm25Card.pm-very-bad .sensor-state { color: rgba(252, 238, 222, 0.92); }
+    #pm25Card.pm-very-bad .sensor-state { color: rgba(252, 238, 222, 0.94); }
     #pm25Card.pm-very-bad .value { color: #ffffff; text-shadow: 0 2px 10px rgba(20, 12, 5, 0.5); }
     #pm25Card.pm-very-bad .unit { color: rgba(246, 226, 200, 0.88); }
 
@@ -872,60 +1026,119 @@
 
     /* ================= 전체 자동설정 카드 (#autoControlCard) ================= */
 
-    /* 전체 자동 ON: 에메랄드-민트 + 회전 톱니/회로 링 + 펄스 파동 */
+    /* 전체 자동 ON: 묵직한 다크 브러시드 강철(쇠 질감) + 금속 빛반사 스윕 + 회전 강철 톱니 */
     #autoControlCard.auto-master-on {
-      border-color: #8fd4b2;
+      border-color: #5b6776;
       background:
-        radial-gradient(circle at 92% 16%, rgba(255, 255, 255, 0.78) 0%, transparent 48%),
-        linear-gradient(135deg, #eafaf2 0%, #d5f4e4 56%, #eefcf5 100%);
+        /* 미세한 수평 브러시드 헤어라인(쇠 연마 결) */
+        repeating-linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.065) 0px,
+          rgba(255, 255, 255, 0.065) 1px,
+          rgba(10, 15, 22, 0.14) 1px,
+          rgba(10, 15, 22, 0.14) 2px,
+          transparent 2px,
+          transparent 4px
+        ),
+        /* 쇠 특유의 명암이 교차하는 다중 메탈릭 광택 그라데이션 */
+        linear-gradient(
+          122deg,
+          #2a323c 0%,
+          #465261 18%,
+          #5d6b7d 30%,
+          #353f4b 48%,
+          #526071 66%,
+          #2f3843 84%,
+          #424e5d 100%
+        );
+      color: #f1f5f9;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.34),
+        inset 0 -2px 0 rgba(15, 20, 28, 0.55),
+        inset 1px 0 0 rgba(255, 255, 255, 0.14),
+        inset -1px 0 0 rgba(15, 20, 28, 0.35),
+        0 6px 16px rgba(15, 23, 35, 0.22);
     }
 
     #autoControlCard.auto-master-on h2,
-    #autoControlCard.auto-master-on .auto-device-name {
-      color: #164f36;
+    #autoControlCard.auto-master-on .auto-device-name,
+    #autoControlCard.auto-master-on .auto-side-label {
+      color: #f8fafc;
+      text-shadow: 0 1px 2px rgba(10, 15, 22, 0.65);
     }
 
     #autoControlCard.auto-master-on .auto-control-description,
     #autoControlCard.auto-master-on .auto-device-help {
-      color: #2d664c;
+      color: #cbd5e1;
     }
 
     #autoControlCard.auto-master-on .auto-master-row {
-      border-top-color: rgba(34, 155, 89, 0.22);
+      border-top-color: rgba(203, 213, 225, 0.2);
     }
 
     #autoControlCard.auto-master-on .auto-control-status {
-      background: rgba(255, 255, 255, 0.72);
-      border-color: #a9dec2;
-      color: #184e36;
+      background: rgba(15, 23, 34, 0.46);
+      border-color: rgba(148, 163, 184, 0.36);
+      color: #e2e8f0;
+      box-shadow:
+        inset 0 1px 3px rgba(0, 0, 0, 0.38),
+        0 1px 0 rgba(255, 255, 255, 0.1);
     }
 
+    #autoControlCard.auto-master-on .auto-toggle.is-on:not(:disabled) {
+      box-shadow:
+        0 0 10px rgba(34, 155, 89, 0.45),
+        inset 0 1px 1px rgba(255, 255, 255, 0.28);
+    }
+
+    /* 강철 표면을 대각선으로 가로지르는 선명한 은빛 광택 스윕 */
     #autoControlCard.auto-master-on::before {
       z-index: 1;
-      top: -28px;
-      right: -24px;
-      width: 176px;
-      height: 176px;
-      border-radius: 50%;
-      background:
-        radial-gradient(circle, rgba(34, 155, 89, 0.22) 0%, rgba(34, 155, 89, 0.08) 46%, transparent 70%);
-      animation: autoPulseRing 3.8s ease-in-out infinite;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 46%;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(226, 232, 240, 0.08) 26%,
+        rgba(255, 255, 255, 0.26) 50%,
+        rgba(226, 232, 240, 0.08) 74%,
+        transparent 100%
+      );
+      animation: autoMetalSheen 6.2s ease-in-out infinite;
     }
 
+    /* 메탈릭 광택과 리벳이 살아있는 회전 강철 기어 */
     #autoControlCard.auto-master-on::after {
       z-index: 2;
       top: -18px;
       right: -14px;
       width: 156px;
       height: 156px;
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 140'%3E%3Ccircle cx='70' cy='70' r='58' fill='none' stroke='%23229b59' stroke-width='2' stroke-dasharray='7 7' opacity='0.26'/%3E%3Ccircle cx='70' cy='70' r='44' fill='none' stroke='%23229b59' stroke-width='1.4' stroke-dasharray='14 8' opacity='0.22'/%3E%3Cg transform='translate(70 70)' fill='%23229b59' opacity='0.2'%3E%3Crect x='-5' y='-36' width='10' height='12' rx='2.5'/%3E%3Crect x='-5' y='24' width='10' height='12' rx='2.5'/%3E%3Crect x='-36' y='-5' width='12' height='10' rx='2.5'/%3E%3Crect x='24' y='-5' width='12' height='10' rx='2.5'/%3E%3Crect x='-5' y='-36' width='10' height='12' rx='2.5' transform='rotate(45)'/%3E%3Crect x='-5' y='24' width='10' height='12' rx='2.5' transform='rotate(45)'/%3E%3Crect x='-36' y='-5' width='12' height='10' rx='2.5' transform='rotate(45)'/%3E%3Crect x='24' y='-5' width='12' height='10' rx='2.5' transform='rotate(45)'/%3E%3Ccircle cx='0' cy='0' r='27'/%3E%3C/g%3E%3Ccircle cx='70' cy='70' r='13' fill='%23eafaf2' opacity='0.92'/%3E%3Ccircle cx='70' cy='70' r='5' fill='%23229b59' opacity='0.34'/%3E%3C/svg%3E") center / contain no-repeat;
-      animation: autoGearSpin 22s linear infinite;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 140'%3E%3Cdefs%3E%3ClinearGradient id='steelGear' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' stop-opacity='0.95'/%3E%3Cstop offset='38%25' stop-color='%23cbd5e1' stop-opacity='0.78'/%3E%3Cstop offset='72%25' stop-color='%2364748b' stop-opacity='0.82'/%3E%3Cstop offset='100%25' stop-color='%23e2e8f0' stop-opacity='0.85'/%3E%3C/linearGradient%3E%3ClinearGradient id='steelRing' x1='100%25' y1='0%25' x2='0%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' stop-opacity='0.72'/%3E%3Cstop offset='100%25' stop-color='%2394a3b8' stop-opacity='0.34'/%3E%3C/linearGradient%3E%3C/defs%3E%3Ccircle cx='70' cy='70' r='58' fill='none' stroke='%23cbd5e1' stroke-width='1.8' stroke-dasharray='7 7' opacity='0.34'/%3E%3Ccircle cx='70' cy='70' r='46' fill='none' stroke='url(%23steelRing)' stroke-width='1.8' stroke-dasharray='16 7' opacity='0.58'/%3E%3Cg transform='translate(70 70)' fill='url(%23steelGear)' stroke='%230f172a' stroke-width='1.2' stroke-opacity='0.48' opacity='0.46'%3E%3Crect x='-5.5' y='-38' width='11' height='12' rx='2'/%3E%3Crect x='-5.5' y='26' width='11' height='12' rx='2'/%3E%3Crect x='-38' y='-5.5' width='12' height='11' rx='2'/%3E%3Crect x='26' y='-5.5' width='12' height='11' rx='2'/%3E%3Crect x='-5.5' y='-38' width='11' height='12' rx='2' transform='rotate(45)'/%3E%3Crect x='-5.5' y='26' width='11' height='12' rx='2' transform='rotate(45)'/%3E%3Crect x='-38' y='-5.5' width='12' height='11' rx='2' transform='rotate(45)'/%3E%3Crect x='26' y='-5.5' width='12' height='11' rx='2' transform='rotate(45)'/%3E%3Ccircle cx='0' cy='0' r='28'/%3E%3C/g%3E%3Ccircle cx='70' cy='70' r='13' fill='%232e3742' stroke='%23cbd5e1' stroke-width='1.6' stroke-opacity='0.52'/%3E%3Ccircle cx='70' cy='70' r='5' fill='%23cbd5e1' opacity='0.58'/%3E%3Cg fill='%231e293b' opacity='0.65'%3E%3Ccircle cx='70' cy='49' r='2.1'/%3E%3Ccircle cx='70' cy='91' r='2.1'/%3E%3Ccircle cx='49' cy='70' r='2.1'/%3E%3Ccircle cx='91' cy='70' r='2.1'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+      filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.38));
+      animation: autoGearSpin 20s linear infinite;
     }
 
-    /* 전체 자동 OFF: 슬레이트-그레이 정지 톱니 + 사선 대기 패턴 */
+    /* 전체 자동 OFF: 광택이 죽은 무광 연철/알루미늄 판 + 정지된 스틸 톱니 */
     #autoControlCard.auto-master-off {
-      border-color: #cfd6dd;
-      background: linear-gradient(145deg, #f4f6f8 0%, #e9edf1 60%, #f2f4f7 100%);
+      border-color: #b7c0ca;
+      background:
+        repeating-linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.16) 0px,
+          rgba(255, 255, 255, 0.16) 1px,
+          rgba(51, 65, 85, 0.045) 1px,
+          rgba(51, 65, 85, 0.045) 2px,
+          transparent 2px,
+          transparent 4px
+        ),
+        linear-gradient(145deg, #e7ebf0 0%, #d5dce4 52%, #dfe5ec 100%);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.65),
+        inset 0 -1px 0 rgba(71, 85, 105, 0.18),
+        0 2px 6px rgba(25, 35, 45, 0.06);
     }
 
     #autoControlCard.auto-master-off::before {
@@ -933,7 +1146,7 @@
       inset: 0;
       background-image: repeating-linear-gradient(
         -45deg,
-        rgba(120, 134, 148, 0.055) 0 10px,
+        rgba(71, 85, 105, 0.05) 0 10px,
         transparent 10px 22px
       );
     }
@@ -944,21 +1157,21 @@
       right: -14px;
       width: 156px;
       height: 156px;
-      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 140'%3E%3Ccircle cx='70' cy='70' r='56' fill='none' stroke='%237b8794' stroke-width='1.8' stroke-dasharray='6 8' opacity='0.22'/%3E%3Cg transform='translate(70 70)' fill='%237b8794' opacity='0.16'%3E%3Crect x='-5' y='-36' width='10' height='12' rx='2.5'/%3E%3Crect x='-5' y='24' width='10' height='12' rx='2.5'/%3E%3Crect x='-36' y='-5' width='12' height='10' rx='2.5'/%3E%3Crect x='24' y='-5' width='12' height='10' rx='2.5'/%3E%3Crect x='-5' y='-36' width='10' height='12' rx='2.5' transform='rotate(45)'/%3E%3Crect x='-5' y='24' width='10' height='12' rx='2.5' transform='rotate(45)'/%3E%3Crect x='-36' y='-5' width='12' height='10' rx='2.5' transform='rotate(45)'/%3E%3Crect x='24' y='-5' width='12' height='10' rx='2.5' transform='rotate(45)'/%3E%3Ccircle cx='0' cy='0' r='27'/%3E%3C/g%3E%3Ccircle cx='70' cy='70' r='13' fill='%23edf0f3' opacity='0.94'/%3E%3C/svg%3E") center / contain no-repeat;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 140 140'%3E%3Ccircle cx='70' cy='70' r='56' fill='none' stroke='%2364748b' stroke-width='1.8' stroke-dasharray='6 8' opacity='0.24'/%3E%3Cg transform='translate(70 70)' fill='%2364748b' stroke='%23475569' stroke-width='1' stroke-opacity='0.28' opacity='0.22'%3E%3Crect x='-5.5' y='-38' width='11' height='12' rx='2'/%3E%3Crect x='-5.5' y='26' width='11' height='12' rx='2'/%3E%3Crect x='-38' y='-5.5' width='12' height='11' rx='2'/%3E%3Crect x='26' y='-5.5' width='12' height='11' rx='2'/%3E%3Crect x='-5.5' y='-38' width='11' height='12' rx='2' transform='rotate(45)'/%3E%3Crect x='-5.5' y='26' width='11' height='12' rx='2' transform='rotate(45)'/%3E%3Crect x='-38' y='-5.5' width='12' height='11' rx='2' transform='rotate(45)'/%3E%3Crect x='26' y='-5.5' width='12' height='11' rx='2' transform='rotate(45)'/%3E%3Ccircle cx='0' cy='0' r='28'/%3E%3C/g%3E%3Ccircle cx='70' cy='70' r='13' fill='%23dce2e8' stroke='%2364748b' stroke-width='1.4' stroke-opacity='0.32'/%3E%3Ccircle cx='70' cy='70' r='5' fill='%2364748b' opacity='0.28'/%3E%3C/svg%3E") center / contain no-repeat;
     }
 
-    /* ================= 창문 카드 (#windowCard) ================= */
+    /* ================= 창문 서브 카드 (.window-sub-card) ================= */
 
     /* 창문 열림: 바깥 날씨 없이 깔끔한 연초록 환기 배경 + 양쪽 활짝 열린 여닫이 창문 */
-    #windowCard.device-on {
+    .window-sub-card.device-on {
       border-color: #96d1ac;
       background: linear-gradient(135deg, #eaf9f0 0%, #d8f2e3 58%, #ecf9f2 100%);
     }
 
-    #windowCard.device-on h3 { color: #1d573b; }
-    #windowCard.device-on .value { color: #103b26; }
+    .window-sub-card.device-on h4 { color: #1d573b; }
+    .window-sub-card.device-on .value { color: #103b26; }
 
-    #windowCard.device-on::before {
+    .window-sub-card.device-on::before {
       z-index: 1;
       top: 0;
       left: 0;
@@ -971,12 +1184,12 @@
     }
 
     /* 양쪽으로 활짝 열린 3D 여닫이 창문 + 중앙 환기 바람 화살표 */
-    #windowCard.device-on::after {
+    .window-sub-card.device-on::after {
       z-index: 2;
       top: 8px;
-      right: 14px;
-      width: 116px;
-      height: 92px;
+      right: 10px;
+      width: 82px;
+      height: 64px;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 120'%3E%3Cdefs%3E%3ClinearGradient id='openAir' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' stop-opacity='0.64'/%3E%3Cstop offset='100%25' stop-color='%23d4f2e1' stop-opacity='0.28'/%3E%3C/linearGradient%3E%3ClinearGradient id='paneOn' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' stop-opacity='0.82'/%3E%3Cstop offset='100%25' stop-color='%23c5ebd6' stop-opacity='0.52'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='40' y='16' width='80' height='78' rx='2' fill='url(%23openAir)' stroke='%23238255' stroke-width='2.6'/%3E%3Cpolygon points='40,16 10,7 10,103 40,94' fill='url(%23paneOn)' stroke='%23238255' stroke-width='2.4' stroke-linejoin='round'/%3E%3Cline x1='10' y1='55' x2='40' y2='55' stroke='%23238255' stroke-width='1.8' opacity='0.85'/%3E%3Cline x1='18' y1='25' x2='32' y2='35' stroke='%23ffffff' stroke-width='2.1' stroke-linecap='round' opacity='0.9'/%3E%3Cline x1='18' y1='68' x2='32' y2='78' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round' opacity='0.78'/%3E%3Cline x1='16' y1='48' x2='16' y2='62' stroke='%23175c3c' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpolygon points='120,16 150,7 150,103 120,94' fill='url(%23paneOn)' stroke='%23238255' stroke-width='2.4' stroke-linejoin='round'/%3E%3Cline x1='120' y1='55' x2='150' y2='55' stroke='%23238255' stroke-width='1.8' opacity='0.85'/%3E%3Cline x1='128' y1='34' x2='142' y2='24' stroke='%23ffffff' stroke-width='2.1' stroke-linecap='round' opacity='0.9'/%3E%3Cline x1='128' y1='77' x2='142' y2='67' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round' opacity='0.78'/%3E%3Cline x1='144' y1='48' x2='144' y2='62' stroke='%23175c3c' stroke-width='2.4' stroke-linecap='round'/%3E%3Cpath d='M48 41 Q 68 31 88 41 T 111 38' fill='none' stroke='%23238c5b' stroke-width='2.1' stroke-linecap='round' opacity='0.66'/%3E%3Cpath d='M106 34.5 L 112 38 L 106.5 42' fill='none' stroke='%23238c5b' stroke-width='2.1' stroke-linecap='round' stroke-linejoin='round' opacity='0.66'/%3E%3Cpath d='M45 58 Q 68 47 91 58 T 114 55' fill='none' stroke='%23ffffff' stroke-width='4.2' stroke-linecap='round' opacity='0.92'/%3E%3Cpath d='M45 58 Q 68 47 91 58 T 114 55' fill='none' stroke='%231d7a4f' stroke-width='2.2' stroke-linecap='round' opacity='0.8'/%3E%3Cpath d='M108.5 51 L 115 55 L 109 59.5' fill='none' stroke='%231d7a4f' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' opacity='0.8'/%3E%3Cpath d='M50 75 Q 70 66 91 75 T 110 73' fill='none' stroke='%23238c5b' stroke-width='1.9' stroke-linecap='round' opacity='0.54'/%3E%3Cpath d='M105.5 70 L 111 73 L 106 76.5' fill='none' stroke='%23238c5b' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round' opacity='0.54'/%3E%3Crect x='30' y='94' width='100' height='9' rx='3' fill='%23eefbf4' stroke='%23238255' stroke-width='2.3'/%3E%3C/svg%3E");
       background-size: contain;
       background-repeat: no-repeat;
@@ -984,24 +1197,26 @@
     }
 
     /* 창문 닫힘: 동일 크기·위치의 닫힌 여닫이 창문 */
-    #windowCard.device-off {
+    .window-sub-card.device-off {
       border-color: #e3b4af;
       background: linear-gradient(145deg, #fff3f2 0%, #fce5e3 58%, #f8dad7 100%);
     }
 
-    #windowCard.device-off h3 { color: #7d3632; }
-    #windowCard.device-off .value { color: #571f1c; }
+    .window-sub-card.device-off h4 { color: #7d3632; }
+    .window-sub-card.device-off .value { color: #571f1c; }
 
-    #windowCard.device-off::before {
+    .window-sub-card.device-off::before,
+    .window-sub-card.device-unknown::before,
+    .window-sub-card.device-unknown::after {
       content: none;
     }
 
-    #windowCard.device-off::after {
+    .window-sub-card.device-off::after {
       z-index: 1;
       top: 8px;
-      right: 14px;
-      width: 116px;
-      height: 92px;
+      right: 10px;
+      width: 82px;
+      height: 64px;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 160 120'%3E%3Crect x='40' y='16' width='80' height='78' rx='2' fill='%23ffffff' fill-opacity='0.52' stroke='%23c86a62' stroke-width='2.6'/%3E%3Crect x='44' y='20' width='34' height='70' fill='%23e8aaa4' fill-opacity='0.16'/%3E%3Crect x='82' y='20' width='34' height='70' fill='%23e8aaa4' fill-opacity='0.16'/%3E%3Cline x1='80' y1='16' x2='80' y2='94' stroke='%23c86a62' stroke-width='2.6'/%3E%3Cline x1='40' y1='55' x2='120' y2='55' stroke='%23c86a62' stroke-width='1.8' opacity='0.82'/%3E%3Cline x1='74' y1='48' x2='74' y2='62' stroke='%23a64c44' stroke-width='2.4' stroke-linecap='round'/%3E%3Cline x1='86' y1='48' x2='86' y2='62' stroke='%23a64c44' stroke-width='2.4' stroke-linecap='round'/%3E%3Cline x1='49' y1='37' x2='65' y2='23' stroke='%23ffffff' stroke-width='2.3' stroke-linecap='round' opacity='0.84'/%3E%3Cline x1='55' y1='42' x2='67' y2='31' stroke='%23ffffff' stroke-width='1.6' stroke-linecap='round' opacity='0.68'/%3E%3Cline x1='92' y1='83' x2='109' y2='68' stroke='%23ffffff' stroke-width='2.3' stroke-linecap='round' opacity='0.8'/%3E%3Crect x='30' y='94' width='100' height='9' rx='3' fill='%23fff6f5' stroke='%23c86a62' stroke-width='2.3'/%3E%3C/svg%3E");
       background-size: contain;
       background-repeat: no-repeat;
@@ -1053,7 +1268,9 @@
     #fanCard.device-off h3 { color: #7d3632; }
     #fanCard.device-off .value { color: #571f1c; }
 
-    #fanCard.device-off::before {
+    #fanCard.device-off::before,
+    #fanCard.device-unknown::before,
+    #fanCard.device-unknown::after {
       content: none;
     }
 
@@ -1068,7 +1285,22 @@
 
     /* ================= 가습기 카드 (#humidifierCard) ================= */
 
-    /* 가습기 파란 거품 래퍼: 켜짐일 때만 표시, 얕은 상단 페이드(0~26%)로 상단 끝 가까이까지 상승 후 소멸 */
+    /* 가습기 켜짐: 파란 톤 + 줄기선 제거 + 2중 속도 파란 거품 + 탁상용 캡슐 가습기 본체 */
+    #humidifierCard.device-on {
+      border-color: #93c9e8;
+      background:
+        radial-gradient(circle at 86% 74%, rgba(255, 255, 255, 0.78) 0%, transparent 54%),
+        linear-gradient(140deg, #e7f6ff 0%, #d2ecfc 55%, #e3f4ff 100%);
+    }
+
+    #humidifierCard.device-on h3 { color: #194f75; }
+    #humidifierCard.device-on .value { color: #0d3552; }
+
+    #humidifierCard::before {
+      content: none;
+    }
+
+    /* 거품 전용 고정 래퍼: 얕은 상단 페이드(0~26%)로 상단 끝 가까이까지 상승 후 자연 소멸 */
     .humid-bubbles {
       position: absolute;
       inset: 0;
@@ -1076,7 +1308,7 @@
       pointer-events: none;
       overflow: hidden;
       opacity: 0;
-      transition: opacity 0.3s ease;
+      transition: opacity 0.25s ease;
       -webkit-mask-image: linear-gradient(
         to bottom,
         transparent 0%,
@@ -1095,9 +1327,8 @@
       );
     }
 
-    /* 투명도 65% (불투명도 0.35) */
     #humidifierCard.device-on .humid-bubbles {
-      opacity: 0.35;
+      opacity: 0.35; /* 투명도 65% */
     }
 
     .humid-bubbles .bubble-layer {
@@ -1107,7 +1338,6 @@
       will-change: transform;
     }
 
-    /* 큰 파란 광택 거품 (느린 속도: 6.4초) */
     .humid-bubbles .bubble-slow {
       inset: 0 0 -140px 0;
       background-size: 160px 140px;
@@ -1115,27 +1345,11 @@
       animation: bubbleRise140 6.4s linear infinite;
     }
 
-    /* 작은 파란 광택 거품 (빠른 속도: 3.7초) */
     .humid-bubbles .bubble-fast {
       inset: 0 0 -110px 0;
       background-size: 130px 110px;
       background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='130' height='110' viewBox='0 0 130 110'%3E%3Cdefs%3E%3CradialGradient id='bFast' cx='32%25' cy='28%25' r='68%25'%3E%3Cstop offset='0%25' stop-color='%23ffffff' stop-opacity='0.95'/%3E%3Cstop offset='54%25' stop-color='%237ccbff' stop-opacity='0.58'/%3E%3Cstop offset='100%25' stop-color='%232382d6' stop-opacity='0.38'/%3E%3C/radialGradient%3E%3C/defs%3E%3Cg%3E%3Ccircle cx='20' cy='24' r='5.2' fill='url(%23bFast)' stroke='%233d9be8' stroke-width='1.0' stroke-opacity='0.78'/%3E%3Ccircle cx='18.3' cy='22.2' r='1.4' fill='%23ffffff' opacity='0.96'/%3E%3Ccircle cx='78' cy='18' r='4.2' fill='url(%23bFast)' stroke='%233d9be8' stroke-width='0.9' stroke-opacity='0.74'/%3E%3Ccircle cx='76.6' cy='16.6' r='1.1' fill='%23ffffff' opacity='0.94'/%3E%3Ccircle cx='52' cy='58' r='6.2' fill='url(%23bFast)' stroke='%233d9be8' stroke-width='1.0' stroke-opacity='0.78'/%3E%3Ccircle cx='50' cy='55.8' r='1.7' fill='%23ffffff' opacity='0.95'/%3E%3Ccircle cx='112' cy='46' r='4.8' fill='url(%23bFast)' stroke='%233d9be8' stroke-width='0.9' stroke-opacity='0.74'/%3E%3Ccircle cx='110.4' cy='44.4' r='1.3' fill='%23ffffff' opacity='0.94'/%3E%3Ccircle cx='90' cy='88' r='5.6' fill='url(%23bFast)' stroke='%233d9be8' stroke-width='1.0' stroke-opacity='0.76'/%3E%3Ccircle cx='88.2' cy='86' r='1.5' fill='%23ffffff' opacity='0.95'/%3E%3Ccircle cx='28' cy='94' r='3.8' fill='url(%23bFast)' stroke='%233d9be8' stroke-width='0.85' stroke-opacity='0.72'/%3E%3Ccircle cx='26.8' cy='92.8' r='1.0' fill='%23ffffff' opacity='0.92'/%3E%3C/g%3E%3C/svg%3E");
       animation: bubbleRise110 3.7s linear infinite;
-    }
-
-    /* 가습기 켜짐: 파란 청량 배경 + 2중 속도 파란 거품(줄기선 없음) + 탁상용 본체 */
-    #humidifierCard.device-on {
-      border-color: #93c9e8;
-      background:
-        radial-gradient(circle at 86% 74%, rgba(255, 255, 255, 0.78) 0%, transparent 54%),
-        linear-gradient(140deg, #e7f6ff 0%, #d2ecfc 55%, #e3f4ff 100%);
-    }
-
-    #humidifierCard.device-on h3 { color: #194f75; }
-    #humidifierCard.device-on .value { color: #0d3552; }
-
-    #humidifierCard.device-on::before {
-      content: none;
     }
 
     #humidifierCard.device-on::after {
@@ -1150,7 +1364,7 @@
       background-position: center;
     }
 
-    /* 가습기 꺼짐: 동일한 캡슐형 본체 (거품 없음 · 잔잔한 수면 · 꺼진 LED) */
+    /* 가습기 꺼짐: 동일한 탁상용 캡슐 본체 (거품 없음 · 잔잔한 수면 · 꺼진 LED) */
     #humidifierCard.device-off {
       border-color: #e3b4af;
       background: linear-gradient(145deg, #fff3f2 0%, #fce5e3 58%, #f8dad7 100%);
@@ -1159,7 +1373,7 @@
     #humidifierCard.device-off h3 { color: #7d3632; }
     #humidifierCard.device-off .value { color: #571f1c; }
 
-    #humidifierCard.device-off::before {
+    #humidifierCard.device-unknown::after {
       content: none;
     }
 
@@ -1208,7 +1422,6 @@
       to   { transform: translate3d(0, -140px, 0); }
     }
 
-    /* 최대 0.20 (20%) 긴 호흡 교차 아지랑이 - 흰색 */
     @keyframes hazeWhiteGradual {
       0%   { opacity: 0.09; }
       4%   { opacity: 0.13; }
@@ -1224,7 +1437,6 @@
       100% { opacity: 0.09; }
     }
 
-    /* 최대 0.20 (20%) 긴 호흡 비대칭 교차 아지랑이 - 붉은색 */
     @keyframes hazeRedGradual {
       0%   { opacity: 0.03; }
       4%   { opacity: 0; }
@@ -1320,9 +1532,12 @@
       to   { transform: rotate(360deg); }
     }
 
-    @keyframes autoPulseRing {
-      0%, 100% { transform: scale(0.92); opacity: 0.65; }
-      50%      { transform: scale(1.1); opacity: 1; }
+    @keyframes autoMetalSheen {
+      0%   { transform: translateX(-140%) skewX(-24deg); opacity: 0; }
+      18%  { opacity: 0.72; }
+      52%  { transform: translateX(220%) skewX(-24deg); opacity: 0.72; }
+      62%  { opacity: 0; }
+      100% { transform: translateX(220%) skewX(-24deg); opacity: 0; }
     }
 
     @keyframes windowBreezeFlow {
@@ -1351,7 +1566,7 @@
     }
 
     /* =========================================================
-       버튼 · 지도 · 안내 박스 · 인앱 모달
+       버튼 · 지도 · 안내 · 인앱 모달
     ========================================================= */
     button {
       padding: 12px 18px;
@@ -1438,12 +1653,12 @@
       cursor: pointer;
     }
 
-    /* 커스텀 알림/확인 모달 (alert/confirm 대체) */
+    /* 인앱 알림/확인 대화상자 */
     .dialog-backdrop {
       position: fixed;
       inset: 0;
       z-index: 9999;
-      background: rgba(18, 24, 32, 0.45);
+      background: rgba(15, 23, 42, 0.45);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1461,14 +1676,14 @@
       border: 1px solid #d7dce1;
       border-radius: 14px;
       padding: 20px;
-      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.2);
-      color: #202428;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.22);
     }
 
     .dialog-message {
       margin: 0 0 18px;
+      color: #202428;
       font-size: 14px;
-      line-height: 1.6;
+      line-height: 1.55;
       white-space: pre-line;
     }
 
@@ -1487,7 +1702,7 @@
 
     .dialog-btn-secondary {
       background: #e5e9ee;
-      color: #303840;
+      color: #252a30;
     }
 
     .dialog-btn-secondary:hover {
@@ -1495,8 +1710,21 @@
     }
 
     /* =========================================================
-       모바일 반응형 (600px 이하)
+       태블릿 및 모바일 반응형
     ========================================================= */
+    @media (max-width: 860px) {
+      .window-sub-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .window-sub-card.device-on::after,
+      .window-sub-card.device-off::after {
+        width: 92px;
+        height: 74px;
+        right: 12px;
+      }
+    }
+
     @media (max-width: 600px) {
       body {
         padding: 12px;
@@ -1537,10 +1765,6 @@
         padding: 15px;
       }
 
-      .sensor-state {
-        font-size: 11px;
-      }
-
       .value,
       .device-card .value {
         font-size: 26px;
@@ -1567,10 +1791,19 @@
         height: 124px;
       }
 
-      #windowCard.device-on::after,
-      #windowCard.device-off::after {
-        width: 94px;
-        height: 74px;
+      .window-group-actions {
+        width: 100%;
+      }
+
+      .window-group-actions > button {
+        flex: 1 1 45%;
+        width: auto;
+      }
+
+      .window-sub-card.device-on::after,
+      .window-sub-card.device-off::after {
+        width: 78px;
+        height: 62px;
         right: 10px;
       }
 
@@ -1584,7 +1817,7 @@
       #humidifierCard.device-off::after {
         width: 78px;
         height: 78px;
-        right: 10px;
+        right: 12px;
       }
 
       button {
@@ -1600,6 +1833,16 @@
       .auto-toggle {
         width: 54px;
         min-width: 54px;
+        margin: 0;
+      }
+
+      .auto-toggle.auto-toggle-sm {
+        width: 42px;
+        min-width: 42px;
+      }
+
+      .window-btn-pair > button {
+        width: auto;
         margin: 0;
       }
 
@@ -1645,23 +1888,23 @@
         <div class="temperature-humidity">
           <!-- 온도 카드 -->
           <div class="card" id="tempCard">
-            <!-- 더움 상태 전용 20% 교차 아지랑이 레이어 -->
+            <!-- 온도 더움 전용 교차 아지랑이 레이어 (최대 불투명도 20%) -->
             <span class="temp-haze" aria-hidden="true">
               <span class="haze-white"></span>
               <span class="haze-red"></span>
             </span>
-            <div class="sensor-heading">
+            <div class="sensor-card-header">
               <h3>온도</h3>
-              <span class="sensor-state" id="tempState"></span>
+              <span class="sensor-state" id="tempStateText"></span>
             </div>
             <div class="value"><span id="temperature">--</span><span class="unit"> °C</span></div>
           </div>
 
           <!-- 습도 카드 -->
           <div class="card" id="humidityCard">
-            <div class="sensor-heading">
+            <div class="sensor-card-header">
               <h3>습도</h3>
-              <span class="sensor-state" id="humidityState"></span>
+              <span class="sensor-state" id="humidityStateText"></span>
             </div>
             <div class="value"><span id="humidity">--</span><span class="unit"> %</span></div>
           </div>
@@ -1675,9 +1918,9 @@
 
         <!-- 미세먼지 카드 -->
         <div class="card" id="pm25Card">
-          <div class="sensor-heading">
+          <div class="sensor-card-header">
             <h3>미세먼지</h3>
-            <span class="sensor-state" id="pm25State"></span>
+            <span class="sensor-state" id="pm25StateText"></span>
           </div>
           <div class="value"><span id="pm25">--</span><span class="unit"> ㎍/㎥</span></div>
         </div>
@@ -1693,6 +1936,8 @@
     <!-- 장치 섹션 -->
     <div class="dashboard-section">
       <h2 class="section-heading">장치</h2>
+
+      <!-- 전체 자동설정 카드 -->
       <div class="section card auto-control-card auto-master-off" id="autoControlCard">
         <h2>자동설정</h2>
         <p class="auto-control-description">
@@ -1713,23 +1958,78 @@
         <p class="auto-control-status" id="autoControlStatus">Firebase에서 자동설정을 확인하고 있습니다.</p>
       </div>
 
-      <div class="grid">
-        <!-- 창문 카드 -->
-        <div class="card device-card device-unknown" id="windowCard">
-          <div class="device-heading"><h3>창문</h3></div>
-          <div class="value" id="window"></div>
-          <div class="device-control-row">
-            <button type="button" id="windowOpenButton" onclick="sendWindowCommand('open')" disabled>창문 열기</button>
-            <button type="button" class="stop" id="windowCloseButton" onclick="sendWindowCommand('close')" disabled>창문 닫기</button>
-            <div class="auto-switch-wrap">
-              <span id="autoWindowLabel" class="auto-mode-label mode-auto">자동모드</span>
-              <span class="auto-side-label">OFF</span>
-              <button type="button" class="auto-toggle" id="autoWindowButton" aria-label="창문 자동설정" aria-pressed="true" onclick="toggleAutoControl('window')" disabled></button>
-              <span class="auto-side-label">ON</span>
-            </div>
+      <!-- 창문 1·2·3 통합 그룹 카드 (1안) -->
+      <div class="card window-group-card" id="windowGroupCard">
+        <div class="window-group-header">
+          <div class="window-group-title-wrap">
+            <h3>창문</h3>
+            <span class="window-group-summary" id="windowGroupSummary">확인 중</span>
+          </div>
+          <div class="window-group-actions">
+            <button type="button" id="windowAllOpenButton" onclick="sendAllWindowsCommand('open')" disabled>전체 열기</button>
+            <button type="button" class="stop" id="windowAllCloseButton" onclick="sendAllWindowsCommand('close')" disabled>전체 닫기</button>
           </div>
         </div>
 
+        <div class="window-sub-grid">
+          <!-- 창문 1 -->
+          <div class="window-sub-card device-unknown" id="window1Card">
+            <div>
+              <h4>창문 1</h4>
+              <div class="value" id="window1"></div>
+            </div>
+            <div class="window-sub-controls">
+              <div class="window-btn-pair">
+                <button type="button" id="window1OpenButton" onclick="sendWindowCommand('window1', 'open')" disabled>열기</button>
+                <button type="button" class="stop" id="window1CloseButton" onclick="sendWindowCommand('window1', 'close')" disabled>닫기</button>
+              </div>
+              <div class="auto-switch-wrap">
+                <span id="autoWindow1Label" class="auto-mode-label mode-auto">자동</span>
+                <button type="button" class="auto-toggle auto-toggle-sm" id="autoWindow1Button" aria-label="창문 1 자동설정" aria-pressed="true" onclick="toggleAutoControl('window1')" disabled></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 창문 2 -->
+          <div class="window-sub-card device-unknown" id="window2Card">
+            <div>
+              <h4>창문 2</h4>
+              <div class="value" id="window2"></div>
+            </div>
+            <div class="window-sub-controls">
+              <div class="window-btn-pair">
+                <button type="button" id="window2OpenButton" onclick="sendWindowCommand('window2', 'open')" disabled>열기</button>
+                <button type="button" class="stop" id="window2CloseButton" onclick="sendWindowCommand('window2', 'close')" disabled>닫기</button>
+              </div>
+              <div class="auto-switch-wrap">
+                <span id="autoWindow2Label" class="auto-mode-label mode-auto">자동</span>
+                <button type="button" class="auto-toggle auto-toggle-sm" id="autoWindow2Button" aria-label="창문 2 자동설정" aria-pressed="true" onclick="toggleAutoControl('window2')" disabled></button>
+              </div>
+            </div>
+          </div>
+
+          <!-- 창문 3 -->
+          <div class="window-sub-card device-unknown" id="window3Card">
+            <div>
+              <h4>창문 3</h4>
+              <div class="value" id="window3"></div>
+            </div>
+            <div class="window-sub-controls">
+              <div class="window-btn-pair">
+                <button type="button" id="window3OpenButton" onclick="sendWindowCommand('window3', 'open')" disabled>열기</button>
+                <button type="button" class="stop" id="window3CloseButton" onclick="sendWindowCommand('window3', 'close')" disabled>닫기</button>
+              </div>
+              <div class="auto-switch-wrap">
+                <span id="autoWindow3Label" class="auto-mode-label mode-auto">자동</span>
+                <button type="button" class="auto-toggle auto-toggle-sm" id="autoWindow3Button" aria-label="창문 3 자동설정" aria-pressed="true" onclick="toggleAutoControl('window3')" disabled></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 하단 선풍기 · 가습기 2열 대칭 -->
+      <div class="grid">
         <!-- 선풍기 카드 -->
         <div class="card device-card device-unknown" id="fanCard">
           <div class="device-heading"><h3>선풍기</h3></div>
@@ -1838,20 +2138,40 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <script>
-    // Firebase 데이터베이스 주소
+    // =========================================================
+    // Firebase 주소 및 전역 상태
+    // =========================================================
     const FIREBASE_URL =
       "https://smart-home-demo-52a8a-default-rtdb.asia-southeast1.firebasedatabase.app";
 
     const LOCATION_URL = FIREBASE_URL + "/locationShare.json";
     const DEVICE_COMMAND_URL = FIREBASE_URL + "/deviceCommands";
-    const WINDOW_COMMAND_URL = DEVICE_COMMAND_URL + "/window.json";
-    const AUTO_CONTROL_URL = FIREBASE_URL + "/autoControl.json";
     const HOUSE_URL = FIREBASE_URL + "/houseLocation.json";
+
+    // 창문 3개 및 전체 장치 키 목록
+    const WINDOW_KEYS = ["window1", "window2", "window3"];
+    const ALL_DEVICE_KEYS = ["window1", "window2", "window3", "fan", "humidifier"];
+    const DEVICE_LABELS = {
+      window1: "창문 1",
+      window2: "창문 2",
+      window3: "창문 3",
+      fan: "선풍기",
+      humidifier: "가습기"
+    };
+
+    // 각 창문의 현재 상태 추적 (true: 열림, false: 닫힘, null: 미연결)
+    const windowStates = {
+      window1: null,
+      window2: null,
+      window3: null
+    };
 
     // Firebase에는 장치별 자동 설정만 저장합니다. 전체 자동/수동은
     // 각 장치에 전달되는 deviceModes 신호로 적용하며 master 항목은 사용하지 않습니다.
     let autoControlSettings = {
-      window: true,
+      window1: true,
+      window2: true,
+      window3: true,
       fan: true,
       humidifier: true
     };
@@ -1880,18 +2200,20 @@
     let statusTimer = null;
     let isSharing = false;
 
-    // 인앱 모달 다이얼로그 (브라우저 기본 alert/confirm 대체)
-    function showDialog(message, options = {}) {
-      return new Promise(function(resolve) {
+    // =========================================================
+    // 공통 유틸리티 (인앱 대화상자 & 애니메이션 끊김 방지 클래스 교체)
+    // =========================================================
+
+    // alert/confirm 대신 사용하는 인앱 대화상자
+    function showDialog(message, showCancel = false) {
+      return new Promise(resolve => {
         const backdrop = document.getElementById("appDialog");
         const msgEl = document.getElementById("appDialogMessage");
-        const cancelBtn = document.getElementById("appDialogCancel");
         const confirmBtn = document.getElementById("appDialogConfirm");
+        const cancelBtn = document.getElementById("appDialogCancel");
 
         msgEl.textContent = message;
-        cancelBtn.hidden = !options.showCancel;
-        confirmBtn.textContent = options.confirmText || "확인";
-        confirmBtn.classList.toggle("stop", Boolean(options.danger));
+        cancelBtn.hidden = !showCancel;
         backdrop.hidden = false;
 
         function cleanup(result) {
@@ -1901,9 +2223,24 @@
           resolve(result);
         }
 
-        confirmBtn.onclick = function() { cleanup(true); };
-        cancelBtn.onclick = function() { cleanup(false); };
+        confirmBtn.onclick = () => cleanup(true);
+        cancelBtn.onclick = () => cleanup(false);
       });
+    }
+
+    // 동일 상태 유지 시 클래스를 제거·재추가하지 않아 CSS 애니메이션 끊김을 방지합니다.
+    function applyExclusiveClass(element, allClasses, nextClass) {
+      if (!element) return;
+      if (nextClass && element.classList.contains(nextClass)) {
+        allClasses.forEach(cls => {
+          if (cls !== nextClass) element.classList.remove(cls);
+        });
+        return;
+      }
+      allClasses.forEach(cls => element.classList.remove(cls));
+      if (nextClass) {
+        element.classList.add(nextClass);
+      }
     }
 
     // 새로고침해도 같은 탭에서는 같은 사용자 ID를 유지
@@ -1911,39 +2248,31 @@
       if (window.crypto && crypto.randomUUID) {
         return crypto.randomUUID();
       }
-
-      return "user-" + Date.now() + "-" +
-        Math.random().toString(16).slice(2);
+      return "user-" + Date.now() + "-" + Math.random().toString(16).slice(2);
     }
 
     let locationUserId;
-
     try {
       locationUserId = sessionStorage.getItem("smartHomeLocationUserId");
-
       if (!locationUserId) {
         locationUserId = createUserId();
-        sessionStorage.setItem(
-          "smartHomeLocationUserId",
-          locationUserId
-        );
+        sessionStorage.setItem("smartHomeLocationUserId", locationUserId);
       }
     } catch (error) {
-      // sessionStorage를 사용할 수 없는 환경의 대체 방식
       locationUserId = createUserId();
     }
 
-    // 지도 초기화
+    // =========================================================
+    // 지도 및 집 위치 관리
+    // =========================================================
     function initializeMap() {
-      if (map !== null) return;
+      if (map !== null || typeof L === "undefined") return;
 
       map = L.map("map").setView([37.5665, 126.9780], 13);
 
       L.tileLayer(
         "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-        {
-          attribution: "&copy; OpenStreetMap contributors"
-        }
+        { attribution: "&copy; OpenStreetMap contributors" }
       ).addTo(map);
 
       // 집 위치 선택 모드일 때만 지도 클릭을 처리
@@ -1966,23 +2295,20 @@
 
         pendingHouseMarker.bindPopup(
           '선택한 집 위치<br>' +
-          '<button class="cancel-marker" ' +
-          'onclick="cancelHouseSelection()">× 취소</button>'
+          '<button class="cancel-marker" onclick="cancelHouseSelection()">× 취소</button>'
         ).openPopup();
 
         document.getElementById("houseButton").textContent = "확정";
-
         document.getElementById("houseInstruction").textContent =
           "위치가 맞으면 확정을 누르세요. 다른 곳을 클릭하면 위치가 변경됩니다.";
-
         document.getElementById("houseStatus").textContent =
           "집 위치를 확인하고 확정해 주세요.";
       });
     }
 
-    // 지도 표시 및 크기 재계산 후 콜백 실행
     function showMap(onReady) {
       initializeMap();
+      if (!map) return;
 
       setTimeout(function() {
         map.invalidateSize();
@@ -1992,7 +2318,6 @@
       }, 200);
     }
 
-    // 지도 접기/펼치기 (처음에는 접힌 상태)
     function toggleMap() {
       const container = document.getElementById("mapContainer");
       const button = document.getElementById("mapToggleButton");
@@ -2011,8 +2336,8 @@
       }
     }
 
-    // 지도에 위치 표시
     function updateMap(latitude, longitude) {
+      if (!map) return;
       const position = [latitude, longitude];
 
       if (!locationMarker) {
@@ -2025,11 +2350,9 @@
       map.setView(position, 16);
     }
 
-    // Firebase에 저장된 집 위치 가져오기
     async function loadHouseLocation() {
       try {
         const response = await fetch(HOUSE_URL);
-
         if (!response.ok) {
           throw new Error("집 위치 확인 실패");
         }
@@ -2042,40 +2365,27 @@
           houseLocation.longitude !== undefined
         ) {
           showHouseMarker();
-          if (!lastPosition && !document.getElementById("mapContainer").hidden) {
-            map.setView([
-              houseLocation.latitude,
-              houseLocation.longitude
-            ], 15);
+          if (!lastPosition && map && !document.getElementById("mapContainer").hidden) {
+            map.setView([houseLocation.latitude, houseLocation.longitude], 15);
           }
 
-          document.getElementById("houseStatus").textContent =
-            "집 위치가 등록되어 있습니다.";
-
-          document.getElementById("houseButton").textContent =
-            "집 위치 변경";
+          document.getElementById("houseStatus").textContent = "집 위치가 등록되어 있습니다.";
+          document.getElementById("houseButton").textContent = "집 위치 변경";
           document.getElementById("clearHouseButton").disabled = false;
         } else {
           houseLocation = null;
-
-          document.getElementById("houseStatus").textContent =
-            "등록된 집 위치가 없습니다.";
-
-          document.getElementById("houseButton").textContent =
-            "집 위치 등록";
+          document.getElementById("houseStatus").textContent = "등록된 집 위치가 없습니다.";
+          document.getElementById("houseButton").textContent = "집 위치 등록";
           document.getElementById("clearHouseButton").disabled = true;
         }
       } catch (error) {
         console.error(error);
-        document.getElementById("houseStatus").textContent =
-          "집 위치를 불러오지 못했습니다.";
+        document.getElementById("houseStatus").textContent = "집 위치를 불러오지 못했습니다.";
       }
     }
 
-    // 저장된 집 위치를 지도에 표시
     function showHouseMarker() {
       if (!houseLocation || !map) return;
-
       if (houseMarker) {
         map.removeLayer(houseMarker);
       }
@@ -2084,11 +2394,9 @@
         houseLocation.latitude,
         houseLocation.longitude
       ]).addTo(map);
-
       houseMarker.bindPopup("등록된 집 위치");
     }
 
-    // 집 위치 등록/변경 선택 모드 시작
     function handleHouseButton() {
       if (!map) initializeMap();
       if (document.getElementById("mapContainer").hidden) {
@@ -2107,20 +2415,14 @@
         selectionMode = true;
         pendingHouseLocation = null;
 
-        if (pendingHouseMarker) {
+        if (pendingHouseMarker && map) {
           map.removeLayer(pendingHouseMarker);
           pendingHouseMarker = null;
         }
 
-        document.getElementById("houseButton").textContent =
-          "선택 취소";
-
-        document.getElementById("houseInstruction").textContent =
-          "지도에서 집 위치를 클릭하세요.";
-
-        document.getElementById("houseStatus").textContent =
-          "지도에서 등록할 집 위치를 선택해 주세요.";
-
+        document.getElementById("houseButton").textContent = "선택 취소";
+        document.getElementById("houseInstruction").textContent = "지도에서 집 위치를 클릭하세요.";
+        document.getElementById("houseStatus").textContent = "지도에서 등록할 집 위치를 선택해 주세요.";
         return;
       }
 
@@ -2132,13 +2434,12 @@
       saveHouseLocation();
     }
 
-    // 등록된 집 위치 삭제 전 사용자 확인
     async function confirmDeleteHouseLocation() {
       if (!houseLocation) return;
 
       const confirmed = await showDialog(
         "등록된 집 위치를 삭제할까요?\n삭제하면 지도에서도 집 위치 표시가 사라집니다.",
-        { showCancel: true, confirmText: "삭제", danger: true }
+        true
       );
       if (!confirmed) return;
 
@@ -2161,7 +2462,8 @@
         document.getElementById("houseButton").textContent = "집 위치 등록";
         document.getElementById("clearHouseButton").disabled = true;
         document.getElementById("houseStatus").textContent = "등록된 집 위치가 없습니다.";
-        document.getElementById("houseInstruction").textContent = "집 위치 등록 버튼을 누른 뒤 지도에서 집 위치를 선택하세요.";
+        document.getElementById("houseInstruction").textContent =
+          "집 위치 등록 버튼을 누른 뒤 지도에서 집 위치를 선택하세요.";
         document.getElementById("distanceFromHome").textContent = "--";
         await showDialog("등록된 집 위치를 삭제했습니다.");
       } catch (error) {
@@ -2170,7 +2472,6 @@
       }
     }
 
-    // 집 위치 선택 취소 (지도 마커의 X 또는 버튼)
     function cancelHouseSelection() {
       selectionMode = false;
       pendingHouseLocation = null;
@@ -2180,21 +2481,14 @@
         pendingHouseMarker = null;
       }
 
-      const houseButton = document.getElementById("houseButton");
-      houseButton.textContent = houseLocation
-        ? "집 위치 변경"
-        : "집 위치 등록";
-
+      document.getElementById("houseButton").textContent =
+        houseLocation ? "집 위치 변경" : "집 위치 등록";
       document.getElementById("houseInstruction").textContent =
         "집 위치 등록 버튼을 누른 뒤 지도에서 집 위치를 선택하세요.";
-
       document.getElementById("houseStatus").textContent =
-        houseLocation
-          ? "기존 집 위치가 유지됩니다."
-          : "집 위치 선택을 취소했습니다.";
+        houseLocation ? "기존 집 위치가 유지됩니다." : "집 위치 선택을 취소했습니다.";
     }
 
-    // 선택한 집 위치를 Firebase에 확정 저장
     async function saveHouseLocation() {
       if (!pendingHouseLocation || !selectionMode) {
         await showDialog("먼저 지도에서 집 위치를 선택하세요.");
@@ -2210,9 +2504,7 @@
       try {
         const response = await fetch(HOUSE_URL, {
           method: "PUT",
-          headers: {
-            "Content-Type": "application/json"
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(selectedLocation)
         });
 
@@ -2224,114 +2516,98 @@
         selectionMode = false;
         pendingHouseLocation = null;
 
-        if (pendingHouseMarker) {
+        if (pendingHouseMarker && map) {
           map.removeLayer(pendingHouseMarker);
           pendingHouseMarker = null;
         }
 
         showHouseMarker();
 
-        document.getElementById("houseButton").textContent =
-          "집 위치 변경";
+        document.getElementById("houseButton").textContent = "집 위치 변경";
         document.getElementById("clearHouseButton").disabled = false;
-
         document.getElementById("houseInstruction").textContent =
           "집 위치가 등록되었습니다. 변경하려면 집 위치 변경을 누르세요.";
-
         document.getElementById("houseStatus").textContent =
           "집 위치가 Firebase에 저장되었습니다.";
 
         if (lastPosition) {
-          await sendLocation(
-            lastPosition.latitude,
-            lastPosition.longitude
-          );
+          await sendLocation(lastPosition.latitude, lastPosition.longitude);
         }
 
         await showDialog("집 위치 등록 성공!");
-
       } catch (error) {
         await showDialog(error.message);
         console.error(error);
       }
     }
 
-    // 두 좌표 사이의 직선거리 계산
     function calculateDistance(lat1, lon1, lat2, lon2) {
       const R = 6371;
-
-      const toRad = function(value) {
-        return value * Math.PI / 180;
-      };
-
+      const toRad = value => value * Math.PI / 180;
       const dLat = toRad(lat2 - lat1);
       const dLon = toRad(lon2 - lon1);
-
       const a =
         Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(toRad(lat1)) *
-        Math.cos(toRad(lat2)) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-
-      const c = 2 * Math.atan2(
-        Math.sqrt(a),
-        Math.sqrt(1 - a)
-      );
-
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+        Math.sin(dLon / 2) * Math.sin(dLon / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
       return R * c;
     }
 
-    // 장치별 설정과 실제 적용 모드를 화면에 반영합니다.
-    // master 값은 Firebase에 저장하지 않고, 세 장치의 모드 신호로 전체 상태를 판단합니다.
+    // =========================================================
+    // 자동설정 (전체 + 창문 1~3 · 선풍기 · 가습기 개별)
+    // =========================================================
     function updateAutoControlDisplay(settings, deviceModes) {
       const hasDeviceModes = deviceModes && typeof deviceModes === "object";
 
       if (!autoControlInitialized && hasDeviceModes) {
-        masterAutoEnabled = ["window", "fan", "humidifier"].some(
+        masterAutoEnabled = ALL_DEVICE_KEYS.some(
           key => deviceModes[key] && deviceModes[key].mode === "auto"
         );
         autoControlInitialized = true;
       }
 
       if (settings && typeof settings === "object") {
-        autoControlSettings = {
-          window: settings.window !== false,
-          fan: settings.fan !== false,
-          humidifier: settings.humidifier !== false
-        };
+        ALL_DEVICE_KEYS.forEach(key => {
+          if (Object.prototype.hasOwnProperty.call(settings, key)) {
+            autoControlSettings[key] = settings[key] !== false;
+          } else if (WINDOW_KEYS.includes(key) && hasDeviceModes && deviceModes[key]) {
+            autoControlSettings[key] = deviceModes[key].mode === "auto";
+          } else {
+            autoControlSettings[key] = true;
+          }
+        });
       } else if (hasDeviceModes && masterAutoEnabled) {
-        // autoControl 노드가 아직 없고 deviceModes만 있는 경우 현재 모드에 맞춰 동기화
-        autoControlSettings = {
-          window: !deviceModes.window || deviceModes.window.mode === "auto",
-          fan: !deviceModes.fan || deviceModes.fan.mode === "auto",
-          humidifier: !deviceModes.humidifier || deviceModes.humidifier.mode === "auto"
-        };
+        ALL_DEVICE_KEYS.forEach(key => {
+          autoControlSettings[key] = !deviceModes[key] || deviceModes[key].mode === "auto";
+        });
       }
 
       // 전체 자동설정 카드 배경 상태 갱신
       const autoCard = document.getElementById("autoControlCard");
-      if (autoCard) {
-        const nextClass = masterAutoEnabled ? "auto-master-on" : "auto-master-off";
-        if (!autoCard.classList.contains(nextClass)) {
-          autoCard.classList.remove("auto-master-on", "auto-master-off");
-          autoCard.classList.add(nextClass);
-        }
-      }
+      applyExclusiveClass(
+        autoCard,
+        ["auto-master-on", "auto-master-off"],
+        masterAutoEnabled ? "auto-master-on" : "auto-master-off"
+      );
 
       const controls = [
-        ["master", "autoMasterButton", "autoMasterLabel"],
-        ["window", "autoWindowButton", "autoWindowLabel"],
-        ["fan", "autoFanButton", "autoFanLabel"],
-        ["humidifier", "autoHumidifierButton", "autoHumidifierLabel"]
+        ["master", "autoMasterButton", "autoMasterLabel", false],
+        ["window1", "autoWindow1Button", "autoWindow1Label", true],
+        ["window2", "autoWindow2Button", "autoWindow2Label", true],
+        ["window3", "autoWindow3Button", "autoWindow3Label", true],
+        ["fan", "autoFanButton", "autoFanLabel", false],
+        ["humidifier", "autoHumidifierButton", "autoHumidifierLabel", false]
       ];
 
-      controls.forEach(([key, buttonId, labelId]) => {
+      controls.forEach(([key, buttonId, labelId, isCompact]) => {
         const button = document.getElementById(buttonId);
+        if (!button) return;
         const isMaster = key === "master";
         const settingEnabled = isMaster ? masterAutoEnabled : autoControlSettings[key] === true;
         const toggleOn = settingEnabled;
         const effectiveAuto = isMaster ? settingEnabled : (masterAutoEnabled && settingEnabled);
+
         button.classList.toggle("is-on", toggleOn);
         button.classList.toggle("is-off", !toggleOn);
         button.setAttribute("aria-pressed", String(toggleOn));
@@ -2339,10 +2615,13 @@
 
         if (labelId) {
           const modeLabel = document.getElementById(labelId);
+          if (!modeLabel) return;
           if (isMaster) {
             modeLabel.textContent = effectiveAuto ? "ON" : "OFF";
           } else {
-            modeLabel.textContent = effectiveAuto ? "자동모드" : "수동모드";
+            modeLabel.textContent = isCompact
+              ? (effectiveAuto ? "자동" : "수동")
+              : (effectiveAuto ? "자동모드" : "수동모드");
             modeLabel.classList.toggle("mode-auto", effectiveAuto);
             modeLabel.classList.toggle("mode-manual", !effectiveAuto);
           }
@@ -2351,21 +2630,20 @@
 
       const status = document.getElementById("autoControlStatus");
       if (!masterAutoEnabled) {
-        status.textContent = "전체 자동 OFF · 창문·선풍기·가습기에 수동 신호를 전송했습니다. 장치별 자동 설정은 유지됩니다.";
+        status.textContent =
+          "전체 자동 OFF · 창문 1~3·선풍기·가습기에 수동 신호를 전송했습니다. 장치별 자동 설정은 유지됩니다.";
       } else {
-        const activeDevices = [];
-        if (autoControlSettings.window) activeDevices.push("창문");
-        if (autoControlSettings.fan) activeDevices.push("선풍기");
-        if (autoControlSettings.humidifier) activeDevices.push("가습기");
+        const activeDevices = ALL_DEVICE_KEYS
+          .filter(key => autoControlSettings[key])
+          .map(key => DEVICE_LABELS[key]);
         status.textContent = activeDevices.length
           ? "전체 자동 ON · 자동 작동 대상: " + activeDevices.join(", ")
           : "전체 자동 ON · 장치별 설정이 모두 수동입니다.";
       }
     }
 
-    // Firebase에는 개별 설정(autoControl)과 실제 적용 모드(deviceModes)를 분리해 기록합니다.
     async function toggleAutoControl(target) {
-      const allowedTargets = ["master", "window", "fan", "humidifier"];
+      const allowedTargets = ["master", ...ALL_DEVICE_KEYS];
       if (!allowedTargets.includes(target) || autoControlSaving) return;
       if (target !== "master" && !masterAutoEnabled) return;
 
@@ -2380,11 +2658,12 @@
 
       autoControlSaving = true;
       updateAutoControlDisplay();
-      document.getElementById("autoControlStatus").textContent = "자동/수동 신호를 Firebase에 전송하고 있습니다...";
+      document.getElementById("autoControlStatus").textContent =
+        "자동/수동 신호를 Firebase에 전송하고 있습니다...";
 
       const timestamp = Date.now();
       const updates = {};
-      const devices = target === "master" ? ["window", "fan", "humidifier"] : [target];
+      const devices = target === "master" ? ALL_DEVICE_KEYS : [target];
 
       if (target !== "master") {
         updates["autoControl/" + target] = autoControlSettings[target];
@@ -2412,14 +2691,11 @@
 
         autoControlSaving = false;
         updateAutoControlDisplay();
-        const targetNames = {
-          master: masterAutoEnabled ? "전체 자동 ON" : "전체 자동 OFF (세 장치 수동 신호)",
-          window: "창문 자동 설정",
-          fan: "선풍기 자동 설정",
-          humidifier: "가습기 자동 설정"
-        };
+        const targetLabel = target === "master"
+          ? (masterAutoEnabled ? "전체 자동 ON" : "전체 자동 OFF (전체 장치 수동 신호)")
+          : DEVICE_LABELS[target] + " 자동 설정";
         document.getElementById("autoControlStatus").textContent =
-          targetNames[target] + " 신호를 Firebase에 전송했습니다.";
+          targetLabel + " 신호를 Firebase에 전송했습니다.";
       } catch (error) {
         autoControlSettings = previousSettings;
         masterAutoEnabled = previousMasterState;
@@ -2431,49 +2707,14 @@
       }
     }
 
-    // 가습기/선풍기 원격 제어 명령을 Firebase에 전송
-    async function sendDeviceCommand(device, command) {
-      const allowedDevices = ["humidifier", "fan"];
+    // =========================================================
+    // 센서 카드 상태 및 동적 배경 갱신
+    // =========================================================
 
-      if (!allowedDevices.includes(device)) return;
-      if (command !== "on" && command !== "off") return;
-      const requestedButton = document.getElementById(device + (command === "on" ? "OnButton" : "OffButton"));
-      if (!requestedButton || requestedButton.disabled) return;
-
-      const deviceName = device === "humidifier" ? "가습기" : "선풍기";
-
-      try {
-        const response = await fetch(DEVICE_COMMAND_URL + "/" + device + ".json", {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            command: command,
-            updatedAt: Date.now()
-          })
-        });
-
-        if (!response.ok) {
-          throw new Error("Firebase 명령 전송 실패: " + response.status);
-        }
-
-      } catch (error) {
-        console.error(deviceName + " 명령 전송 실패:", error);
-      }
-    }
-
-    // 애니메이션 끊김 방지를 위해 클래스가 실제로 바뀔 때만 교체하는 헬퍼
-    function applyExclusiveClass(element, allClasses, nextClass) {
-      if (nextClass && element.classList.contains(nextClass)) return;
-      element.classList.remove(...allClasses);
-      if (nextClass) {
-        element.classList.add(nextClass);
-      }
-    }
-
-    // 온도 수치 표시, 오른쪽 위 상태 텍스트 및 3단계 카드 배경 전환 (18°C 미만 추움 / 18~26°C 쾌적 / 26°C 초과 더움)
+    // 온도: 추움(<18) / 쾌적(18~26) / 더움(>26)
     function updateTemperatureDisplay(value) {
       const label = document.getElementById("temperature");
-      const stateLabel = document.getElementById("tempState");
+      const stateLabel = document.getElementById("tempStateText");
       const card = document.getElementById("tempCard");
       const hasValue = value !== null && value !== undefined && String(value).trim() !== "";
       const num = hasValue ? Number(value) : NaN;
@@ -2481,27 +2722,29 @@
       label.textContent = hasValue ? value : "--";
 
       if (Number.isNaN(num)) {
-        stateLabel.textContent = "";
         applyExclusiveClass(card, ["temp-cold", "temp-comfort", "temp-hot"], null);
+        if (stateLabel) stateLabel.textContent = "";
         return;
       }
 
+      let nextClass = "temp-comfort";
+      let nextState = "쾌적";
       if (num < 18) {
-        stateLabel.textContent = "추움";
-        applyExclusiveClass(card, ["temp-cold", "temp-comfort", "temp-hot"], "temp-cold");
-      } else if (num <= 26) {
-        stateLabel.textContent = "쾌적";
-        applyExclusiveClass(card, ["temp-cold", "temp-comfort", "temp-hot"], "temp-comfort");
-      } else {
-        stateLabel.textContent = "더움";
-        applyExclusiveClass(card, ["temp-cold", "temp-comfort", "temp-hot"], "temp-hot");
+        nextClass = "temp-cold";
+        nextState = "추움";
+      } else if (num > 26) {
+        nextClass = "temp-hot";
+        nextState = "더움";
       }
+
+      applyExclusiveClass(card, ["temp-cold", "temp-comfort", "temp-hot"], nextClass);
+      if (stateLabel) stateLabel.textContent = nextState;
     }
 
-    // 습도 수치 표시, 오른쪽 위 상태 텍스트 및 3단계 카드 배경 전환 (40% 미만 건조 / 40~65% 적정 / 65% 초과 습함)
+    // 습도: 건조(<40) / 적정(40~65) / 습함(>65)
     function updateHumidityDisplay(value) {
       const label = document.getElementById("humidity");
-      const stateLabel = document.getElementById("humidityState");
+      const stateLabel = document.getElementById("humidityStateText");
       const card = document.getElementById("humidityCard");
       const hasValue = value !== null && value !== undefined && String(value).trim() !== "";
       const num = hasValue ? Number(value) : NaN;
@@ -2509,43 +2752,47 @@
       label.textContent = hasValue ? value : "--";
 
       if (Number.isNaN(num)) {
-        stateLabel.textContent = "";
         applyExclusiveClass(card, ["hum-dry", "hum-comfort", "hum-humid"], null);
+        if (stateLabel) stateLabel.textContent = "";
         return;
       }
 
+      let nextClass = "hum-comfort";
+      let nextState = "적정";
       if (num < 40) {
-        stateLabel.textContent = "건조";
-        applyExclusiveClass(card, ["hum-dry", "hum-comfort", "hum-humid"], "hum-dry");
-      } else if (num <= 65) {
-        stateLabel.textContent = "적정";
-        applyExclusiveClass(card, ["hum-dry", "hum-comfort", "hum-humid"], "hum-comfort");
-      } else {
-        stateLabel.textContent = "습함";
-        applyExclusiveClass(card, ["hum-dry", "hum-comfort", "hum-humid"], "hum-humid");
+        nextClass = "hum-dry";
+        nextState = "건조";
+      } else if (num > 65) {
+        nextClass = "hum-humid";
+        nextState = "습함";
       }
+
+      applyExclusiveClass(card, ["hum-dry", "hum-comfort", "hum-humid"], nextClass);
+      if (stateLabel) stateLabel.textContent = nextState;
     }
 
-    // 빗물 감지 상태 표시 및 카드 배경 전환
+    // 빗물 감지: 맑음 / 비
     function updateRainDisplay(value) {
       const label = document.getElementById("rain");
-      const normalized = String(value).trim().toLowerCase();
+      const rainCard = document.getElementById("rainCard");
+      const normalized = value === null || value === undefined
+        ? ""
+        : String(value).trim().toLowerCase();
+
       const isRain = value === true || value === 1 || normalized === "1" ||
         ["true", "rain", "raining", "비", "비 감지", "비가 감지됨", "감지", "wet", "rain detected"].includes(normalized);
       const isClear = value === false || value === 0 || normalized === "0" ||
         ["false", "clear", "sunny", "맑음", "미감지", "dry", "no rain"].includes(normalized);
 
       label.textContent = isRain ? "비" : (isClear ? "맑음" : "--");
-
-      const rainCard = document.getElementById("rainCard");
       const nextClass = isRain ? "rain-detected" : (isClear ? "rain-clear" : null);
       applyExclusiveClass(rainCard, ["rain-detected", "rain-clear"], nextClass);
     }
 
-    // 미세먼지(PM2.5) 수치 표시, 오른쪽 위 상태 텍스트 및 4단계 카드 배경 전환
+    // 미세먼지(PM2.5): 좋음(0~15) / 보통(16~35) / 나쁨(36~75) / 매우 나쁨(76+)
     function updatePm25Display(value) {
       const label = document.getElementById("pm25");
-      const stateLabel = document.getElementById("pm25State");
+      const stateLabel = document.getElementById("pm25StateText");
       const card = document.getElementById("pm25Card");
       const hasValue = value !== null && value !== undefined && String(value).trim() !== "";
       const num = hasValue ? Number(value) : NaN;
@@ -2553,32 +2800,80 @@
       label.textContent = hasValue ? value : "--";
 
       if (Number.isNaN(num)) {
-        stateLabel.textContent = "";
         applyExclusiveClass(card, ["pm-good", "pm-moderate", "pm-bad", "pm-very-bad"], null);
+        if (stateLabel) stateLabel.textContent = "";
         return;
       }
 
+      let nextClass = "pm-very-bad";
+      let nextState = "매우 나쁨";
       if (num <= 15) {
-        stateLabel.textContent = "좋음";
-        applyExclusiveClass(card, ["pm-good", "pm-moderate", "pm-bad", "pm-very-bad"], "pm-good");
+        nextClass = "pm-good";
+        nextState = "좋음";
       } else if (num <= 35) {
-        stateLabel.textContent = "보통";
-        applyExclusiveClass(card, ["pm-good", "pm-moderate", "pm-bad", "pm-very-bad"], "pm-moderate");
+        nextClass = "pm-moderate";
+        nextState = "보통";
       } else if (num <= 75) {
-        stateLabel.textContent = "나쁨";
-        applyExclusiveClass(card, ["pm-good", "pm-moderate", "pm-bad", "pm-very-bad"], "pm-bad");
-      } else {
-        stateLabel.textContent = "매우 나쁨";
-        applyExclusiveClass(card, ["pm-good", "pm-moderate", "pm-bad", "pm-very-bad"], "pm-very-bad");
+        nextClass = "pm-bad";
+        nextState = "나쁨";
       }
+
+      applyExclusiveClass(card, ["pm-good", "pm-moderate", "pm-bad", "pm-very-bad"], nextClass);
+      if (stateLabel) stateLabel.textContent = nextState;
     }
 
-    // 장치 상태에 따라 카드 배경·애니메이션 및 제어 버튼 갱신
+    // =========================================================
+    // 장치 상태 갱신 & 원격 제어 명령 전송
+    // =========================================================
+
+    // 창문 3개의 요약 배지 및 '전체 열기 / 전체 닫기' 버튼 활성 상태를 갱신합니다.
+    function updateWindowGroupSummary() {
+      const summaryEl = document.getElementById("windowGroupSummary");
+      const openAllBtn = document.getElementById("windowAllOpenButton");
+      const closeAllBtn = document.getElementById("windowAllCloseButton");
+      if (!summaryEl || !openAllBtn || !closeAllBtn) return;
+
+      const connectedStates = WINDOW_KEYS
+        .map(key => windowStates[key])
+        .filter(state => state !== null);
+
+      summaryEl.classList.remove("summary-open", "summary-closed", "summary-mixed");
+
+      if (connectedStates.length === 0) {
+        summaryEl.textContent = "연결 대기";
+        openAllBtn.disabled = true;
+        closeAllBtn.disabled = true;
+        return;
+      }
+
+      const openCount = connectedStates.filter(state => state === true).length;
+      const closedCount = connectedStates.length - openCount;
+      const allOpen = openCount === connectedStates.length;
+      const allClosed = openCount === 0;
+
+      if (allOpen) {
+        summaryEl.textContent = "모두 열림";
+        summaryEl.classList.add("summary-open");
+      } else if (allClosed) {
+        summaryEl.textContent = "모두 닫힘";
+        summaryEl.classList.add("summary-closed");
+      } else {
+        summaryEl.textContent = openCount + "개 열림 · " + closedCount + "개 닫힘";
+        summaryEl.classList.add("summary-mixed");
+      }
+
+      openAllBtn.disabled = allOpen;
+      closeAllBtn.disabled = allClosed;
+    }
+
     function updateDeviceDisplay(device, value, connected = true) {
+      const isWindow = WINDOW_KEYS.includes(device);
       const card = document.getElementById(device + "Card");
-      const valueElement = document.getElementById(device === "window" ? "window" : device);
-      const onButton = document.getElementById(device === "window" ? "windowOpenButton" : device + "OnButton");
-      const offButton = document.getElementById(device === "window" ? "windowCloseButton" : device + "OffButton");
+      const valueElement = document.getElementById(device);
+      const onButton = document.getElementById(isWindow ? device + "OpenButton" : device + "OnButton");
+      const offButton = document.getElementById(isWindow ? device + "CloseButton" : device + "OffButton");
+      if (!card || !valueElement || !onButton || !offButton) return;
+
       const normalized = value === null || value === undefined
         ? ""
         : String(value).trim().toLowerCase();
@@ -2598,25 +2893,37 @@
         valueElement.textContent = "";
         onButton.disabled = true;
         offButton.disabled = true;
+        if (isWindow) windowStates[device] = null;
       } else if (nextClass === "device-on") {
-        valueElement.textContent = device === "window" ? "열림" : "켜짐";
+        valueElement.textContent = isWindow ? "열림" : "켜짐";
         onButton.disabled = true;
         offButton.disabled = false;
+        if (isWindow) windowStates[device] = true;
       } else {
-        valueElement.textContent = device === "window" ? "닫힘" : "꺼짐";
+        valueElement.textContent = isWindow ? "닫힘" : "꺼짐";
         onButton.disabled = false;
         offButton.disabled = true;
+        if (isWindow) windowStates[device] = false;
+      }
+
+      if (isWindow) {
+        updateWindowGroupSummary();
       }
     }
 
-    // 창문 원격 제어 명령을 deviceCommands/window 경로에 전송
-    async function sendWindowCommand(command) {
-      if (command !== "open" && command !== "close") return;
-      const requestedButton = document.getElementById(command === "open" ? "windowOpenButton" : "windowCloseButton");
+    // 가습기/선풍기 원격 제어 명령 전송
+    async function sendDeviceCommand(device, command) {
+      const allowedDevices = ["humidifier", "fan"];
+      if (!allowedDevices.includes(device)) return;
+      if (command !== "on" && command !== "off") return;
+
+      const requestedButton = document.getElementById(
+        device + (command === "on" ? "OnButton" : "OffButton")
+      );
       if (!requestedButton || requestedButton.disabled) return;
 
       try {
-        const response = await fetch(WINDOW_COMMAND_URL, {
+        const response = await fetch(DEVICE_COMMAND_URL + "/" + device + ".json", {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -2628,17 +2935,76 @@
         if (!response.ok) {
           throw new Error("Firebase 명령 전송 실패: " + response.status);
         }
-
       } catch (error) {
-        console.error("창문 명령 전송 실패:", error);
+        console.error(DEVICE_LABELS[device] + " 명령 전송 실패:", error);
       }
     }
 
-    // Firebase 센서 데이터 가져오기
+    // 개별 창문 원격 제어 명령을 deviceCommands/window1~3 경로에 전송
+    async function sendWindowCommand(windowKey, command) {
+      if (!WINDOW_KEYS.includes(windowKey)) return;
+      if (command !== "open" && command !== "close") return;
+      const requestedButton = document.getElementById(
+        windowKey + (command === "open" ? "OpenButton" : "CloseButton")
+      );
+      if (!requestedButton || requestedButton.disabled) return;
+
+      try {
+        const response = await fetch(DEVICE_COMMAND_URL + "/" + windowKey + ".json", {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            command: command,
+            updatedAt: Date.now()
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error("Firebase 명령 전송 실패: " + response.status);
+        }
+      } catch (error) {
+        console.error(DEVICE_LABELS[windowKey] + " 명령 전송 실패:", error);
+      }
+    }
+
+    // 창문 1~3 전체 열기/닫기 명령을 PATCH로 한 번에 전송
+    async function sendAllWindowsCommand(command) {
+      if (command !== "open" && command !== "close") return;
+      const requestedButton = document.getElementById(
+        command === "open" ? "windowAllOpenButton" : "windowAllCloseButton"
+      );
+      if (!requestedButton || requestedButton.disabled) return;
+
+      const timestamp = Date.now();
+      const updates = {};
+      WINDOW_KEYS.forEach(key => {
+        updates[key] = {
+          command: command,
+          updatedAt: timestamp
+        };
+      });
+
+      try {
+        const response = await fetch(DEVICE_COMMAND_URL + ".json", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updates)
+        });
+
+        if (!response.ok) {
+          throw new Error("Firebase 전체 창문 명령 전송 실패: " + response.status);
+        }
+      } catch (error) {
+        console.error("전체 창문 명령 전송 실패:", error);
+      }
+    }
+
+    // =========================================================
+    // Firebase 실시간 데이터 폴링
+    // =========================================================
     async function getData() {
       try {
         const response = await fetch(FIREBASE_URL + "/.json");
-
         if (!response.ok) {
           throw new Error("Firebase 응답 오류: " + response.status);
         }
@@ -2651,7 +3017,7 @@
           );
         }
 
-        // 이전 버전에서 사용하던 Firebase autoControl/master 항목을 한 번 삭제합니다.
+        // 이전 버전의 autoControl/master 항목이 남아 있으면 정리
         if (!legacyMasterCleanupDone && data && data.autoControl &&
             Object.prototype.hasOwnProperty.call(data.autoControl, "master")) {
           legacyMasterCleanupDone = true;
@@ -2666,58 +3032,58 @@
           updatePm25Display(null);
           updateDeviceDisplay("humidifier", null, false);
           updateDeviceDisplay("fan", null, false);
-          updateDeviceDisplay("window", null, false);
+          WINDOW_KEYS.forEach(key => updateDeviceDisplay(key, null, false));
           return;
         }
 
         updateTemperatureDisplay(data.temperature);
         updateHumidityDisplay(data.humidity);
-
-        // 미세먼지는 새 키 pm25를 우선 사용하고, 기존 dust 키도 호환합니다.
         updatePm25Display(data.pm25 ?? data.dust);
-
-        document.getElementById("gas").textContent =
-          data.gas ?? "--";
-
-        // 빗물 감지는 새 키 rainDetected를 우선 사용하고, 기존 rain 키도 호환합니다.
+        document.getElementById("gas").textContent = data.gas ?? "--";
         updateRainDisplay(data.rainDetected ?? data.rain);
 
         updateDeviceDisplay("humidifier", data.humidifier, data.humidifier !== undefined && data.humidifier !== null);
         updateDeviceDisplay("fan", data.fan, data.fan !== undefined && data.fan !== null);
-        updateDeviceDisplay("window", data.windowState, data.windowState !== undefined && data.windowState !== null);
 
-        document.getElementById("firebaseStatus").textContent =
-          "Firebase 연결 성공";
+        // 창문 1~3 상태 읽기 (최상위 window1~3, window1State~3State, windows.window1~3 모두 호환)
+        WINDOW_KEYS.forEach(key => {
+          let val;
+          if (data[key] !== undefined) {
+            val = data[key];
+          } else if (data[key + "State"] !== undefined) {
+            val = data[key + "State"];
+          } else if (data.windows && data.windows[key] !== undefined) {
+            val = data.windows[key];
+          }
+          updateDeviceDisplay(key, val, val !== undefined && val !== null);
+        });
 
+        document.getElementById("firebaseStatus").textContent = "Firebase 연결 성공";
       } catch (error) {
         updateDeviceDisplay("humidifier", null, false);
         updateDeviceDisplay("fan", null, false);
-        updateDeviceDisplay("window", null, false);
+        WINDOW_KEYS.forEach(key => updateDeviceDisplay(key, null, false));
         document.getElementById("firebaseStatus").textContent =
           "Firebase 연결 실패: " + error.message;
-
         console.error(error);
       }
     }
 
-    // 위치 공유 상태 확인
+    // =========================================================
+    // 위치 공유 기능
+    // =========================================================
     async function getShareData() {
       const response = await fetch(LOCATION_URL);
-
       if (!response.ok) {
         throw new Error("위치 공유 정보 확인 실패");
       }
-
       return await response.json();
     }
 
-    // 위치 공유 잠금 획득
     async function acquireLocationShare() {
       const response = await fetch(LOCATION_URL, {
         method: "GET",
-        headers: {
-          "X-Firebase-ETag": "true"
-        }
+        headers: { "X-Firebase-ETag": "true" }
       });
 
       if (!response.ok) {
@@ -2725,7 +3091,6 @@
       }
 
       const etag = response.headers.get("ETag");
-
       if (!etag) {
         throw new Error("Firebase ETag를 가져오지 못했습니다.");
       }
@@ -2733,7 +3098,6 @@
       const data = await response.json();
       const now = Date.now();
 
-      // 다른 사용자의 공유가 아직 유효한 경우
       if (
         data &&
         data.active === true &&
@@ -2743,7 +3107,6 @@
         return false;
       }
 
-      // 잠금 정보 저장
       const updateResponse = await fetch(LOCATION_URL, {
         method: "PUT",
         headers: {
@@ -2760,7 +3123,6 @@
         })
       });
 
-      // 다른 사용자가 먼저 잠금을 획득한 경우
       if (updateResponse.status === 412) {
         return false;
       }
@@ -2772,7 +3134,6 @@
       return true;
     }
 
-    // 위치 공유 상태 화면 갱신
     async function checkShareStatus() {
       try {
         const data = await getShareData();
@@ -2807,18 +3168,15 @@
           document.getElementById("locationStatus").textContent =
             "현재 위치 공유를 시작할 수 있습니다.";
         }
-
       } catch (error) {
         console.error("공유 상태 확인 오류:", error);
       }
     }
 
-    // 실시간 위치 Firebase 전송
     async function sendLocation(latitude, longitude) {
       if (!isSharing) return;
 
       let distance = null;
-
       if (houseLocation) {
         distance = calculateDistance(
           latitude,
@@ -2826,24 +3184,18 @@
           houseLocation.latitude,
           houseLocation.longitude
         );
-
-        document.getElementById("distanceFromHome").textContent =
-          distance.toFixed(2);
+        document.getElementById("distanceFromHome").textContent = distance.toFixed(2);
       } else {
         document.getElementById("distanceFromHome").textContent = "--";
       }
 
       const response = await fetch(LOCATION_URL, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           latitude: latitude,
           longitude: longitude,
-          distanceFromHome: distance === null
-            ? null
-            : Number(distance.toFixed(2)),
+          distanceFromHome: distance === null ? null : Number(distance.toFixed(2)),
           distanceUnit: "km",
           lastUpdate: Date.now(),
           expiresAt: Date.now() + SHARE_TIME
@@ -2855,33 +3207,23 @@
       }
     }
 
-    // 위치 정보를 화면에 표시
     function displayLocation(position) {
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
 
-      lastPosition = {
-        latitude: latitude,
-        longitude: longitude
-      };
+      lastPosition = { latitude: latitude, longitude: longitude };
 
-      document.getElementById("latitude").textContent =
-        latitude.toFixed(6);
-
-      document.getElementById("longitude").textContent =
-        longitude.toFixed(6);
+      document.getElementById("latitude").textContent = latitude.toFixed(6);
+      document.getElementById("longitude").textContent = longitude.toFixed(6);
 
       updateMap(latitude, longitude);
 
       sendLocation(latitude, longitude).catch(error => {
-        document.getElementById("locationStatus").textContent =
-          error.message;
-
+        document.getElementById("locationStatus").textContent = error.message;
         console.error(error);
       });
     }
 
-    // 하나의 버튼으로 위치 공유 시작/종료 전환
     async function toggleLocationShare() {
       if (isSharing) {
         await stopLocationShare();
@@ -2890,7 +3232,6 @@
       }
     }
 
-    // 위치 공유 시작
     async function startLocationShare() {
       if (!navigator.geolocation) {
         await showDialog("이 브라우저는 위치 정보를 지원하지 않습니다.");
@@ -2901,20 +3242,16 @@
       if (isSharing || shareToggleButton.disabled) return;
 
       shareToggleButton.disabled = true;
-      document.getElementById("locationStatus").textContent =
-        "위치 공유 확인 중...";
+      document.getElementById("locationStatus").textContent = "위치 공유 확인 중...";
 
       try {
         const acquired = await acquireLocationShare();
-
         if (!acquired) {
           document.getElementById("shareNotice").textContent =
             "현재 위치를 공유하고 있는 사용자가 있습니다.";
           document.getElementById("shareNotice").hidden = false;
-
           document.getElementById("locationStatus").textContent =
             "다른 사용자가 위치를 공유 중입니다. 현재 위치 공유를 시작할 수 없습니다.";
-
           shareToggleButton.disabled = false;
           return;
         }
@@ -2929,35 +3266,24 @@
         document.getElementById("houseButton").disabled = false;
         document.getElementById("clearHouseButton").disabled = !houseLocation;
 
-        document.getElementById("shareNotice").textContent =
-          "내 위치를 공유하고 있습니다.";
+        document.getElementById("shareNotice").textContent = "내 위치를 공유하고 있습니다.";
         document.getElementById("shareNotice").hidden = false;
-
         document.getElementById("locationStatus").textContent =
           "브라우저 위치 권한을 확인하고 있습니다.";
 
         watchId = navigator.geolocation.watchPosition(
           displayLocation,
-
           async function(error) {
             document.getElementById("locationStatus").textContent =
               "위치 확인 실패: " + error.message;
-
             await stopLocationShare(true);
           },
-
-          {
-            enableHighAccuracy: true,
-            maximumAge: 5000,
-            timeout: 15000
-          }
+          { enableHighAccuracy: true, maximumAge: 5000, timeout: 15000 }
         );
 
-        // 공유 잠금 갱신
         heartbeatTimer = setInterval(async function() {
           try {
             const data = await getShareData();
-
             if (!data || data.owner !== locationUserId) {
               await stopLocationShare();
               return;
@@ -2965,29 +3291,20 @@
 
             await fetch(LOCATION_URL, {
               method: "PATCH",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify({
-                expiresAt: Date.now() + SHARE_TIME
-              })
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ expiresAt: Date.now() + SHARE_TIME })
             });
-
           } catch (error) {
             console.error("공유 갱신 실패:", error);
           }
         }, HEARTBEAT_TIME);
-
       } catch (error) {
-        document.getElementById("locationStatus").textContent =
-          "위치 공유 실패: " + error.message;
+        document.getElementById("locationStatus").textContent = "위치 공유 실패: " + error.message;
         shareToggleButton.disabled = false;
-
         console.error(error);
       }
     }
 
-    // 위치 공유 종료
     async function stopLocationShare(keepStatusMessage = false) {
       if (watchId !== null) {
         navigator.geolocation.clearWatch(watchId);
@@ -3000,8 +3317,6 @@
       }
 
       isSharing = false;
-
-      // 선택 중이던 임시 집 위치만 취소하고 등록된 집 위치는 유지
       selectionMode = false;
       pendingHouseLocation = null;
 
@@ -3015,7 +3330,6 @@
       document.getElementById("distanceFromHome").textContent = "--";
       document.getElementById("houseButton").textContent =
         houseLocation ? "집 위치 변경" : "집 위치 등록";
-
       document.getElementById("houseInstruction").textContent =
         "집 위치 등록 버튼을 누른 뒤 지도에서 집 위치를 선택하세요.";
 
@@ -3036,8 +3350,7 @@
       shareToggleButton.disabled = false;
 
       if (!keepStatusMessage) {
-        document.getElementById("locationStatus").textContent =
-          "위치 공유가 종료되었습니다.";
+        document.getElementById("locationStatus").textContent = "위치 공유가 종료되었습니다.";
       }
 
       document.getElementById("shareNotice").textContent = "";
@@ -3046,21 +3359,14 @@
       try {
         const response = await fetch(LOCATION_URL, {
           method: "GET",
-          headers: {
-            "X-Firebase-ETag": "true"
-          }
+          headers: { "X-Firebase-ETag": "true" }
         });
 
         if (response.ok) {
           const etag = response.headers.get("ETag");
           const data = await response.json();
 
-          // 본인이 소유한 공유 정보만 종료
-          if (
-            data &&
-            data.owner === locationUserId &&
-            etag
-          ) {
+          if (data && data.owner === locationUserId && etag) {
             await fetch(LOCATION_URL, {
               method: "PUT",
               headers: {
@@ -3078,7 +3384,6 @@
             });
           }
         }
-
       } catch (error) {
         console.error("공유 종료 처리 오류:", error);
       }
@@ -3088,32 +3393,32 @@
       }
     }
 
-    // 초기 실행 설정
-    document.getElementById("houseButton").disabled = false;
-    document.getElementById("shareToggleButton").textContent = "위치 공유 시작";
-    document.getElementById("shareNotice").hidden = true;
+    // =========================================================
+    // 초기 실행
+    // =========================================================
+    window.addEventListener("DOMContentLoaded", function() {
+      document.getElementById("houseButton").disabled = false;
+      document.getElementById("shareToggleButton").textContent = "위치 공유 시작";
+      document.getElementById("shareNotice").hidden = true;
+      document.getElementById("mapContainer").hidden = true;
+      document.getElementById("mapToggleButton").textContent = "▼ 지도 보기";
+      document.getElementById("clearHouseButton").disabled = true;
 
-    initializeMap();
-    updateAutoControlDisplay();
-    document.getElementById("mapContainer").hidden = true;
-    document.getElementById("mapToggleButton").textContent = "▼ 지도 보기";
-    document.getElementById("clearHouseButton").disabled = true;
-    loadHouseLocation();
-    getData();
-    checkShareStatus();
+      initializeMap();
+      updateAutoControlDisplay();
+      updateWindowGroupSummary();
+      loadHouseLocation();
+      getData();
+      checkShareStatus();
 
-    // 센서 데이터 주기적 갱신
-    setInterval(getData, 3000);
+      setInterval(getData, 3000);
+      statusTimer = setInterval(checkShareStatus, 5000);
+    });
 
-    // 다른 사용자 공유 상태 주기적 확인
-    statusTimer = setInterval(checkShareStatus, 5000);
-
-    // 새로고침/페이지 종료 시 브라우저 위치 추적만 중단
     window.addEventListener("beforeunload", function() {
       if (watchId !== null) {
         navigator.geolocation.clearWatch(watchId);
       }
-
       if (heartbeatTimer !== null) {
         clearInterval(heartbeatTimer);
       }
